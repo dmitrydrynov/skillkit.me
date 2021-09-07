@@ -9,7 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
     "antd": "^4.16.13",
+=======
+    "@headlessui/react": "^1.4.1",
+    "@heroicons/react": "^1.0.4",
+>>>>>>> bfa9439fd7d618c4bc63c49dbfc4a504e26f38b8
     "cross-env": "^7.0.3",
     "graphql": "^15.5.3",
     "jwt-decode": "^3.1.2",

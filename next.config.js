@@ -20,4 +20,11 @@ const plugins = [
 
 module.exports = withPlugins(plugins, {
   reactStrictMode: true,
+<<<<<<< HEAD
 });
+=======
+  images: {
+    domains: ['tailwindui.com'],
+  },
+};
+>>>>>>> bfa9439fd7d618c4bc63c49dbfc4a504e26f38b8
