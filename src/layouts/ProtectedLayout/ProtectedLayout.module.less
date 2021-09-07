@@ -1,0 +1,42 @@
+@sider-width: 200px;
+
+.logo {
+    height: 32px;
+    margin: 16px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.sider {
+    width: @sider-width;
+    background-color: #dbdddf;
+}
+
+.header {
+    background-color: @layout-body-background !important;
+    padding: 0 16px;
+    position: fixed;
+    z-index: 1;
+    width: calc(100% - @sider-width);
+
+    &_userMenu {   
+        border: 0;        
+
+        :global {
+            .ant-menu-item { 
+                border-radius: calc(@border-radius-base * 2.5);
+                color: @text-color-secondary;
+                height: auto;
+                padding: 2px 8px;
+
+                &.ant-dropdown-open, &:hover {
+                    background-color: #e4e4e4 !important;
+                    color: @text-color-secondary;
+                }
+
+                .ant-space-item {
+                    height: 43px;
+                }
+            }
+        }
+    }
+}
