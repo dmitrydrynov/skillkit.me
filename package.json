@@ -9,14 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@headlessui/react": "^1.4.1",
+    "antd": "^4.16.13",
     "cross-env": "^7.0.3",
+    "less": "^4.1.1",
+    "less-loader": "^10.0.1",
     "next": "11.1.2",
+    "next-compose-plugins": "^2.2.1",
+    "next-with-less": "^1.0.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-hook-form": "^7.14.2",
     "sass": "^1.39.0",
-    "tailwindcss": "^2.2.9"
+    "stylelint-config-recommended": "^5.0.0"
   },
   "devDependencies": {
     "@types/react": "17.0.19",

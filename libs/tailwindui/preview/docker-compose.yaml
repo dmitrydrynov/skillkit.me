@@ -1,8 +1,0 @@
-version: '3'
-services:
-  tailwind:
-    image: nginx:alpine
-    ports:
-      - 80:80
-    volumes:
-      - ./public_html:/usr/share/nginx/html
