@@ -12,17 +12,26 @@ type MenuItem = {
     before?: ReactNode;
 }
 
-const userMenuItems: MenuItem[] = [{
-    link: '/user/profile',
-    title: 'Profile',
-},
-{
-    link: '/',
-    title: 'Sign out',
-    before: <Menu.Divider />,
-}];
+type ProtectedLayoutParams = {
+    title?: string;
+}
 
-const ProtectedLayout: FC = ({ children }) => {
+const userMenuItems: MenuItem[] = [
+    {
+        link: '/user/profile',
+        title: 'Profile',
+    },
+    {
+        link: '/user/skills',
+        title: 'Skills',
+    },
+    {
+        link: '/',
+        title: 'Sign out',
+        before: <Menu.Divider />,
+    }];
+
+const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, title }) => {
     const [activeUserMenu, setActiveUserMenu] = useState(false);
 
     const userMenu = (
@@ -49,7 +58,12 @@ const ProtectedLayout: FC = ({ children }) => {
             </Sider>
             <Layout className="site-layout">
                 <Header className={styles.header} >
-                    <Row justify="end" align="middle" style={{height: 'inherit'}} >
+                    <Row justify="space-between" align="top" style={{ height: 'inherit' }} >
+                        {!!title &&
+                            <Col>
+                                <h2>{title}</h2>
+                            </Col>
+                        }
                         <Col>
                             <Menu
                                 className={styles.header_userMenu}
