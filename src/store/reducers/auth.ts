@@ -26,12 +26,17 @@ const authReducer = (state = initialState, action: AnyAction): AuthState => {
 
   switch (type) {
     case 'LOGIN': {
-      setCookie('jwt', payload.token);
+      if (process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
+        setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, payload.token);
+        return { ...state, loggedIn: true };
+      }
 
-      return { ...state, loggedIn: true };
+      return state;
     }
     case 'LOGOUT': {
-      deleteCookie('jwt');
+      if (process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
+        deleteCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME);
+      }
 
       return { ...state, loggedIn: false };
     }
@@ -40,13 +45,8 @@ const authReducer = (state = initialState, action: AnyAction): AuthState => {
   }
 };
 
-export const setLogin = (payload: { token: string }): AppThunk => {
-  const { id, role } = jwtDecode<{ id: number; role: string }>(payload.token);
-
-  return (dispatch: Dispatch<AnyAction>) => {
-    dispatch({ type: 'LOGIN', payload });
-    dispatch(setUserData({ id, role }));
-  };
+export const setLogin = (payload: { token: string }): AnyAction => {
+  return { type: 'LOGIN', payload };
 };
 
 export const setLogout = (): AppThunk => {

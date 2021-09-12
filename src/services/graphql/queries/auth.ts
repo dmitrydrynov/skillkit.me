@@ -4,6 +4,13 @@ export const authorizeMutation = `mutation ($email: String!, $password: String!)
       sessionToken
       item {
         name
+        email
+        id
+        role {
+          id
+          name
+          canManageUsers
+        }
       }
     }
     ...on UserAuthenticationWithPasswordFailure {
@@ -12,3 +19,26 @@ export const authorizeMutation = `mutation ($email: String!, $password: String!)
     }
   }
 }`;
+
+export const authenticatedUserQuery = `
+  {
+    authenticatedItem {
+      ...on User {
+        name
+        email
+        id
+        role {
+          id
+          name
+          canManageUsers
+        }
+      }
+    }
+  }
+`;
+
+export const endSessionMutation = `
+  mutation {
+    endSession
+  }
+`;

@@ -1,12 +1,15 @@
-import { Col, Layout, Row, Menu, Space, Button, message, Modal, Form, Input } from "antd";
+import { Col, Layout, Row, Menu, Space, Button, message, Modal, Form, Input, Dropdown, Avatar } from "antd";
 import React, { FC, useState, useEffect } from "react";
 import Link from 'next/link';
 import styles from './PublicLayout.module.less';
 import { useRouter } from "next/router";
 import { useMutation } from "urql";
 import { authorizeMutation } from './../../services/graphql/queries/auth';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLogin } from "src/store/reducers/auth";
+import { setUserData } from "src/store/reducers/user";
+import UserMenu from "@components/UserMenu";
+import { RootState } from "src/store/configure-store";
 
 const { Header, Footer, Content } = Layout;
 
@@ -32,8 +35,9 @@ const headerMenu: HeaderMenu[] = [{
 const PublicLayout: FC = ({ children }) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
-	const [currentHeaderMenuItem, setCurrentHeaderMenuItem] = useState<string>('');
+	const [currentHeaderMenuItem, setCurrentHeaderMenuItem] = useState('');
 	const [authorizedResponse, authorize] = useMutation(authorizeMutation);
+	const { loggedIn } = useSelector((state: RootState) => state.auth)
 
 	const [visibleSignInModal, setVisibleSignInModal] = useState(false);
 	const [form] = Form.useForm();
@@ -47,6 +51,7 @@ const PublicLayout: FC = ({ children }) => {
 	}
 
 	const handleSignIn = async () => {
+		form.resetFields();
 		setVisibleSignInModal(true)
 	}
 
@@ -58,23 +63,26 @@ const PublicLayout: FC = ({ children }) => {
 		form
 			.validateFields()
 			.then(async (values: SignInRequest) => {
-				form.resetFields();
-
 				try {
 					const { data, error } = await authorize({
 						email: values.email,
-						password: 'dmitry.drynov@gmail.com'
+						password: values.password,
 					});
 
 					if (error) {
 						message.error(error.message);
+						return;
 					}
 
 					if (data.authenticateUserWithPassword.code) {
 						message.error(data.authenticateUserWithPassword.message);
+						return;
 					}
 
 					dispatch(setLogin({ token: data.authenticateUserWithPassword.sessionToken }));
+					dispatch(setUserData({ ...data.authenticateUserWithPassword.item }));
+
+					message.success('Your are welcome!');
 					setVisibleSignInModal(false)
 				} catch (e: any) {
 					message.error(e.message);
@@ -91,7 +99,7 @@ const PublicLayout: FC = ({ children }) => {
 				title="Sign in"
 				visible={visibleSignInModal}
 				onOk={handleOk}
-				confirmLoading={!authorizedResponse}
+				confirmLoading={authorizedResponse.fetching}
 				onCancel={handleCancel}
 			>
 				<Form
@@ -118,7 +126,7 @@ const PublicLayout: FC = ({ children }) => {
 			</Modal>
 			<Layout className={styles.layout} >
 				<Header className={styles.publicLayout_header}>
-					<Row>
+					<Row align="middle">
 						<Col flex="1">
 							<div className={styles.logo}></div>
 							<Menu onClick={handleClick} selectedKeys={[currentHeaderMenuItem]} mode="horizontal" className={styles.publicLayout_header_menu}>
@@ -134,10 +142,14 @@ const PublicLayout: FC = ({ children }) => {
 							</Menu>
 						</Col>
 						<Col>
-							<Space>
-								<Button type="text" onClick={handleSignIn}>Sign in</Button>
-								<Button type="primary">Sign up</Button>
-							</Space>
+							{!loggedIn ? (
+								<Space>
+									<Button type="text" onClick={handleSignIn}>Sign in</Button>
+									<Button type="primary">Sign up</Button>
+								</Space>
+							) : (
+								<UserMenu />
+							)}
 						</Col>
 					</Row>
 				</Header>

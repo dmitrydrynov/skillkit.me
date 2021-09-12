@@ -26,7 +26,7 @@ const userReducer = (state = initialState, action: AnyAction): UserState => {
   }
 };
 
-export const setUserData = (payload: { id: number; role: string }): AnyAction => {
+export const setUserData = (payload: { id: number; role: UserRole, name: string, email: string }): AnyAction => {
   return {
     type: 'SET_USER_DATA',
     payload,
