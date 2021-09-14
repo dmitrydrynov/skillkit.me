@@ -1,4 +1,4 @@
-import { Col, Layout, Row, Menu, Space, Button, message, Modal, Form, Input, Dropdown, Avatar } from "antd";
+import { Col, Layout, Row, Menu, Space, Button, message, Modal, Form, Input, Dropdown, Avatar, Tooltip, Typography, Checkbox } from "antd";
 import React, { FC, useState, useEffect } from "react";
 import Link from 'next/link';
 import styles from './PublicLayout.module.less';
@@ -10,6 +10,7 @@ import { setLogin } from "src/store/reducers/auth";
 import { setUserData } from "src/store/reducers/user";
 import UserMenu from "@components/UserMenu";
 import { RootState } from "src/store/configure-store";
+import Password from "antd/lib/input/Password";
 
 const { Header, Footer, Content } = Layout;
 
@@ -93,16 +94,34 @@ const PublicLayout: FC = ({ children }) => {
 			});
 	}
 
+	const forgotPasword = () => {
+		setVisibleSignInModal(false);
+		router.push('/password/send')
+	}
+
 	return (
 		<>
 			<Modal
 				title="Sign in"
 				visible={visibleSignInModal}
 				onOk={handleOk}
-				confirmLoading={authorizedResponse.fetching}
 				onCancel={handleCancel}
+				width={450}
+				maskClosable={false}
+				footer={[
+					<Button
+						key="submit"
+						type="primary"
+						loading={authorizedResponse.fetching}
+						onClick={handleOk}
+						className={styles.submitBtn}
+					>
+						Sign in
+					</Button>,
+				]}
 			>
 				<Form
+					className={styles.form}
 					form={form}
 					layout="vertical"
 					name="form_in_modal"
@@ -117,11 +136,17 @@ const PublicLayout: FC = ({ children }) => {
 					</Form.Item>
 					<Form.Item
 						name="password"
-						label="Password"
+						label={(
+							<Row justify="space-between" style={{ width: '100%' }}>
+								<Col>Password</Col>
+								<Col><a onClick={forgotPasword}>Forgot password</a></Col>
+							</Row>
+						)}
 						rules={[{ required: true, message: 'Please input the password!' }]}
 					>
 						<Input type="password" />
 					</Form.Item>
+
 				</Form>
 			</Modal>
 			<Layout className={styles.layout} >

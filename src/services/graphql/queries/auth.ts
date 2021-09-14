@@ -42,3 +42,25 @@ export const endSessionMutation = `
     endSession
   }
 `;
+
+export const resetPasswordMutation = `
+  mutation($email: String!, $token: String!, $password: String!) {
+    redeemUserPasswordResetToken(
+        email: $email
+        token: $token
+        password: $password
+      ) {
+      code
+      message
+    }
+  }
+`;
+
+export const forgotPasswordMutation = `
+mutation($email: String!) {
+  sendUserPasswordResetLink(email: $email) {
+    code
+    message
+  }
+}
+`;
