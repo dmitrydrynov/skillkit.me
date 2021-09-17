@@ -1,23 +1,14 @@
-import { Col, Layout, Row, Menu, Space, Button, message, Modal, Form, Input, Dropdown, Avatar, Tooltip, Typography, Checkbox } from "antd";
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useEffect, useState } from 'react';
+import SignInModal from '@components/modals/SignInModal';
+import UserMenu from '@components/UserMenu';
+import { RootState } from 'src/store/configure-store';
+import { Button, Col, Layout, Menu, Row, Space } from 'antd';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
 import styles from './PublicLayout.module.less';
-import { useRouter } from "next/router";
-import { useMutation } from "urql";
-import { authorizeMutation } from './../../services/graphql/queries/auth';
-import { useDispatch, useSelector } from "react-redux";
-import { setLogin } from "src/store/reducers/auth";
-import { setUserData } from "src/store/reducers/user";
-import UserMenu from "@components/UserMenu";
-import { RootState } from "src/store/configure-store";
-import Password from "antd/lib/input/Password";
 
 const { Header, Footer, Content } = Layout;
-
-type SignInRequest = {
-	email: string;
-	password: string;
-}
 
 type HeaderMenu = {
 	link: string;
@@ -34,14 +25,10 @@ const headerMenu: HeaderMenu[] = [{
 }];
 
 const PublicLayout: FC = ({ children }) => {
-	const dispatch = useDispatch();
 	const router = useRouter();
 	const [currentHeaderMenuItem, setCurrentHeaderMenuItem] = useState('');
-	const [authorizedResponse, authorize] = useMutation(authorizeMutation);
 	const { loggedIn } = useSelector((state: RootState) => state.auth)
-
 	const [visibleSignInModal, setVisibleSignInModal] = useState(false);
-	const [form] = Form.useForm();
 
 	useEffect(() => {
 		setCurrentHeaderMenuItem(router.route)
@@ -52,111 +39,25 @@ const PublicLayout: FC = ({ children }) => {
 	}
 
 	const handleSignIn = async () => {
-		form.resetFields();
 		setVisibleSignInModal(true)
-	}
-
-	const handleCancel = () => {
-		setVisibleSignInModal(false)
-	}
-
-	const handleOk = () => {
-		form
-			.validateFields()
-			.then(async (values: SignInRequest) => {
-				try {
-					const { data, error } = await authorize({
-						email: values.email,
-						password: values.password,
-					});
-
-					if (error) {
-						message.error(error.message);
-						return;
-					}
-
-					if (data.authenticateUserWithPassword.code) {
-						message.error(data.authenticateUserWithPassword.message);
-						return;
-					}
-
-					dispatch(setLogin({ token: data.authenticateUserWithPassword.sessionToken }));
-					dispatch(setUserData({ ...data.authenticateUserWithPassword.item }));
-
-					message.success('Your are welcome!');
-					setVisibleSignInModal(false)
-				} catch (e: any) {
-					message.error(e.message);
-				}
-			})
-			.catch(info => {
-				console.log('Validate Failed:', info);
-			});
-	}
-
-	const forgotPasword = () => {
-		setVisibleSignInModal(false);
-		router.push('/password/send')
 	}
 
 	return (
 		<>
-			<Modal
-				title="Sign in"
-				visible={visibleSignInModal}
-				onOk={handleOk}
-				onCancel={handleCancel}
-				width={450}
-				maskClosable={false}
-				footer={[
-					<Button
-						key="submit"
-						type="primary"
-						loading={authorizedResponse.fetching}
-						onClick={handleOk}
-						className={styles.submitBtn}
-					>
-						Sign in
-					</Button>,
-				]}
-			>
-				<Form
-					className={styles.form}
-					form={form}
-					layout="vertical"
-					name="form_in_modal"
-					initialValues={{ modifier: 'public' }}
-				>
-					<Form.Item
-						name="email"
-						label="Email"
-						rules={[{ required: true, message: 'Please input the email!' }]}
-					>
-						<Input />
-					</Form.Item>
-					<Form.Item
-						name="password"
-						label={(
-							<Row justify="space-between" style={{ width: '100%' }}>
-								<Col>Password</Col>
-								<Col><a onClick={forgotPasword}>Forgot password</a></Col>
-							</Row>
-						)}
-						rules={[{ required: true, message: 'Please input the password!' }]}
-					>
-						<Input type="password" />
-					</Form.Item>
-
-				</Form>
-			</Modal>
+			<SignInModal visible={visibleSignInModal} onClose={() => setVisibleSignInModal(false)} />
 			<Layout className={styles.layout} >
 				<Header className={styles.publicLayout_header}>
 					<Row align="middle">
 						<Col flex="1">
 							<div className={styles.logo}></div>
-							<Menu onClick={handleClick} selectedKeys={[currentHeaderMenuItem]} mode="horizontal" className={styles.publicLayout_header_menu}>
-								{headerMenu.map((menuItem) => (
-									<Menu.Item key={menuItem.link}>
+							<Menu
+								onClick={handleClick}
+								selectedKeys={[currentHeaderMenuItem]}
+								mode="horizontal"
+								className={styles.publicLayout_header_menu}
+							>
+								{headerMenu.map((menuItem, indx) => (
+									<Menu.Item key={indx}>
 										<Link href={menuItem.link}>
 											<a>
 												{menuItem.title}

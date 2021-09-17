@@ -1,3 +1,57 @@
 {
-  "extends": ["next/core-web-vitals", "prettier"]
+  "extends": ["next", "prettier"],
+  "root": true,
+  "rules": {
+    "comma-dangle": ["error", "always-multiline"],
+    "curly": "error",
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "groups": ["builtin", "internal", "external", "sibling", "index"],
+        "newlines-between": "never",
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "builtin",
+            "position": "before"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["react"]
+      }
+    ],
+    "max-len": ["error", 120],
+    "sort-imports": [
+      "error",
+      {
+        "ignoreDeclarationSort": true
+      }
+    ],
+    "padding-line-between-statements": [
+      "error",
+      { "blankLine": "always", "prev": "*", "next": "function" },
+      { "blankLine": "always", "prev": "*", "next": "if" },
+      { "blankLine": "always", "prev": "if", "next": "*" },
+      { "blankLine": "always", "prev": "*", "next": "switch" },
+      { "blankLine": "always", "prev": "switch", "next": "*" }
+    ],
+    "quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "no-unused-vars": "error"
+  }
 }

@@ -15,11 +15,14 @@
         "isolatedModules": true,
         "jsx": "preserve",
         "paths": {
-            "@components/*": ["src/components/*"],
-            "@styles/*": ["src/styles/*"],
-            "@pages/*": ["src/pages/*"],
             "@assets/*": ["src/assets/*"],
+            "@components/*": ["src/components/*"],
             "@helpers/*": ["src/helpers/*"],
+            "@layouts/*": ["src/layouts/*"],
+            "@pages/*": ["src/pages/*"],
+            "@services/*": ["src/services/*"],
+            "@store/*": ["src/store/*"],
+            "@styles/*": ["src/styles/*"],            
         }
     },
     "include": ["src", "next-env.d.ts",  "externals.d.ts", "**/*.ts", "**/*.tsx"],

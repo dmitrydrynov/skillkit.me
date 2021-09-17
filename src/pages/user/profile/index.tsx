@@ -1,13 +1,12 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import ProtectedLayout from 'src/layouts/ProtectedLayout'
-import styles from './ProfilePage.module.less'
-import { NextPageWithLayout } from '@pages/_app'
 import { ReactElement } from 'react'
+import { NextPageWithLayout } from '@pages/_app'
+import ProtectedLayout from 'src/layouts/ProtectedLayout'
+import { Col, Row } from 'antd';
+import Head from 'next/head'
 
 const ProfilePage: NextPageWithLayout = () => {
     return (
-        <div className={styles.container}>
+        <>
             <Head>
                 <title>Profile</title>
                 <meta
@@ -16,10 +15,15 @@ const ProfilePage: NextPageWithLayout = () => {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                Profile page
-            </main>
-        </div>
+            <Row>
+                <Col flex="250px">
+                    Profile
+                </Col>
+                <Col flex="1">
+                    Form
+                </Col>
+            </Row>
+        </>
     )
 }
 

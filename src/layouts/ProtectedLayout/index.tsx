@@ -37,7 +37,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, title }) => {
                         </Col>
                     </Row>
                 </Header>
-                <Content style={{ margin: '64px 16px' }}>{children}</Content>
+                <Content style={{ margin: '64px 40px 40px', paddingTop: '40px' }}>{children}</Content>
             </Layout>
         </Layout >
     )

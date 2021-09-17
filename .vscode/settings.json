@@ -6,4 +6,5 @@
         "source.fixAll.eslint": true,
         "source.fixAll.prettier": true
     },
+    "eslint.lintTask.enable": true
 }
