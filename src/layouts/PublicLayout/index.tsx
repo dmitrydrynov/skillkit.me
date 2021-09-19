@@ -1,7 +1,8 @@
 import React, { FC, useEffect, useState } from 'react';
 import SignInModal from '@components/modals/SignInModal';
+import SignUpModal from '@components/modals/SignUpModal';
 import UserMenu from '@components/UserMenu';
-import { RootState } from 'src/store/configure-store';
+import { RootState } from '@store/configure-store';
 import { Button, Col, Layout, Menu, Row, Space } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -29,6 +30,7 @@ const PublicLayout: FC = ({ children }) => {
 	const [currentHeaderMenuItem, setCurrentHeaderMenuItem] = useState('');
 	const { loggedIn } = useSelector((state: RootState) => state.auth)
 	const [visibleSignInModal, setVisibleSignInModal] = useState(false);
+	const [visibleSignUpModal, setVisibleSignUpModal] = useState(false);
 
 	useEffect(() => {
 		setCurrentHeaderMenuItem(router.route)
@@ -42,9 +44,18 @@ const PublicLayout: FC = ({ children }) => {
 		setVisibleSignInModal(true)
 	}
 
+	const handleSignUp = async () => {
+		setVisibleSignUpModal(true)
+	}
+
 	return (
 		<>
-			<SignInModal visible={visibleSignInModal} onClose={() => setVisibleSignInModal(false)} />
+			{visibleSignInModal && (
+				<SignInModal visible={visibleSignInModal} onClose={() => setVisibleSignInModal(false)} />
+			)}
+			{visibleSignUpModal && (
+				<SignUpModal visible={visibleSignUpModal} onClose={() => setVisibleSignUpModal(false)} />
+			)}
 			<Layout className={styles.layout} >
 				<Header className={styles.publicLayout_header}>
 					<Row align="middle">
@@ -71,7 +82,7 @@ const PublicLayout: FC = ({ children }) => {
 							{!loggedIn ? (
 								<Space>
 									<Button type="text" onClick={handleSignIn}>Sign in</Button>
-									<Button type="primary">Sign up</Button>
+									<Button type="primary" onClick={handleSignUp}>Sign up</Button>
 								</Space>
 							) : (
 								<UserMenu />

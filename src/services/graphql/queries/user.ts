@@ -23,54 +23,27 @@ mutation deleteUser {
   }
 }`;
 
-export const transactionsListQuery = `
-query transactionsList($limit: Int, $offset: Int, $where: SequelizeJSON, $order: String) {
-  transactionsList(limit: $limit, offset: $offset, where: $where, order: $order) {
-    total
-    items {
-      id
-      hash
-      status
-      cryptoCurrencyAmount
-      fiatCurrencyAmount
-      frozenState
-      createdAt
-      updatedAt
-      walletAddress
-      cryptoCurrency {
-        name
+export const registerMutation = `
+mutation(
+  $firstName: String!, 
+  $lastName: String!, 
+  $password: String!, 
+  $confirmPassword: String!, 
+  $email: String!
+) {
+  register(
+    firstName: $firstName
+    lastName: $lastName
+    password: $password
+    confirmPassword: $confirmPassword
+    email: $email
+  ) {
+      ...on RegisterSuccess {
+        ok
+      }
+      ...on RegisterFailure {
         code
-      }
-      fiatCurrency {
-        name
-        code
-      }
-    }
-  }
-}`;
-
-export const walletsListQuery = `{
-  userWallets {
-      items {
-          id
-          address
-          name
-          cryptoCurrency {
-            id
-            code
-          }
-      }
-  }
-}`;
-
-export const cardsListQuery = `{
-  userCards {
-      items {
-          id
-          number
-          holder
-          expire
-          asMain
+        message
       }
   }
 }`;
