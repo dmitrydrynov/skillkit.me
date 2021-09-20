@@ -47,3 +47,14 @@ mutation(
       }
   }
 }`;
+
+export const sendConfirmCodeMutation = `
+mutation(
+  $email: String!
+) {
+  sendConfirmCode(
+    email: $email
+  ) {
+      success
+  }
+}`;
