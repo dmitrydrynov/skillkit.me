@@ -1,12 +1,12 @@
-import type { NextPage } from 'next'
-import React, { useEffect, useState } from 'react'
-import { Button, Col, Form, Input, Result } from 'antd'
-import { useRouter } from 'next/router'
-import styles from './style.module.less'
-import { Row } from 'antd';
+import React from 'react'
 import { forgotPasswordMutation } from 'src/services/graphql/queries/auth'
-import { useMutation } from 'urql';
+import { Button, Col, Form, Input } from 'antd'
+import { Row } from 'antd';
 import { message } from 'antd';
+import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useMutation } from 'urql';
+import styles from './style.module.less'
 
 const ResetPasswordPage: NextPage = () => {
     const router = useRouter()
@@ -53,7 +53,11 @@ const ResetPasswordPage: NextPage = () => {
                         <Input />
                     </Form.Item>
                 </Form>
-                <Button type="primary" loading={forgotPasswordResponse.fetching} onClick={form.submit}>Forgot password</Button>
+                <Button
+                    type="primary"
+                    loading={forgotPasswordResponse.fetching}
+                    onClick={form.submit}>Forgot password
+                </Button>
             </Col>
         </Row>
     )

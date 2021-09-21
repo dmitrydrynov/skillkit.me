@@ -1,13 +1,13 @@
-import { Avatar, Dropdown, Menu, Space } from "antd";
-import React, { FC, ReactNode, useState } from "react";
+import React, { FC, ReactNode, useState } from 'react';
+import { setLogout } from 'src/store/reducers/auth';
 import { UserOutlined } from '@ant-design/icons';
-import styles from './UserMenu.module.less';
-import Link from "next/link";
+import { Avatar, Dropdown, Menu, Space } from 'antd';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import { useMutation } from 'urql';
 import { endSessionMutation } from './../../services/graphql/queries/auth';
-import { useMutation } from "urql";
-import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
-import { setLogout } from "src/store/reducers/auth";
+import styles from './UserMenu.module.less';
 
 type MenuItem = {
     link?: string;
@@ -41,7 +41,7 @@ const UserMenu: FC = () => {
                 router.push('/');
             },
             before: <Menu.Divider />,
-        }
+        },
     ];
 
     const userMenu = (
@@ -73,9 +73,13 @@ const UserMenu: FC = () => {
         <Menu
             className={styles.userMenu}
             defaultActiveFirst={false}
-            selectedKeys={activeUserMenu ? ["userMenu"] : []}
+            selectedKeys={activeUserMenu ? ['userMenu'] : []}
         >
-            <Dropdown overlay={userMenu} trigger={['click']} onVisibleChange={(visible: boolean) => { setActiveUserMenu(visible) }}>
+            <Dropdown
+                overlay={userMenu}
+                trigger={['click']}
+                onVisibleChange={(visible: boolean) => { setActiveUserMenu(visible) }}
+            >
                 <Menu.Item key="userMenu">
                     <Space align="center">
                         <Avatar icon={<UserOutlined />} className="ant-dropdown-link" />

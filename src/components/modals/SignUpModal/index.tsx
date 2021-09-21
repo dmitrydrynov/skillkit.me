@@ -2,12 +2,8 @@ import React, { FC, useEffect } from 'react';
 import { useState } from 'react';
 import SignModalIllustration from '@assets/images/sign-modal-illustration.svg'
 import { sendConfirmCodeMutation } from '@services/graphql/queries/user';
-// import { setLogin } from '@store/reducers/auth';
-// import { setUserData } from '@store/reducers/user';
-import { registerMutation } from 'src/services/graphql/queries/user';
 import { Button, Col, Form, Input, Modal, Row, message } from 'antd';
 import Image from 'next/image'
-import { useDispatch } from 'react-redux';
 import { useMutation } from 'urql';
 import styles from './SignUpModal.module.less';
 
@@ -16,19 +12,19 @@ type SignUpModalArgs = {
     onClose: () => void;
 }
 
-type SignUpRequest = {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-}
+// type SignUpRequest = {
+//     firstName: string;
+//     lastName: string;
+//     email: string;
+//     password: string;
+//     confirmPassword: string;
+// }
 
 const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
     const [form] = Form.useForm();
     // const dispatch = useDispatch();
     const [step, setStep] = useState('email');
-    const [sendConfirmCodeResponse, sendConfirmCode] = useMutation(sendConfirmCodeMutation);
+    const [sendConfirmCodeResponse] = useMutation(sendConfirmCodeMutation);
     // const [authorizedResponse, authorize] = useMutation(authorizeMutation);
 
     useEffect(() => {
@@ -39,7 +35,7 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
     const handleOk = () => {
         form
             .validateFields()
-            .then(async (values: SignUpRequest) => {
+            .then(async (/*values: SignUpRequest*/) => {
                 try {
 
                     if (step === 'email') {

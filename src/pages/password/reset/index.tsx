@@ -1,11 +1,11 @@
-import type { NextPage } from 'next'
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Form, Input, Result } from 'antd'
-import { useRouter } from 'next/router'
-import styles from './style.module.less'
-import { Row, message } from 'antd';
 import { resetPasswordMutation } from 'src/services/graphql/queries/auth'
+import { Button, Col, Form, Input } from 'antd'
+import { Row, message } from 'antd';
+import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import { useMutation } from 'urql';
+import styles from './style.module.less'
 
 const ResetPasswordPage: NextPage = () => {
     const router = useRouter()
@@ -25,7 +25,9 @@ const ResetPasswordPage: NextPage = () => {
         const { email, password } = form.getFieldsValue();
 
         try {
-            const { data: { redeemUserPasswordResetToken }, error } = await resetPassword({ email, password, token: resetToken })
+            const { data: { redeemUserPasswordResetToken }, error } = await resetPassword({
+                email, password, token: resetToken,
+            })
 
             if (redeemUserPasswordResetToken !== null && redeemUserPasswordResetToken.message) {
                 message.error(redeemUserPasswordResetToken.message);

@@ -1,19 +1,19 @@
-import type { AppProps } from 'next/app'
 import React, { FC, ReactElement, ReactNode, useEffect, useState } from 'react'
-import PublicLayout from 'src/layouts/PublicLayout'
-import { NextPage } from 'next'
-import { store } from '../store/configure-store';
-import { Provider as StoreProvider, useDispatch } from 'react-redux';
-import { Provider as UrqlProvider, useQuery } from 'urql';
+import PublicLayout from '@layouts/PublicLayout'
 import '@styles/globals.less'
-import { graphqlClient } from 'src/services/graphql/client';
 import { getCookie } from 'src/helpers/cookie';
+import { graphqlClient } from 'src/services/graphql/client';
+import { authenticatedUserQuery } from 'src/services/graphql/queries/auth';
 import { setLogin } from 'src/store/reducers/auth';
 import { setUserData } from 'src/store/reducers/user';
-import { authenticatedUserQuery } from 'src/services/graphql/queries/auth';
-import { message } from 'antd';
+import { NextPage } from 'next'
+import type { AppProps } from 'next/app'
+import { Provider as StoreProvider, useDispatch } from 'react-redux';
+import { Provider as UrqlProvider, useQuery } from 'urql';
+import { store } from '../store/configure-store';
 
 export type NextPageWithLayout = NextPage & {
+    // eslint-disable-next-line no-unused-vars
     getLayout?: (page: ReactElement) => ReactNode
 }
 
@@ -40,7 +40,7 @@ const AuthProvider: FC = ({ children }): any => {
     }, []);
 
     useEffect(() => {
-        const { data, error } = userData;
+        const { data } = userData;
 
         if (data && sessionToken) {
             dispatch(setLogin({ token: sessionToken }));

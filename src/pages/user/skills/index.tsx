@@ -1,11 +1,9 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import ProtectedLayout from 'src/layouts/ProtectedLayout'
-// import styles from './SkillsPage.module.less'
-import { NextPageWithLayout } from '@pages/_app'
 import React, { ReactElement } from 'react'
-import { Button } from 'antd'
+import { NextPageWithLayout } from '@pages/_app'
+import ProtectedLayout from 'src/layouts/ProtectedLayout'
 import { PlusOutlined } from '@ant-design/icons'
+import { Button } from 'antd'
+import Head from 'next/head'
 
 const ProfilePage: NextPageWithLayout = () => {
     return (
