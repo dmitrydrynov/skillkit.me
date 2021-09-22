@@ -25,17 +25,13 @@ mutation deleteUser {
 
 export const registerMutation = `
 mutation(
-  $firstName: String!, 
-  $lastName: String!, 
-  $password: String!, 
-  $confirmPassword: String!, 
+  $firstName: String!,
+  $lastName: String!,
   $email: String!
 ) {
   register(
     firstName: $firstName
     lastName: $lastName
-    password: $password
-    confirmPassword: $confirmPassword
     email: $email
   ) {
       ...on RegisterSuccess {
@@ -48,13 +44,42 @@ mutation(
   }
 }`;
 
-export const sendConfirmCodeMutation = `
+export const signUpMutation = `
 mutation(
+  $firstName: String!,
+  $lastName: String!,
   $email: String!
 ) {
-  sendConfirmCode(
+  signUp(
+    firstName: $firstName
+    lastName: $lastName
     email: $email
   ) {
-      success
+    ...on SignUpSuccess {
+      ok
+    }
+    ...on SignUpFailure {
+      code
+      message
+    }
+  }
+}`;
+
+export const authorizeMutation = `
+mutation(
+  $tempPassword: String!,
+  $email: String!
+) {
+  signUp(
+    tempPassword: $tempPassword
+    email: $email
+  ) {
+    ...on SignUpSuccess {
+      ok
+    }
+    ...on SignUpFailure {
+      code
+      message
+    }
   }
 }`;
