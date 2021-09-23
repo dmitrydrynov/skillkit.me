@@ -1,5 +1,5 @@
 import React from 'react'
-import { forgotPasswordMutation } from 'src/services/graphql/queries/auth'
+import { forgotPasswordMutation } from 'src/services/graphql/queries/user'
 import { Button, Col, Form, Input } from 'antd'
 import { Row } from 'antd';
 import { message } from 'antd';

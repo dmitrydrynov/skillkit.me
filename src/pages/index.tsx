@@ -1,7 +1,45 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from 'react';
+import { redeemUserMagicAuthTokenMutation } from '@services/graphql/queries/auth';
+import { setLogin } from '@store/reducers/auth';
+import { setUserData } from '@store/reducers/user';
+import { message } from 'antd';
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import { useMutation } from 'urql';
 
 const Home: NextPage = () => {
+    const router = useRouter()
+    const dispatch = useDispatch();
+    const [, redeemUserMagicAuthToken] = useMutation(redeemUserMagicAuthTokenMutation);
+
+    useEffect(() => {
+        const { magicAuth, email }: any = router.query;
+
+        if (magicAuth && email) {
+            const checkMagicAuth = async () => {
+                const { data, error } = await redeemUserMagicAuthToken({
+                    email,
+                    token: magicAuth,
+                });
+
+                if (error || data.code) {
+                    router.push('/');
+                    return;
+                }
+
+                dispatch(setLogin({ token: data.redeemUserMagicAuthToken.sessionToken }));
+                dispatch(setUserData({ ...data.redeemUserMagicAuthToken.item }));
+
+                message.success('Your are welcome!');
+                router.push('/user/profile');
+            }
+            checkMagicAuth();
+        }
+    }, [router])
+
     return (
         <>
             <Head>

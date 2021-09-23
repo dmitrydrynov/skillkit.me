@@ -44,42 +44,41 @@ mutation(
   }
 }`;
 
-export const signUpMutation = `
+export const createUserMutation = `
 mutation(
   $firstName: String!,
   $lastName: String!,
-  $email: String!
+  $email: String!,
+  $password: String!
 ) {
-  signUp(
+  createUser(data: {
     firstName: $firstName
     lastName: $lastName
     email: $email
-  ) {
-    ...on SignUpSuccess {
-      ok
-    }
-    ...on SignUpFailure {
-      code
-      message
-    }
+    password: $password
+  }) {
+    id
   }
 }`;
 
-export const authorizeMutation = `
-mutation(
-  $tempPassword: String!,
-  $email: String!
-) {
-  signUp(
-    tempPassword: $tempPassword
-    email: $email
-  ) {
-    ...on SignUpSuccess {
-      ok
-    }
-    ...on SignUpFailure {
+export const resetPasswordMutation = `
+  mutation($email: String!, $token: String!, $password: String!) {
+    redeemUserPasswordResetToken(
+        email: $email
+        token: $token
+        password: $password
+      ) {
       code
       message
     }
   }
-}`;
+`;
+
+export const forgotPasswordMutation = `
+mutation($email: String!) {
+  sendUserPasswordResetLink(email: $email) {
+    code
+    message
+  }
+}
+`;

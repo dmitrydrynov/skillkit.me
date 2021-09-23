@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from 'react';
-import { useState } from 'react';
 import SignModalIllustration from '@assets/images/sign-modal-illustration.svg'
-import { authorizeMutation, signUpMutation } from '@services/graphql/queries/user';
+import { sendUserMagicAuthLinkMutation } from '@services/graphql/queries/auth';
+import { createUserMutation } from '@services/graphql/queries/user';
 import { Button, Col, Form, Input, Modal, Row, message } from 'antd';
 import Image from 'next/image'
 import { useMutation } from 'urql';
@@ -16,67 +16,59 @@ type SignUpRequest = {
 	firstName: string;
 	lastName: string;
 	email: string;
-	tempPassword: string;
+	password: string;
+	confirmPassword: string;
 }
 
 const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 	const [form] = Form.useForm();
-	// const dispatch = useDispatch();
-	const [step, setStep] = useState('email');
-	const [signUpResponse, signUp] = useMutation(signUpMutation);
-	const [authorizedResponse, authorize] = useMutation(authorizeMutation);
+	const [createUserResponse, createUser] = useMutation(createUserMutation);
+	const [, sendUserMagicAuthLink] = useMutation(sendUserMagicAuthLinkMutation);
 
 	useEffect(() => {
 		form.resetFields();
-		setStep('email');
 	}, [form])
 
 	const handleOk = () => {
 		form
 			.validateFields()
-			.then(async (values: SignUpRequest) => {
+			.then(async ({ firstName, lastName, email, password }: SignUpRequest) => {
 				try {
+					const { data, error } = await createUser({
+						firstName,
+						lastName,
+						email,
+						password,
+					});
 
-					if (step === 'email') {
-						const { data, error } = await signUp({
-							email: values.email,
-							firstName: values.firstName,
-							lastName: values.lastName,
-						});
-
-						if (error) {
-							message.error(error.message);
-							return;
-						}
-
-						if (data.signUp?.code) {
-							message.error(data.signUp.message);
-							return;
-						}
-
-						setStep('confirm');
+					if (error) {
+						message.error('The email already buzy or sign up failed. Try another email.');
+						createUserResponse.fetching = false;
+						return;
 					}
 
-					if (step === 'confirm') {
-
-						const { data, error } = await authorize({
-							email: values.email,
-							tempPassword: values.tempPassword,
-						});
-
-						if (error) {
-							message.error(error.message);
-							return;
-						}
-
-						if (data.authorize.code) {
-							message.error(data.authorize.message);
-							return;
-						}
-
-						message.success('Your are welcome!');
-						// onClose();
+					if (data.createUser?.code) {
+						message.error(data.signUp.message);
+						createUserResponse.fetching = false;
+						return;
 					}
+
+					const sended = await sendUserMagicAuthLink({ email });
+
+					if (sended.error) {
+						message.error(sended.error.message);
+						createUserResponse.fetching = false;
+						return;
+					}
+
+					if (data.sendUserMagicAuthLink?.code) {
+						message.error(data.sendUserMagicAuthLink.message);
+						createUserResponse.fetching = false;
+						return;
+					}
+
+					message.success('You are welcome! Confirm your email please.');
+					onClose();
 				} catch (e: any) {
 					message.error(e.message);
 				}
@@ -105,11 +97,11 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 					key="submit"
 					type="primary"
 					size="large"
-					loading={signUpResponse.fetching || authorizedResponse.fetching}
+					loading={createUserResponse.fetching}
 					onClick={handleOk}
 					className={styles.submitBtn}
 				>
-					{step === 'email' ? 'Continue' : 'Sign Up'}
+					Sign up
 				</Button>,
 			]}
 		>
@@ -149,29 +141,38 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 							</Form.Item>
 						</Col>
 					</Row>
+
 					<Form.Item
 						name="email"
 						rules={[{ type: 'email', required: true, message: 'Please input the email!' }]}
 					>
 						<Input placeholder="Email" />
 					</Form.Item>
-					{step === 'confirm' &&
-						<>
-							<Form.Item
-								name="tempPassword"
-								label={
-									<Row style={{ width: '100%' }} justify="end">
-										<Col>
-											<Button type="link">Resend a code</Button>
-										</Col>
-									</Row>
-								}
-								rules={[{ required: true, message: 'Please input the password!' }]}
-							>
-								<Input.Password placeholder="The code sent to your email" />
-							</Form.Item>
-						</>
-					}
+
+					<Form.Item
+						name="password"
+						rules={[{ required: true, message: 'Please input the password!' }]}
+					>
+						<Input.Password placeholder="Password" />
+					</Form.Item>
+
+					<Form.Item
+						name="confirmPassword"
+						rules={[
+							{ required: true, message: 'Please repeat the password!' },
+							({ getFieldValue }) => ({
+								validator(_, value) {
+									if (!value || getFieldValue('password') === value) {
+										return Promise.resolve();
+									}
+
+									return Promise.reject(new Error('The two passwords not match!'));
+								},
+							}),
+						]}
+					>
+						<Input.Password placeholder="Repeat the password" />
+					</Form.Item>
 				</Form>
 			</Row>
 		</Modal>

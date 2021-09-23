@@ -1,8 +1,10 @@
 import React, { FC, useEffect } from 'react';
+import SignModalIllustration from '@assets/images/sign-modal-illustration.svg'
 import { authorizeMutation } from 'src/services/graphql/queries/auth';
 import { setLogin } from 'src/store/reducers/auth';
 import { setUserData } from 'src/store/reducers/user';
-import { Button, Col, Form, Input, Modal, Row, message } from 'antd';
+import { Button, Form, Input, Modal, message } from 'antd';
+import Image from 'next/image'
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { useMutation } from 'urql';
@@ -53,6 +55,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 
                     message.success('Your are welcome!');
 
+                    router.push('/user/profile');
                     onClose();
                 } catch (e: any) {
                     message.error(e.message);
@@ -67,23 +70,21 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
         onClose();
     }
 
-    const forgotPasword = () => {
-        onClose();
-        router.push('/password/send')
-    }
-
     return (
         <Modal
-            title="Sign in"
+            title={null}
             visible={visible}
             onOk={handleOk}
             onCancel={handleCancel}
             width={450}
+            centered={true}
             maskClosable={false}
+            className={styles.modal}
             footer={[
                 <Button
                     key="submit"
                     type="primary"
+                    size="large"
                     loading={authorizedResponse.fetching}
                     onClick={handleOk}
                     className={styles.submitBtn}
@@ -92,6 +93,13 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
                 </Button>,
             ]}
         >
+            <div className={styles.imageContainer}>
+                <Image
+                    src={SignModalIllustration}
+                    alt="image for sign up form"
+                />
+            </div>
+            <h2 className={styles.title}>Welcome back</h2>
             <Form
                 className={styles.form}
                 form={form}
@@ -102,24 +110,16 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
             >
                 <Form.Item
                     name="email"
-                    label="Email"
                     rules={[{ required: true, message: 'Please input the email!' }]}
                 >
-                    <Input />
+                    <Input placeholder="Email" />
                 </Form.Item>
                 <Form.Item
                     name="password"
-                    label={(
-                        <Row justify="space-between" style={{ width: '100%' }}>
-                            <Col>Password</Col>
-                            <Col><a onClick={forgotPasword}>Forgot password</a></Col>
-                        </Row>
-                    )}
                     rules={[{ required: true, message: 'Please input the password!' }]}
                 >
-                    <Input type="password" />
+                    <Input type="password" placeholder="Password" />
                 </Form.Item>
-
             </Form>
         </Modal>
     );

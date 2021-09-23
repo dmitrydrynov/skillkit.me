@@ -43,12 +43,10 @@ export const endSessionMutation = `
   }
 `;
 
-export const resetPasswordMutation = `
-  mutation($email: String!, $token: String!, $password: String!) {
-    redeemUserPasswordResetToken(
+export const sendUserMagicAuthLinkMutation = `
+  mutation($email: String!) {
+    sendUserMagicAuthLink(
         email: $email
-        token: $token
-        password: $password
       ) {
       code
       message
@@ -56,11 +54,21 @@ export const resetPasswordMutation = `
   }
 `;
 
-export const forgotPasswordMutation = `
-mutation($email: String!) {
-  sendUserPasswordResetLink(email: $email) {
-    code
-    message
+export const redeemUserMagicAuthTokenMutation = `
+mutation($email: String!, $token: String!) {
+  redeemUserMagicAuthToken(email: $email, token: $token) {
+    ...on RedeemUserMagicAuthTokenSuccess {
+      token
+      item {
+        id
+        name
+      }
+    }
+
+    ...on RedeemUserMagicAuthTokenFailure {
+      code
+      message
+    }
   }
 }
 `;
