@@ -14,45 +14,11 @@
 
             :global {
                 .ant-menu-item {
-                    padding: 0 8px !important;
-
-                    &:first-child {
-                        padding-left: 16px;
-                    }
-
                     .ant-menu-title-content {
                         padding: 8px 16px;
                         border-radius: @border-radius-base;
                         transition: background 0.3s;
                         height: @height-base;
-                    }
-
-                    &::after {
-                        border: 0 !important;
-                    }
-
-                    &-selected {
-                        color: #fff !important;
-
-                        a {
-                            color: #fff !important;
-                        }
-
-                        .ant-menu-title-content {
-                            background-color: #1890fb;
-                        }
-                    }
-
-                    &:hover:not(.ant-menu-item-selected) {
-                        color: rgba(0, 0, 0, 0.65) !important;
-
-                        a {
-                            color: rgba(0, 0, 0, 0.65) !important;
-                        }
-
-                        .ant-menu-title-content {
-                            background-color: #e4e4e4;
-                        }
                     }
                 }
             }

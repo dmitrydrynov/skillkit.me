@@ -34,7 +34,7 @@ const Home: NextPage = () => {
                 dispatch(setUserData({ ...data.redeemUserMagicAuthToken.item }));
 
                 message.success('Your are welcome!');
-                router.push('/user/profile');
+                router.push('/settings/profile');
             }
             checkMagicAuth();
         }

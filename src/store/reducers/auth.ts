@@ -1,10 +1,9 @@
 import { Dispatch } from 'react';
-import { deleteCookie, setCookie } from '../../helpers/cookie';
-import { RootState } from '../configure-store';
-import { clearUserData, setUserData } from './user';
-import jwtDecode from 'jwt-decode';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { clearUserData } from './user';
+import { deleteCookie, setCookie } from '../../helpers/cookie';
+import { RootState } from '../configure-store';
 
 export type AppThunk = ThunkAction<void, RootState, null, Action<string>>;
 

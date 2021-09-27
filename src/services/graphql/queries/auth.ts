@@ -24,11 +24,13 @@ export const authenticatedUserQuery = `
   {
     authenticatedItem {
       ...on User {
+        id
         name
         email
-        id
+        avatar {
+          src
+        }
         role {
-          id
           name
           canManageUsers
         }

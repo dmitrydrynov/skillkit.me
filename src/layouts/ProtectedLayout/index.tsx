@@ -1,10 +1,10 @@
-import { Col, Layout, Row } from "antd";
-import React, { FC } from "react";
+import React, { FC } from 'react';
+import UserMenu from '@components/UserMenu';
+import NoFoundPage from '@pages/404';
+import { RootState } from 'src/store/configure-store';
+import { Col, Layout, Row } from 'antd';
+import { useSelector } from 'react-redux';
 import styles from './ProtectedLayout.module.less';
-import UserMenu from "@components/UserMenu";
-import { useSelector } from "react-redux";
-import { RootState } from "src/store/configure-store";
-import NoFoundPage from "@pages/404";
 
 const { Header, Content, Sider } = Layout;
 

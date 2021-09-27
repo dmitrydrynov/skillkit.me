@@ -1,14 +1,3 @@
-export const getProfileQuery = `{
-  getProfile {
-    email
-    firstName
-    lastName
-    country
-    verificationLevel
-    hasOneTimePassword
-  }
-}`;
-
 export const setPasswordMutation = `
 mutation setPassword($newPassword: String, $confirmPassword: String) {
   setPassword(newPassword: $newPassword, confirmPassword: $confirmPassword) {
@@ -20,27 +9,6 @@ export const deleteUserMutation = `
 mutation deleteUser {
   deleteUser {
       result
-  }
-}`;
-
-export const registerMutation = `
-mutation(
-  $firstName: String!,
-  $lastName: String!,
-  $email: String!
-) {
-  register(
-    firstName: $firstName
-    lastName: $lastName
-    email: $email
-  ) {
-      ...on RegisterSuccess {
-        ok
-      }
-      ...on RegisterFailure {
-        code
-        message
-      }
   }
 }`;
 
@@ -82,3 +50,45 @@ mutation($email: String!) {
   }
 }
 `;
+
+export const userDataQuery = `
+query ($id: ID) {
+  user(where: {
+    id: $id
+  }) {
+    firstName
+    lastName
+    email
+    country
+    birthdayDate
+    avatar {
+      src
+    }
+  }
+}
+`;
+
+export const updateUserMutation = `
+mutation(
+  $id: ID
+  $firstName: String!
+  $lastName: String!
+  $email: String!
+  $country: String!
+  $birthdayDate: String!
+  $avatar: ImageFieldInput
+) {
+  updateUser(
+    where: {id: $id}
+    data: {
+      firstName: $firstName
+      lastName: $lastName
+      email: $email
+      country: $country
+      birthdayDate: $birthdayDate
+      avatar: $avatar
+    }
+  ) {
+    id
+  }
+}`;

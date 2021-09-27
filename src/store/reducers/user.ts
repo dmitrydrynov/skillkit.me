@@ -1,13 +1,20 @@
-import { UserRole } from '../../definitions/user';
 import { AnyAction } from 'redux';
+import { UserRole } from '../../definitions/user';
 
 export type UserState = {
-  id: number;
+  id: string;
+  name: string;
+  email: string;
+  avatar?: {
+    src: string;
+  }
   role: UserRole;
 };
 
 const initialState: UserState = {
-  id: NaN,
+  id: '',
+  name: '',
+  email: '',
   role: UserRole.UNKNOWN,
 };
 
@@ -26,7 +33,7 @@ const userReducer = (state = initialState, action: AnyAction): UserState => {
   }
 };
 
-export const setUserData = (payload: { id: number; role: UserRole, name: string, email: string }): AnyAction => {
+export const setUserData = (payload): AnyAction => {
   return {
     type: 'SET_USER_DATA',
     payload,

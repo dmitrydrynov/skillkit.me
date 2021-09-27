@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
-const path = require("path");
-const withPlugins = require("next-compose-plugins");
-const withLess = require("next-with-less");
+const path = require('path');
+const withPlugins = require('next-compose-plugins');
+const withLess = require('next-with-less');
 
 const lessVariables = path.resolve(
-  "./src/styles/variables.less"
+  './src/styles/variables.less'
 );
 
 const plugins = [
@@ -13,7 +13,7 @@ const plugins = [
       additionalData: (content) => `${content}\n\n@import '${lessVariables}';`,
       lessOptions: {
         javascriptEnabled: true,
-      }
+      },
     },
   }],
 ];

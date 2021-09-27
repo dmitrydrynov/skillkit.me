@@ -55,7 +55,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 
                     message.success('Your are welcome!');
 
-                    router.push('/user/profile');
+                    router.push('/settings/profile');
                     onClose();
                 } catch (e: any) {
                     message.error(e.message);

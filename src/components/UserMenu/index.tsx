@@ -1,10 +1,11 @@
 import React, { FC, ReactNode, useState } from 'react';
+import { RootState } from '@store/configure-store';
 import { setLogout } from 'src/store/reducers/auth';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, Menu, Space } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from 'urql';
 import { endSessionMutation } from './../../services/graphql/queries/auth';
 import styles from './UserMenu.module.less';
@@ -21,10 +22,11 @@ const UserMenu: FC = () => {
     const router = useRouter();
     const [activeUserMenu, setActiveUserMenu] = useState(false);
     const [, endSession] = useMutation(endSessionMutation);
+    const authUser = useSelector((state: RootState) => state.user)
 
     const userMenuItems: MenuItem[] = [
         {
-            link: '/user/profile',
+            link: '/settings/profile',
             title: 'Profile',
         },
         {
@@ -46,8 +48,8 @@ const UserMenu: FC = () => {
 
     const userMenu = (
         <Menu>
-            {userMenuItems.map((menuItem) => (
-                <div key={menuItem.link}>
+            {userMenuItems.map((menuItem, indx) => (
+                <div key={indx}>
                     {!!menuItem.before && menuItem.before}
                     <Menu.Item>
                         {!!menuItem.link && (
@@ -82,8 +84,20 @@ const UserMenu: FC = () => {
             >
                 <Menu.Item key="userMenu">
                     <Space align="center">
-                        <Avatar icon={<UserOutlined />} className="ant-dropdown-link" />
-                        <span className="name">Peter Pan</span>
+                        <div className={styles.info}>
+                            <p className={styles.name}>{authUser.name}</p>
+                            <p className={styles.email}>{authUser.email}</p>
+                        </div>
+                        {authUser.avatar ? (
+                            <Avatar
+                                size={40}
+                                src={'http://localhost:8000' + authUser.avatar.src} className="ant-dropdown-link"
+                            />
+                        ) : (
+                            <Avatar size={40} icon={<UserOutlined />} className="ant-dropdown-link" />
+                        )}
+
+
                     </Space>
                 </Menu.Item>
             </Dropdown>
