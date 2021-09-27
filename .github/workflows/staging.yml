@@ -15,5 +15,9 @@ jobs:
     - uses: actions/checkout@v2
     - run: npm install -g yarn
     - run: yarn install --frozen-lockfile
+    - name: Set environment variables
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000/api/graphql
+          NEXT_PUBLIC_AUTH_COOKIE_NAME: gamelab-session
     - run: yarn lint
     - run: yarn build
