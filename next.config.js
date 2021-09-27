@@ -4,7 +4,7 @@ const withPlugins = require('next-compose-plugins');
 const withLess = require('next-with-less');
 
 const lessVariables = path.resolve(
-  '@styles/variables.less'
+  './src/styles/variables.less'
 );
 
 const plugins = [
