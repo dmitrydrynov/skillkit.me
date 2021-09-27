@@ -1,13 +1,12 @@
 import React, { ReactElement } from 'react'
-import { SettingsMenu } from '@components/menus/SettingsMenu';
+import SettingsMenu from '@components/menus/SettingsMenu';
+import ProtectedLayout from '@layouts/ProtectedLayout'
 import { NextPageWithLayout } from '@pages/_app'
-import ProtectedLayout from 'src/layouts/ProtectedLayout'
 import { Col, Row } from 'antd';
 import Head from 'next/head'
 import styles from './SecurityPage.module.less';
 
-const SecurityPage: NextPageWithLayout = () => {
-    return (
+const SecurityPage: NextPageWithLayout = () => (
         <>
             <Head>
                 <title>Security</title>
@@ -27,7 +26,6 @@ const SecurityPage: NextPageWithLayout = () => {
             </Row>
         </>
     )
-}
 
 SecurityPage.getLayout = (page: ReactElement) => <ProtectedLayout title="Profile">{page}</ProtectedLayout>;
 

@@ -1,10 +1,9 @@
-import React, { ReactElement, useMemo, useState } from 'react'
-import { useEffect } from 'react';
-import { SettingsMenu } from '@components/menus/SettingsMenu';
+import { ReactElement, useEffect, useMemo , useState } from 'react'
+import SettingsMenu from '@components/menus/SettingsMenu';
+import ProtectedLayout from '@layouts/ProtectedLayout'
 import { NextPageWithLayout } from '@pages/_app'
 import { updateUserMutation, userDataQuery } from '@services/graphql/queries/user';
 import { RootState } from '@store/configure-store';
-import ProtectedLayout from 'src/layouts/ProtectedLayout'
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Col, DatePicker, Form, Input, Row, Spin, Upload, message } from 'antd';
 import moment from 'moment';
@@ -59,13 +58,11 @@ const ProfilePage: NextPageWithLayout = () => {
 		}
 	}, [data, form]);
 
-	const countryFlag = (countryCode: string) => {
-		return (
+	const countryFlag = (countryCode: string) => (
 			<span
-				className={'flag-icon flag-icon-' + countryCode.toLowerCase()}
+				className={`flag-icon flag-icon-${  countryCode.toLowerCase()}`}
 			/>
-		);
-	}
+		)
 
 	const handleFinish = async () => {
 		const values = form.getFieldsValue();
@@ -208,7 +205,7 @@ const ProfilePage: NextPageWithLayout = () => {
 									}
 									suffixIcon={(
 										<span
-											className={'flag-icon flag-icon-by'}
+											className="flag-icon flag-icon-by"
 										/>
 									)}
 								>
@@ -227,7 +224,7 @@ const ProfilePage: NextPageWithLayout = () => {
 								<DatePicker
 									placeholder="Birthday date"
 									defaultPickerValue={moment().subtract(10, 'years').startOf('day')}
-									format={'DD.MM.YYYY'}
+									format="DD.MM.YYYY"
 								/>
 							</Form.Item>
 

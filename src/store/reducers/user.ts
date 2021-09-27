@@ -33,7 +33,9 @@ const userReducer = (state = initialState, action: AnyAction): UserState => {
   }
 };
 
-export const setUserData = (payload): AnyAction => {
+export const setUserData = (payload: UserState): AnyAction => {
+  console.log()
+ 
   return {
     type: 'SET_USER_DATA',
     payload,

@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import SignModalIllustration from '@assets/images/sign-modal-illustration.svg'
 import { sendUserMagicAuthLinkMutation } from '@services/graphql/queries/auth';
 import { createUserMutation } from '@services/graphql/queries/user';
@@ -89,7 +89,7 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 			onOk={handleOk}
 			onCancel={handleCancel}
 			width={450}
-			centered={true}
+			centered
 			maskClosable={false}
 			className={styles.modal}
 			footer={[

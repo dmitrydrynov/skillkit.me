@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import SignInModal from '@components/modals/SignInModal';
 import SignUpModal from '@components/modals/SignUpModal';
 import UserMenu from '@components/UserMenu';
@@ -60,7 +60,7 @@ const PublicLayout: FC = ({ children }) => {
 				<Header className={styles.publicLayout_header}>
 					<Row align="middle">
 						<Col flex="1">
-							<div className={styles.logo}></div>
+							<div className={styles.logo} />
 							<Menu
 								onClick={handleClick}
 								selectedKeys={[currentHeaderMenuItem]}

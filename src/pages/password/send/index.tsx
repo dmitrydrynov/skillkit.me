@@ -1,8 +1,6 @@
 import React from 'react'
-import { forgotPasswordMutation } from 'src/services/graphql/queries/user'
-import { Button, Col, Form, Input } from 'antd'
-import { Row } from 'antd';
-import { message } from 'antd';
+import { forgotPasswordMutation } from '@services/graphql/queries/user'
+import { Button, Col, Form, Input , Row , message } from 'antd'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useMutation } from 'urql';

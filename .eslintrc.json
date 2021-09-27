@@ -1,5 +1,6 @@
 {
-  "extends": ["next", "prettier"],
+  "plugins": ["jsx-a11y"],
+  "extends": ["plugin:jsx-a11y/recommended", "next", "prettier"],
   "root": true,
   "rules": {
     "comma-dangle": ["error", "always-multiline"],
@@ -45,6 +46,7 @@
       { "blankLine": "always", "prev": "*", "next": "switch" },
       { "blankLine": "always", "prev": "switch", "next": "*" }
     ],
+    "jsx-a11y/anchor-is-valid": "off",
     "quotes": [
       "error",
       "single",

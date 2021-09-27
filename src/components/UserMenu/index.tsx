@@ -1,13 +1,13 @@
-import React, { FC, ReactNode, useState } from 'react';
+import { FC, ReactNode, useState } from 'react';
+import { endSessionMutation } from '@services/graphql/queries/auth';
 import { RootState } from '@store/configure-store';
-import { setLogout } from 'src/store/reducers/auth';
+import { setLogout } from '@store/reducers/auth';
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, Menu, Space } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from 'urql';
-import { endSessionMutation } from './../../services/graphql/queries/auth';
 import styles from './UserMenu.module.less';
 
 type MenuItem = {
@@ -48,8 +48,8 @@ const UserMenu: FC = () => {
 
     const userMenu = (
         <Menu>
-            {userMenuItems.map((menuItem, indx) => (
-                <div key={indx}>
+            {userMenuItems.map((menuItem) => (
+                <div key={menuItem.link}>
                     {!!menuItem.before && menuItem.before}
                     <Menu.Item>
                         {!!menuItem.link && (
@@ -61,7 +61,7 @@ const UserMenu: FC = () => {
                         )}
 
                         {!!menuItem.action && (
-                            <span onClick={menuItem.action}>
+                            <span onClick={menuItem.action} aria-hidden="true">
                                 {menuItem.title}
                             </span>
                         )}
@@ -91,7 +91,7 @@ const UserMenu: FC = () => {
                         {authUser.avatar ? (
                             <Avatar
                                 size={40}
-                                src={'http://localhost:8000' + authUser.avatar.src} className="ant-dropdown-link"
+                                src={`http://localhost:8000${  authUser.avatar.src}`} className="ant-dropdown-link"
                             />
                         ) : (
                             <Avatar size={40} icon={<UserOutlined />} className="ant-dropdown-link" />

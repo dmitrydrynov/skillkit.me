@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button, Result } from 'antd'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'

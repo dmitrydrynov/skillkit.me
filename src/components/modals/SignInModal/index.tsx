@@ -1,8 +1,8 @@
-import React, { FC, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import SignModalIllustration from '@assets/images/sign-modal-illustration.svg'
-import { authorizeMutation } from 'src/services/graphql/queries/auth';
-import { setLogin } from 'src/store/reducers/auth';
-import { setUserData } from 'src/store/reducers/user';
+import { authorizeMutation } from '@services/graphql/queries/auth';
+import { setLogin } from '@store/reducers/auth';
+import { setUserData } from '@store/reducers/user';
 import { Button, Form, Input, Modal, message } from 'antd';
 import Image from 'next/image'
 import { useRouter } from 'next/router';
@@ -61,8 +61,8 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
                     message.error(e.message);
                 }
             })
-            .catch(info => {
-                console.log('Validate Failed:', info);
+            .catch(() => {
+                // console.log('Validate Failed:', info);
             });
     }
 
@@ -77,7 +77,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
             onOk={handleOk}
             onCancel={handleCancel}
             width={450}
-            centered={true}
+            centered
             maskClosable={false}
             className={styles.modal}
             footer={[

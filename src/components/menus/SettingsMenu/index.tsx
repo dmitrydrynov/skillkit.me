@@ -1,4 +1,3 @@
-import React from 'react'
 import { Menu } from 'antd'
 import Link from 'next/link'
 
@@ -6,7 +5,7 @@ type SettingsMenuParams = {
     selectedItem: string;
 }
 
-export const SettingsMenu = ({ selectedItem }: SettingsMenuParams) => {
+const SettingsMenu = ({ selectedItem }: SettingsMenuParams) => {
     const handleProfileMenu = () => { }
 
     return (
@@ -24,3 +23,5 @@ export const SettingsMenu = ({ selectedItem }: SettingsMenuParams) => {
         </Menu>
     )
 }
+
+export default SettingsMenu

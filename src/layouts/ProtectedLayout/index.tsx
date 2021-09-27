@@ -1,7 +1,7 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import UserMenu from '@components/UserMenu';
 import NoFoundPage from '@pages/404';
-import { RootState } from 'src/store/configure-store';
+import { RootState } from '@store/configure-store';
 import { Col, Layout, Row } from 'antd';
 import { useSelector } from 'react-redux';
 import styles from './ProtectedLayout.module.less';
@@ -9,7 +9,7 @@ import styles from './ProtectedLayout.module.less';
 const { Header, Content, Sider } = Layout;
 
 type ProtectedLayoutParams = {
-    title?: string;
+    title: string;
 }
 
 const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, title }) => {
@@ -22,7 +22,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, title }) => {
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sider className={styles.sider}>
-                <div className={styles.logo}></div>
+                <div className={styles.logo} />
             </Sider>
             <Layout className="site-layout">
                 <Header className={styles.header} >

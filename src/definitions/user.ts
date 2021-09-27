@@ -1,8 +1,7 @@
+/* eslint-disable no-unused-vars */
 export enum UserRole {
   ADMIN = 'admin',
-  OPERATOR = 'operator',
-  PARTNER = 'partner',
-  USER = 'user',
+  OPERATOR = 'member',
   UNKNOWN = 'unknown',
 }
 
