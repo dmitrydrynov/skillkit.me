@@ -51,7 +51,7 @@ const UserMenu: FC = () => {
             {userMenuItems.map((menuItem) => (
                 <div key={menuItem.link}>
                     {!!menuItem.before && menuItem.before}
-                    <Menu.Item>
+                    <Menu.Item key={menuItem.link}>
                         {!!menuItem.link && (
                             <Link href={menuItem.link}>
                                 <a>

@@ -18,6 +18,17 @@ const plugins = [
   }],
 ];
 
-module.exports = withPlugins(plugins, {
-  reactStrictMode: true,
-});
+const config = {
+  reactStrictMode: false,
+};
+
+/** Add images hosts */
+if (process.env.IMAGES_HOST) {
+  config.images = {
+    domains: [
+      process.env.IMAGES_HOST,
+    ],
+  };
+}
+
+module.exports = withPlugins(plugins, config);

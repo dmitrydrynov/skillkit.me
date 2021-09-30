@@ -17,12 +17,12 @@ import { Provider as StoreProvider, useDispatch } from 'react-redux';
 import { Provider as UrqlProvider, useQuery } from 'urql';
 
 export type NextPageWithLayout = NextPage & {
-    // eslint-disable-next-line no-unused-vars
-    getLayout?: (page: ReactElement) => ReactNode
+  // eslint-disable-next-line no-unused-vars
+  getLayout?: (page: ReactElement) => ReactNode
 }
 
 type AppPropsWithLayout = AppProps & {
-    Component: NextPageWithLayout
+  Component: NextPageWithLayout
 }
 
 const progress = new ProgressBar({
