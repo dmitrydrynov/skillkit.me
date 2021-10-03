@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from 'urql';
 import styles from './UserMenu.module.less';
 
+const IMAGES_HOST = process.env.NEXT_PUBLIC_IMAGES_HOST;
+
 type MenuItem = {
     link?: string;
     title: string;
@@ -51,7 +53,7 @@ const UserMenu: FC = () => {
             {userMenuItems.map((menuItem) => (
                 <div key={menuItem.link}>
                     {!!menuItem.before && menuItem.before}
-                    <Menu.Item>
+                    <Menu.Item key={menuItem.link}>
                         {!!menuItem.link && (
                             <Link href={menuItem.link}>
                                 <a>
@@ -91,10 +93,14 @@ const UserMenu: FC = () => {
                         {authUser.avatar ? (
                             <Avatar
                                 size={40}
-                                src={`http://localhost:8000${  authUser.avatar.src}`} className="ant-dropdown-link"
+                                src={IMAGES_HOST + authUser.avatar.src} className={`${styles.avatar} ant-dropdown-link`}
                             />
                         ) : (
-                            <Avatar size={40} icon={<UserOutlined />} className="ant-dropdown-link" />
+                            <Avatar
+                                size={40}
+                                icon={<UserOutlined />}
+                                className={`${styles.avatar} ant-dropdown-link`}
+                            />
                         )}
 
 

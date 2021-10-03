@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import UserMenu from '@components/UserMenu';
-import NoFoundPage from '@pages/404';
-import { RootState } from '@store/configure-store';
+// import { RootState } from '@store/configure-store';
 import { Col, Layout, Row } from 'antd';
-import { useSelector } from 'react-redux';
+// import { useRouter } from 'next/router';
+// import { useSelector } from 'react-redux';
 import styles from './ProtectedLayout.module.less';
 
 const { Header, Content, Sider } = Layout;
@@ -13,14 +13,17 @@ type ProtectedLayoutParams = {
 }
 
 const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, title }) => {
-    const { loggedIn } = useSelector((state: RootState) => state.auth);
+    // const { loggedIn } = useSelector((state: RootState) => state.auth);
+    // const router = useRouter();
 
-    if(!loggedIn) {
-        return <NoFoundPage />;
-    }
+    // useEffect(() => {
+    //     if (!loggedIn) {
+    //         router.push('/');
+    //     }
+    // })
 
     return (
-        <Layout style={{ minHeight: '100vh' }}>
+        <Layout style={{ minHeight: '100vh', maxWidth: '1440px', margin: '0 auto' }}>
             <Sider className={styles.sider}>
                 <div className={styles.logo} />
             </Sider>
@@ -37,7 +40,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, title }) => {
                         </Col>
                     </Row>
                 </Header>
-                <Content style={{ margin: '64px 40px 40px', paddingTop: '40px' }}>{children}</Content>
+                <Content style={{ margin: '40px' }}>{children}</Content>
             </Layout>
         </Layout >
     )

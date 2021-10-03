@@ -92,3 +92,18 @@ mutation(
     id
   }
 }`;
+
+export const changeUserPasswordMutation = `
+mutation(
+  $id: ID
+  $password: String!
+) {
+  updateUser(
+    where: {id: $id}
+    data: {
+      password: $password
+    }
+  ) {
+    id
+  }
+}`;

@@ -85,7 +85,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
                     key="submit"
                     type="primary"
                     size="large"
-                    loading={authorizedResponse.fetching}
+                    loading={authorizedResponse.fetching && !authorizedResponse.error}
                     onClick={handleOk}
                     className={styles.submitBtn}
                 >
@@ -118,7 +118,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
                     name="password"
                     rules={[{ required: true, message: 'Please input the password!' }]}
                 >
-                    <Input type="password" placeholder="Password" />
+                    <Input.Password placeholder="Password" />
                 </Form.Item>
             </Form>
         </Modal>

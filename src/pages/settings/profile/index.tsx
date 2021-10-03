@@ -1,18 +1,21 @@
-import { ReactElement, useEffect, useMemo , useState } from 'react'
+import { ReactElement, useEffect, useMemo, useState } from 'react'
 import SettingsMenu from '@components/menus/SettingsMenu';
 import ProtectedLayout from '@layouts/ProtectedLayout'
 import { NextPageWithLayout } from '@pages/_app'
 import { updateUserMutation, userDataQuery } from '@services/graphql/queries/user';
 import { RootState } from '@store/configure-store';
+import { setUserData } from '@store/reducers/user';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Col, DatePicker, Form, Input, Row, Spin, Upload, message } from 'antd';
 import moment from 'moment';
 import Head from 'next/head'
 import Image from 'next/image'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import countryList from 'react-select-country-list'
 import { useMutation, useQuery } from 'urql';
 import styles from './ProfilePage.module.less';
+
+const IMAGES_HOST = process.env.NEXT_PUBLIC_IMAGES_HOST;
 
 // eslint-disable-next-line no-unused-vars
 function getBase64(img: Blob, callback: (args: any) => void) {
@@ -23,6 +26,7 @@ function getBase64(img: Blob, callback: (args: any) => void) {
 
 const ProfilePage: NextPageWithLayout = () => {
 	const [form] = Form.useForm();
+	const dispatch = useDispatch();
 	const countries = useMemo(() => countryList().getData(), [])
 	const userId = useSelector((state: RootState) => state.user.id)
 	const [, updateUserData] = useMutation(updateUserMutation);
@@ -34,7 +38,7 @@ const ProfilePage: NextPageWithLayout = () => {
 	const [avatarUrl, setAvatarUrl] = useState(null);
 
 	useEffect(() => {
-		if (data) {
+		if (data?.user) {
 			const {
 				firstName,
 				lastName,
@@ -53,16 +57,16 @@ const ProfilePage: NextPageWithLayout = () => {
 				lastName,
 				email,
 				country: country || undefined,
-				birthdayDate: moment(birthdayDate) || undefined,
+				birthdayDate: moment(birthdayDate) || null,
 			})
 		}
 	}, [data, form]);
 
 	const countryFlag = (countryCode: string) => (
-			<span
-				className={`flag-icon flag-icon-${  countryCode.toLowerCase()}`}
-			/>
-		)
+		<span
+			className={`flag-icon flag-icon-${countryCode.toLowerCase()}`}
+		/>
+	)
 
 	const handleFinish = async () => {
 		const values = form.getFieldsValue();
@@ -77,8 +81,6 @@ const ProfilePage: NextPageWithLayout = () => {
 			};
 		}
 
-		console.log('updateData', updateData)
-
 		try {
 			const { error } = await updateUserData(updateData);
 
@@ -88,6 +90,8 @@ const ProfilePage: NextPageWithLayout = () => {
 			}
 
 			message.success('Profile saved!');
+
+			dispatch(setUserData(updateData));
 		} catch (error: any) {
 			message.error(error.message);
 		}
@@ -157,7 +161,7 @@ const ProfilePage: NextPageWithLayout = () => {
 								>
 									{avatarUrl ? (
 										<Image
-											loader={({ src }) => `http://localhost:8000${src}`}
+											loader={({ src }) => IMAGES_HOST + src}
 											src={avatarUrl}
 											alt="avatar"
 											className={styles.avatar}
