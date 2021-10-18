@@ -1,13 +1,13 @@
 type InitStateType = {
-  auth?: {
-    loggedIn: boolean;
-  };
+	auth?: {
+		loggedIn: boolean;
+	};
 };
 
 const initialState: InitStateType = {
-  auth: {
-    loggedIn: false,
-  },
+	auth: {
+		loggedIn: false,
+	},
 };
 
 export default initialState;

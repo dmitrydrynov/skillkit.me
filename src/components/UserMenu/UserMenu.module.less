@@ -1,5 +1,5 @@
 .userMenu {
-    border: 0;  
+    border: 0 !important;  
     display: flex;
     align-items: center;
     
@@ -36,7 +36,7 @@
             padding: 4px 12px 8px 20px !important;
 
             &.ant-dropdown-open, &:hover {
-                background-color: #00000015 !important;
+                background-color: @gray-4 !important;
                 color: @text-color-secondary !important;
             }
 
@@ -47,7 +47,7 @@
             }
 
             .ant-avatar {
-                border: 2px solid #a2b4ca;
+                background-color: @gray-8;
             }
         }
     }

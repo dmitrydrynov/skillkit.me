@@ -8,51 +8,51 @@ import { RootState } from '../configure-store';
 export type AppThunk = ThunkAction<void, RootState, null, Action<string>>;
 
 export interface ActionRes<P = unknown> {
-  type: string;
-  payload?: P;
+	type: string;
+	payload?: P;
 }
 
 export type AuthState = {
-  loggedIn: boolean;
+	loggedIn: boolean;
 };
 
 const initialState = {
-  loggedIn: false,
+	loggedIn: false,
 };
 
 const authReducer = (state = initialState, action: AnyAction): AuthState => {
-  const { type, payload } = action;
+	const { type, payload } = action;
 
-  switch (type) {
-    case 'LOGIN': {
-      if (process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
-        setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, payload.token);
-        return { ...state, loggedIn: true };
-      }
+	switch (type) {
+		case 'LOGIN': {
+			if (process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
+				setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, payload.token);
+				return { ...state, loggedIn: true };
+			}
 
-      return state;
-    }
-    case 'LOGOUT': {
-      if (process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
-        deleteCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME);
-      }
+			return state;
+		}
+		case 'LOGOUT': {
+			if (process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
+				deleteCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME);
+			}
 
-      return { ...state, loggedIn: false };
-    }
-    default:
-      return state;
-  }
+			return { ...state, loggedIn: false };
+		}
+		default:
+			return state;
+	}
 };
 
 export const setLogin = (payload: { token: string }): AnyAction => {
-  return { type: 'LOGIN', payload };
+	return { type: 'LOGIN', payload };
 };
 
 export const setLogout = (): AppThunk => {
-  return (dispatch: Dispatch<AnyAction>) => {
-    dispatch({ type: 'LOGOUT' });
-    dispatch(clearUserData());
-  };
+	return (dispatch: Dispatch<AnyAction>) => {
+		dispatch({ type: 'LOGOUT' });
+		dispatch(clearUserData());
+	};
 };
 
 export default authReducer;

@@ -1,16 +1,16 @@
 import { FC, useEffect } from 'react';
-import SignModalIllustration from '@assets/images/sign-modal-illustration.svg'
+import SignModalIllustration from '@assets/images/sign-modal-illustration.svg';
 import { sendUserMagicAuthLinkMutation } from '@services/graphql/queries/auth';
 import { createUserMutation } from '@services/graphql/queries/user';
 import { Button, Col, Form, Input, Modal, Row, message } from 'antd';
-import Image from 'next/image'
+import Image from 'next/image';
 import { useMutation } from 'urql';
 import styles from './SignUpModal.module.less';
 
 type SignUpModalArgs = {
 	visible: boolean;
 	onClose: () => void;
-}
+};
 
 type SignUpRequest = {
 	firstName: string;
@@ -18,7 +18,7 @@ type SignUpRequest = {
 	email: string;
 	password: string;
 	confirmPassword: string;
-}
+};
 
 const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 	const [form] = Form.useForm();
@@ -27,7 +27,7 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 
 	useEffect(() => {
 		form.resetFields();
-	}, [form])
+	}, [form]);
 
 	const handleOk = () => {
 		form
@@ -73,14 +73,14 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 					message.error(e.message);
 				}
 			})
-			.catch(info => {
+			.catch((info) => {
 				console.log('Validate Failed:', info);
 			});
-	}
+	};
 
 	const handleCancel = () => {
 		onClose();
-	}
+	};
 
 	return (
 		<Modal
@@ -99,60 +99,41 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 					size="large"
 					loading={createUserResponse.fetching}
 					onClick={handleOk}
-					className={styles.submitBtn}
-				>
+					className={styles.submitBtn}>
 					Sign up
 				</Button>,
-			]}
-		>
+			]}>
 			<Row justify="center">
 				<div className={styles.imageContainer}>
-					<Image
-						src={SignModalIllustration}
-						alt="image for sign up form"
-					/>
+					<Image src={SignModalIllustration} alt="image for sign up form" />
 				</div>
 				<h2 className={styles.title}>Get Connect to the best Mentors</h2>
-				<p className={styles.subtitle}>Easy way to connect to mentor and get
-					advise solution of design. </p>
+				<p className={styles.subtitle}>Easy way to connect to mentor and get advise solution of design. </p>
 				<Form
 					className={styles.form}
 					form={form}
 					layout="vertical"
 					name="form_in_modal"
 					initialValues={{ modifier: 'public' }}
-					requiredMark={false}
-				>
+					requiredMark={false}>
 					<Row gutter={16}>
 						<Col span={12}>
-							<Form.Item
-								name="firstName"
-								rules={[{ required: true, message: 'Please input the first name!' }]}
-							>
+							<Form.Item name="firstName" rules={[{ required: true, message: 'Please input the first name!' }]}>
 								<Input placeholder="First name" />
 							</Form.Item>
 						</Col>
 						<Col span={12}>
-							<Form.Item
-								name="lastName"
-								rules={[{ required: true, message: 'Please input the last name!' }]}
-							>
+							<Form.Item name="lastName" rules={[{ required: true, message: 'Please input the last name!' }]}>
 								<Input placeholder="Last name" />
 							</Form.Item>
 						</Col>
 					</Row>
 
-					<Form.Item
-						name="email"
-						rules={[{ type: 'email', required: true, message: 'Please input the email!' }]}
-					>
+					<Form.Item name="email" rules={[{ type: 'email', required: true, message: 'Please input the email!' }]}>
 						<Input placeholder="Email" />
 					</Form.Item>
 
-					<Form.Item
-						name="password"
-						rules={[{ required: true, message: 'Please input the password!' }]}
-					>
+					<Form.Item name="password" rules={[{ required: true, message: 'Please input the password!' }]}>
 						<Input.Password placeholder="Password" />
 					</Form.Item>
 
@@ -169,14 +150,13 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 									return Promise.reject(new Error('The two passwords not match!'));
 								},
 							}),
-						]}
-					>
+						]}>
 						<Input.Password placeholder="Repeat the password" />
 					</Form.Item>
 				</Form>
 			</Row>
 		</Modal>
 	);
-}
+};
 
 export default SignUpModal;

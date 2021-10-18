@@ -4,76 +4,49 @@
 
 @import '~antd/dist/antd.less';
 @import '~flag-icon-css/css/flag-icon.css';
+@import '~braft-editor/dist/index.css';
+
+.ant-col {
+  min-height: initial;
+}
 
 .ant-input:focus, 
 .ant-input-focused, 
 .ant-picker-focused,
+.ant-input-affix-wrapper-focused,
 .ant-select-focused > .ant-select-selector {
-    box-shadow: 0 0 0 4px rgb(24 144 255 / 20%) !important;
-}
-
-.ant-input, 
-.ant-picker,
-.ant-select > .ant-select-selector {
-    box-shadow: 0px 4px 20px rgba(94, 132, 194, 0.06) !important;
-    border-radius: 16px !important;
-}
-
-.ant-form-item-explain {
-    margin-bottom: 8px;
-    font-size: 14px;
+    box-shadow: 0 0 0 @input-shadow-size rgba(@primary-color, 10%) !important;
 }
 
 .ant-picker-cell .ant-picker-cell-inner {
     min-width: 28px;
     height: 28px;
     line-height: 28px;
-    border-radius: 8px;
 }
 
-.bar-of-progress {
-    z-index: 50;
+// .ant-form-item {
+//   margin-bottom: @height-sm;
+// }
+
+.ant-form-item-explain {
+    margin-bottom: 8px;
+    font-size: @font-size-base;
 }
 
-.ant-menu-item {
-    padding: 0 8px !important;
+.ant-form-item-control-input {
+  align-items: stretch;
 
-    &:first-child {
-        padding-left: 16px;
+  .ant-form-item-control-input-content {
+    display: flex;
+
+    input {
+      height: 100%;
     }
+  }
+}
 
-    .ant-menu-title-content {
-        padding: 0 16px;
-        border-radius: @border-radius-base !important;
-        transition: background 0.3s;
-        height: inherit;
-    }
-
-    &::after {
-        border: 0 !important;
-    }
-
-    &-selected {
-        color: #fff !important;
-
-        a {
-            color: #fff !important;
-        }
-
-        .ant-menu-title-content {
-            background-color: #1890fb;
-        }
-    }
-
-    &:hover:not(.ant-menu-item-selected) {
-        color: rgba(0, 0, 0, 0.65) !important;
-
-        a {
-            color: rgba(0, 0, 0, 0.65) !important;
-        }
-
-        .ant-menu-title-content {
-            background-color: #e4e4e4;
-        }
-    }
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  color: @gray-13;
+  font-weight: 600;
+  background-color: @gray-4;
 }

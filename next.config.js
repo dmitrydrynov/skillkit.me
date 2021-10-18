@@ -9,28 +9,29 @@ const imagesHost = new URL(process.env.NEXT_PUBLIC_IMAGES_HOST || '');
 
 /** Setup plugins */
 const plugins = [
-  [withLess, {
-    lessLoaderOptions: {
-      additionalData: (content) => `${content}\n\n@import '${lessVariables}';`,
-      lessOptions: {
-        javascriptEnabled: true,
-      },
-    },
-  }],
+	[
+		withLess,
+		{
+			lessLoaderOptions: {
+				additionalData: (content) => `${content}\n\n@import '${lessVariables}';`,
+				lessOptions: {
+					javascriptEnabled: true,
+				},
+			},
+		},
+	],
 ];
 
 /** Main Next.js configuration */
 const mainConfig = {
-  reactStrictMode: false,
+	reactStrictMode: false,
 };
 
 /** Image hosts */
 if (imagesHost) {
-  mainConfig.images = {
-    domains: [imagesHost.hostname],
-  }
+	mainConfig.images = {
+		domains: [imagesHost.hostname],
+	};
 }
-
-console.log(mainConfig);
 
 module.exports = withPlugins(plugins, mainConfig);
