@@ -33,12 +33,20 @@ const UserJobBlock = ({ visible, jobs, onDelete, onAdd }: UserJobBlockParams) =>
 
 			<Row>
 				<Col span={11}>
-					<Form.Item name={['job', idx, 'company']} label="Company name" rules={[{ required: true, message: 'Please input the field!' }]}>
+					<Form.Item
+						name={['job', idx, 'company']}
+						label="Company name"
+						rules={[{ required: true, message: 'Please input the field!' }]}
+					>
 						<Input />
 					</Form.Item>
 				</Col>
 				<Col span={11} offset={2}>
-					<Form.Item name={['job', idx, 'title']} label="Job title" rules={[{ required: true, message: 'Please input the field!' }]}>
+					<Form.Item
+						name={['job', idx, 'title']}
+						label="Job title"
+						rules={[{ required: true, message: 'Please input the field!' }]}
+					>
 						<Input />
 					</Form.Item>
 				</Col>
@@ -46,18 +54,31 @@ const UserJobBlock = ({ visible, jobs, onDelete, onAdd }: UserJobBlockParams) =>
 
 			<Row>
 				<Col span={5}>
-					<Form.Item name={['job', idx, 'startedAt']} label="Start date" rules={[{ required: true, message: 'Please input the field!' }]}>
+					<Form.Item
+						name={['job', idx, 'startedAt']}
+						label="Start date"
+						rules={[{ required: true, message: 'Please input the field!' }]}
+					>
 						<DatePicker placeholder="Start date" picker="month" format="MMM YYYY" />
 					</Form.Item>
 				</Col>
 				<Col span={5} offset={1}>
-					<Form.Item name={['job', idx, 'finishedAt']} label="Finish date" rules={[{ required: true, message: 'Please input the field!' }]}>
+					<Form.Item
+						name={['job', idx, 'finishedAt']}
+						label="Finish date"
+						rules={[{ required: true, message: 'Please input the field!' }]}
+					>
 						<DatePicker placeholder="Finish date" picker="month" format="MMM YYYY" />
 					</Form.Item>
 				</Col>
 			</Row>
 			<Form.Item name={['job', idx, 'description']} label="Description" style={{ marginBottom: 0 }}>
-				<BraftEditor className={styles.textEditor} controls={controls} language="en" contentClassName={styles.textEditorContent} />
+				<BraftEditor
+					className={styles.textEditor}
+					controls={controls}
+					language="en"
+					contentClassName={styles.textEditorContent}
+				/>
 			</Form.Item>
 		</div>
 	);

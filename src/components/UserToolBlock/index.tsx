@@ -43,19 +43,32 @@ const UserToolBlock = ({ visible, tools, onDelete, onAdd }: UserToolBlockParams)
 
 			<Row>
 				<Col span={14}>
-					<Form.Item name={['tool', idx, 'title']} label="Title" rules={[{ required: true, message: 'Please input the field!' }]}>
+					<Form.Item
+						name={['tool', idx, 'title']}
+						label="Title"
+						rules={[{ required: true, message: 'Please input the field!' }]}
+					>
 						<Input />
 					</Form.Item>
 				</Col>
 				<Col span={8} offset={2}>
-					<Form.Item name={['tool', idx, 'level']} label="Level" rules={[{ required: true, message: 'Please input the field!' }]}>
+					<Form.Item
+						name={['tool', idx, 'level']}
+						label="Level"
+						rules={[{ required: true, message: 'Please input the field!' }]}
+					>
 						<Rate allowClear={false} tooltips={userToolDesc} character={<ToolLevelIcon />} />
 					</Form.Item>
 				</Col>
 			</Row>
 
 			<Form.Item name={['tool', idx, 'description']} label="Description" style={{ marginBottom: 0 }}>
-				<BraftEditor className={styles.textEditor} controls={controls} language="en" contentClassName={styles.textEditorContent} />
+				<BraftEditor
+					className={styles.textEditor}
+					controls={controls}
+					language="en"
+					contentClassName={styles.textEditorContent}
+				/>
 			</Form.Item>
 		</div>
 	);

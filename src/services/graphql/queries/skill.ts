@@ -22,3 +22,36 @@ mutation($name: String!) {
   }
 }
 `;
+
+export const getUserSkillQuery = `
+query($id: ID!) {
+  userSkill(
+    where: {
+      id: $id
+    }
+  ) {
+    id
+    description
+    level
+    skill {
+    	id
+      name
+  	}
+    jobs {
+      id
+      title
+      description
+    }
+    schools {
+      id
+      title
+      description
+    }
+    tools {
+      title
+      description
+      level
+    }
+  }
+}
+`;

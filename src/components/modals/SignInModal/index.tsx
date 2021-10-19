@@ -87,10 +87,12 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 					size="large"
 					loading={authorizedResponse.fetching && !authorizedResponse.error}
 					onClick={handleOk}
-					className={styles.submitBtn}>
+					className={styles.submitBtn}
+				>
 					Sign in
 				</Button>,
-			]}>
+			]}
+		>
 			<div className={styles.imageContainer}>
 				<Image src={SignModalIllustration} alt="image for sign up form" />
 			</div>
@@ -101,7 +103,8 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 				layout="vertical"
 				name="form_in_modal"
 				initialValues={{ modifier: 'public' }}
-				requiredMark={false}>
+				requiredMark={false}
+			>
 				<Form.Item name="email" rules={[{ required: true, message: 'Please input the email!' }]}>
 					<Input placeholder="Email" />
 				</Form.Item>

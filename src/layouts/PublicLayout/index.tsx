@@ -67,7 +67,8 @@ const PublicLayout: FC = ({ children }) => {
 								onClick={handleClick}
 								selectedKeys={[currentHeaderMenuItem]}
 								mode="horizontal"
-								className={styles.publicLayout_header_menu}>
+								className={styles.publicLayout_header_menu}
+							>
 								{headerMenu.map((menuItem, indx) => (
 									<Menu.Item key={indx}>
 										<Link href={menuItem.link}>

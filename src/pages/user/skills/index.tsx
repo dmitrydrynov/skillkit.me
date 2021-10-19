@@ -21,10 +21,16 @@ const ProfilePage: NextPageWithLayout = () => {
 		variables: { userId },
 		pause: !userId,
 	});
+	const [userSkillId, setUserSkillId] = useState<string | null>(null);
 
 	const getSkillLevelIcon = (levelName: string): string => {
 		const skillLevel: SkillLevel = getSkillLevel(levelName);
 		return skillLevel.icon;
+	};
+
+	const handleEditUserSkill = (id: string) => {
+		setVisibleAddUserSkillModal(true);
+		setUserSkillId(id);
 	};
 
 	return (
@@ -33,14 +39,26 @@ const ProfilePage: NextPageWithLayout = () => {
 				<title>Skills</title>
 			</Head>
 			{visibleAddUserSkillModal && (
-				<AddUserSkillModal visible={visibleAddUserSkillModal} onClose={() => setVisibleAddUserSkillModal(false)} />
+				<AddUserSkillModal
+					recordId={userSkillId}
+					visible={visibleAddUserSkillModal}
+					onClose={() => setVisibleAddUserSkillModal(false)}
+				/>
 			)}
 			<PageHeader
 				className={styles.pageHeader}
 				title="Skills"
 				backIcon={false}
 				extra={[
-					<Button type="primary" key="add-skill-button" icon={<PlusOutlined />} onClick={() => setVisibleAddUserSkillModal(true)}>
+					<Button
+						type="primary"
+						key="add-skill-button"
+						icon={<PlusOutlined />}
+						onClick={() => {
+							setUserSkillId(null);
+							setVisibleAddUserSkillModal(true);
+						}}
+					>
 						Add skill
 					</Button>,
 				]}
@@ -54,13 +72,16 @@ const ProfilePage: NextPageWithLayout = () => {
 					renderItem={(item: any) => (
 						<List.Item>
 							<List.Item.Meta
-								title={<a href="#">{item.skill.name}</a>}
+								title={
+									<Button type="link" onClick={() => handleEditUserSkill(item.id)}>
+										{item.skill.name}
+									</Button>
+								}
 								description={
 									<>
 										<p>
 											<Image src={getSkillLevelIcon(item.level)} alt="" /> {item.level}
 										</p>
-										{!!item.description && <p>{item.description}</p>}
 									</>
 								}
 							/>

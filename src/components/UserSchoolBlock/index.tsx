@@ -30,7 +30,11 @@ const UserSchoolBlock = ({ visible, schools, onDelete, onAdd }: UserSchoolBlockP
 					/>
 				</Tooltip>
 			</div>
-			<Form.Item name={['school', idx, 'title']} label="School" rules={[{ required: true, message: 'Please input the field!' }]}>
+			<Form.Item
+				name={['school', idx, 'title']}
+				label="School"
+				rules={[{ required: true, message: 'Please input the field!' }]}
+			>
 				<Input />
 			</Form.Item>
 
@@ -39,7 +43,8 @@ const UserSchoolBlock = ({ visible, schools, onDelete, onAdd }: UserSchoolBlockP
 					<Form.Item
 						name={['school', idx, 'startedAt']}
 						label="Start date"
-						rules={[{ required: true, message: 'Please input the field!' }]}>
+						rules={[{ required: true, message: 'Please input the field!' }]}
+					>
 						<DatePicker placeholder="Start date" picker="month" format="MMM YYYY" />
 					</Form.Item>
 				</Col>
@@ -47,13 +52,19 @@ const UserSchoolBlock = ({ visible, schools, onDelete, onAdd }: UserSchoolBlockP
 					<Form.Item
 						name={['school', idx, 'finishedAt']}
 						label="Finish date"
-						rules={[{ required: true, message: 'Please input the field!' }]}>
+						rules={[{ required: true, message: 'Please input the field!' }]}
+					>
 						<DatePicker placeholder="Finish date" picker="month" format="MMM YYYY" />
 					</Form.Item>
 				</Col>
 			</Row>
 			<Form.Item name={['school', idx, 'description']} label="Description" style={{ marginBottom: 0 }}>
-				<BraftEditor className={styles.textEditor} controls={controls} language="en" contentClassName={styles.textEditorContent} />
+				<BraftEditor
+					className={styles.textEditor}
+					controls={controls}
+					language="en"
+					contentClassName={styles.textEditorContent}
+				/>
 			</Form.Item>
 		</div>
 	);

@@ -135,7 +135,8 @@ const ProfilePage: NextPageWithLayout = () => {
 									// customRequest={uploadAvatar}
 									// action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
 									// beforeUpload={beforeUpload}
-									onChange={handleAvatarChange}>
+									onChange={handleAvatarChange}
+								>
 									{avatarUrl ? (
 										<Image
 											loader={({ src }) => IMAGES_HOST + src}
@@ -160,7 +161,8 @@ const ProfilePage: NextPageWithLayout = () => {
 												required: true,
 												message: 'Please input the first name!',
 											},
-										]}>
+										]}
+									>
 										<Input placeholder="First name" />
 									</Form.Item>
 								</Col>
@@ -173,22 +175,34 @@ const ProfilePage: NextPageWithLayout = () => {
 												required: true,
 												message: 'Please input the last name!',
 											},
-										]}>
+										]}
+									>
 										<Input placeholder="Last name" />
 									</Form.Item>
 								</Col>
 							</Row>
 
-							<Form.Item name="email" label="Email" rules={[{ type: 'email', required: true, message: 'Please input the email!' }]}>
+							<Form.Item
+								name="email"
+								label="Email"
+								rules={[{ type: 'email', required: true, message: 'Please input the email!' }]}
+							>
 								<Input placeholder="Email" />
 							</Form.Item>
 
-							<Form.Item name="country" label="Country" rules={[{ required: true, message: 'Please input the email!' }]}>
+							<Form.Item
+								name="country"
+								label="Country"
+								rules={[{ required: true, message: 'Please input the email!' }]}
+							>
 								<AutoComplete
 									allowClear
 									placeholder="Country"
-									filterOption={(inputValue, option) => option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
-									suffixIcon={<span className="flag-icon flag-icon-by" />}>
+									filterOption={(inputValue, option) =>
+										option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+									}
+									suffixIcon={<span className="flag-icon flag-icon-by" />}
+								>
 									{countries.map(({ value, label }: any) => (
 										<AutoComplete.Option key={value} value={label}>
 											{countryFlag(value)} {label}
@@ -197,7 +211,11 @@ const ProfilePage: NextPageWithLayout = () => {
 								</AutoComplete>
 							</Form.Item>
 
-							<Form.Item name="birthdayDate" label="Date of birth" rules={[{ required: true, message: 'Please input the email!' }]}>
+							<Form.Item
+								name="birthdayDate"
+								label="Date of birth"
+								rules={[{ required: true, message: 'Please input the email!' }]}
+							>
 								<DatePicker
 									placeholder="Birthday date"
 									defaultPickerValue={moment().subtract(10, 'years').startOf('day')}

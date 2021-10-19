@@ -2,7 +2,7 @@ import React, { FC, createRef, useEffect, useState } from 'react';
 import UserJobBlock from '@components/UserJobBlock';
 import UserSchoolBlock from '@components/UserSchoolBlock';
 import UserToolBlock from '@components/UserToolBlock';
-import { createSkillMutation, searchSkillsQuery } from '@services/graphql/queries/skill';
+import { createSkillMutation, getUserSkillQuery, searchSkillsQuery } from '@services/graphql/queries/skill';
 import { createUserMutation } from '@services/graphql/queries/user';
 import { createUserSkillMutation } from '@services/graphql/queries/userSkill';
 import { RootState } from '@store/configure-store';
@@ -19,6 +19,7 @@ import styles from './AddUserSkillModal.module.less';
 
 type AddSkillArgs = {
 	visible: boolean;
+	recordId?: string | null;
 	onClose: () => void;
 };
 
@@ -52,7 +53,7 @@ type UserTool = {
 	description?: EditorState | string;
 };
 
-const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, onClose }) => {
+const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => {
 	const BraftEditor = dynamic(() => import('braft-editor'), { ssr: false });
 	const [form] = Form.useForm();
 	const skillRef = createRef<RefSelectProps>();
@@ -72,6 +73,12 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, onClose }) => {
 		pause: true,
 		requestPolicy: 'network-only',
 	});
+	const [{ data: getUserSkillData }, getUserSkill] = useQuery({
+		query: getUserSkillQuery,
+		variables: { id: recordId },
+		pause: true,
+		requestPolicy: 'network-only',
+	});
 	const [addSkillResponse, addSkill] = useMutation(createSkillMutation);
 	const [addUserSkillResponse, addUserSkill] = useMutation(createUserSkillMutation);
 	const [schools, setSchools] = useState<UserSchool[]>([]);
@@ -80,14 +87,19 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, onClose }) => {
 
 	useEffect(() => {
 		form.resetFields();
-	}, [form]);
+
+		if (recordId) {
+			getUserSkill();
+		}
+	}, [form, getUserSkill, recordId]);
 
 	useEffect(() => {
 		const asyncFunc = async () => {
 			await searchSkills();
 		};
 		asyncFunc();
-	}, [searchSkills, skillSearchQuery]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [skillSearchQuery]);
 
 	const handleOk = () => {
 		console.log('handleOk', form.getFieldsValue());
@@ -282,17 +294,20 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, onClose }) => {
 					size="large"
 					loading={createUserSkillResponse.fetching}
 					onClick={handleOk}
-					className={styles.submitBtn}>
+					className={styles.submitBtn}
+				>
 					Save
 				</Button>,
-			]}>
+			]}
+		>
 			<Form
 				className={styles.form}
 				form={form}
 				layout="vertical"
 				name="form_in_modal"
 				initialValues={{ modifier: 'public' }}
-				requiredMark={false}>
+				requiredMark={false}
+			>
 				<Row>
 					<Col span={14}>
 						<Form.Item
@@ -303,7 +318,8 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, onClose }) => {
 									required: true,
 									message: 'Please input the skill name!',
 								},
-							]}>
+							]}
+						>
 							<Select
 								ref={skillRef}
 								showSearch
@@ -313,7 +329,8 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, onClose }) => {
 								filterOption={false}
 								placeholder="What can you do?"
 								notFoundContent={null}
-								onSearch={(value: string) => setsSkillSearchQuery(value)}>
+								onSearch={(value: string) => setsSkillSearchQuery(value)}
+							>
 								{searchSkillData?.skills.map((d: any) => (
 									<Select.Option key={d.id} value={d.id}>
 										{d.name}
@@ -330,7 +347,8 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, onClose }) => {
 											style={{
 												paddingBottom: 0,
 												paddingTop: 0,
-											}}>
+											}}
+										>
 											<Button type="link" style={{ padding: 0 }} onClick={handleAddNewSkill}>
 												<PlusOutlined /> Add new: &ldquo;{skillSearchQuery}&ldquo;
 											</Button>
@@ -355,9 +373,19 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, onClose }) => {
 				</Row>
 
 				<Space direction="vertical" style={{ width: '100%' }}>
-					<UserToolBlock visible={visibleBlocks.tools} tools={tools} onDelete={handleRemoveTool} onAdd={handleAddTool} />
+					<UserToolBlock
+						visible={visibleBlocks.tools}
+						tools={tools}
+						onDelete={handleRemoveTool}
+						onAdd={handleAddTool}
+					/>
 
-					<UserSchoolBlock visible={visibleBlocks.schools} schools={schools} onDelete={handleRemoveSchool} onAdd={handleAddSchool} />
+					<UserSchoolBlock
+						visible={visibleBlocks.schools}
+						schools={schools}
+						onDelete={handleRemoveSchool}
+						onAdd={handleAddSchool}
+					/>
 
 					<UserJobBlock visible={visibleBlocks.schools} jobs={jobs} onDelete={handleRemoveJob} onAdd={handleAddJob} />
 
@@ -366,14 +394,20 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, onClose }) => {
 						<p>If you have something to add, write here</p>
 						{visibleBlocks.description ? (
 							<Form.Item name="description" style={{ marginBottom: 0 }}>
-								<BraftEditor className={styles.textEditor} controls={controls} language="en" contentClassName={styles.textEditorContent} />
+								<BraftEditor
+									className={styles.textEditor}
+									controls={controls}
+									language="en"
+									contentClassName={styles.textEditorContent}
+								/>
 							</Form.Item>
 						) : (
 							<Button
 								size="small"
 								type="text"
 								disabled={visibleBlocks.description}
-								onClick={() => setVisibleBlocks({ ...visibleBlocks, description: true })}>
+								onClick={() => setVisibleBlocks({ ...visibleBlocks, description: true })}
+							>
 								<PlusOutlined /> Add details
 							</Button>
 						)}

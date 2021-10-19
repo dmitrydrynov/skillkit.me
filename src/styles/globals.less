@@ -7,21 +7,21 @@
 @import '~braft-editor/dist/index.css';
 
 .ant-col {
-  min-height: initial;
+	min-height: initial;
 }
 
-.ant-input:focus, 
-.ant-input-focused, 
+.ant-input:focus,
+.ant-input-focused,
 .ant-picker-focused,
 .ant-input-affix-wrapper-focused,
 .ant-select-focused > .ant-select-selector {
-    box-shadow: 0 0 0 @input-shadow-size rgba(@primary-color, 10%) !important;
+	box-shadow: 0 0 0 @input-shadow-size rgba(@primary-color, 10%) !important;
 }
 
 .ant-picker-cell .ant-picker-cell-inner {
-    min-width: 28px;
-    height: 28px;
-    line-height: 28px;
+	min-width: 28px;
+	height: 28px;
+	line-height: 28px;
 }
 
 // .ant-form-item {
@@ -29,24 +29,33 @@
 // }
 
 .ant-form-item-explain {
-    margin-bottom: 8px;
-    font-size: @font-size-base;
+	margin-bottom: 8px;
+	font-size: @font-size-base;
 }
 
 .ant-form-item-control-input {
-  align-items: stretch;
+	align-items: stretch;
 
-  .ant-form-item-control-input-content {
-    display: flex;
+	.ant-form-item-control-input-content {
+		display: flex;
 
-    input {
-      height: 100%;
-    }
-  }
+		input {
+			height: 100%;
+		}
+	}
 }
 
 .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
-  color: @gray-13;
-  font-weight: 600;
-  background-color: @gray-4;
+	color: @gray-13;
+	font-weight: 600;
+	background-color: @gray-4;
+}
+
+.ant-btn-link:hover > span {
+	color: @link-hover-color;
+	text-decoration: @link-hover-decoration;
+}
+.ant-btn-link:focus > span {
+	color: @link-hover-color;
+	text-decoration: @link-focus-decoration;
 }

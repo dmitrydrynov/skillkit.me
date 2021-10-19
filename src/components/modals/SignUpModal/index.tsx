@@ -99,10 +99,12 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 					size="large"
 					loading={createUserResponse.fetching}
 					onClick={handleOk}
-					className={styles.submitBtn}>
+					className={styles.submitBtn}
+				>
 					Sign up
 				</Button>,
-			]}>
+			]}
+		>
 			<Row justify="center">
 				<div className={styles.imageContainer}>
 					<Image src={SignModalIllustration} alt="image for sign up form" />
@@ -115,7 +117,8 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 					layout="vertical"
 					name="form_in_modal"
 					initialValues={{ modifier: 'public' }}
-					requiredMark={false}>
+					requiredMark={false}
+				>
 					<Row gutter={16}>
 						<Col span={12}>
 							<Form.Item name="firstName" rules={[{ required: true, message: 'Please input the first name!' }]}>
@@ -150,7 +153,8 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 									return Promise.reject(new Error('The two passwords not match!'));
 								},
 							}),
-						]}>
+						]}
+					>
 						<Input.Password placeholder="Repeat the password" />
 					</Form.Item>
 				</Form>
