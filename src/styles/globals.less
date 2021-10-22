@@ -51,11 +51,15 @@
 	background-color: @gray-4;
 }
 
+.ant-btn-link > span {
+	color: @link-hover-color;
+	transition: text-decoration 0.2s;
+}
 .ant-btn-link:hover > span {
 	color: @link-hover-color;
-	text-decoration: @link-hover-decoration;
+	text-decoration: underline;
 }
 .ant-btn-link:focus > span {
 	color: @link-hover-color;
-	text-decoration: @link-focus-decoration;
+	text-decoration: underline;
 }

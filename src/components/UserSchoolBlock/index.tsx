@@ -6,6 +6,10 @@ import { ControlType } from 'braft-editor';
 import dynamic from 'next/dynamic';
 import styles from './UserSchoolBlock.module.less';
 
+const BraftEditor: any = dynamic(() => import('braft-editor').then((mod: any) => mod.default), {
+	ssr: false,
+});
+
 type UserSchoolBlockParams = {
 	visible?: boolean;
 	schools?: any[];
@@ -14,7 +18,6 @@ type UserSchoolBlockParams = {
 };
 
 const UserSchoolBlock = ({ visible, schools, onDelete, onAdd }: UserSchoolBlockParams) => {
-	const BraftEditor = dynamic(() => import('braft-editor'), { ssr: false });
 	const controls: ControlType[] = ['bold', 'italic', 'underline', 'text-color', 'separator', 'link', 'separator'];
 
 	const schoolSection = (school: any, idx: number) => (
@@ -31,7 +34,7 @@ const UserSchoolBlock = ({ visible, schools, onDelete, onAdd }: UserSchoolBlockP
 				</Tooltip>
 			</div>
 			<Form.Item
-				name={['school', idx, 'title']}
+				name={['schools', idx, 'title']}
 				label="School"
 				rules={[{ required: true, message: 'Please input the field!' }]}
 			>
@@ -41,7 +44,7 @@ const UserSchoolBlock = ({ visible, schools, onDelete, onAdd }: UserSchoolBlockP
 			<Row>
 				<Col span={5}>
 					<Form.Item
-						name={['school', idx, 'startedAt']}
+						name={['schools', idx, 'startedAt']}
 						label="Start date"
 						rules={[{ required: true, message: 'Please input the field!' }]}
 					>
@@ -50,7 +53,7 @@ const UserSchoolBlock = ({ visible, schools, onDelete, onAdd }: UserSchoolBlockP
 				</Col>
 				<Col span={5} offset={1}>
 					<Form.Item
-						name={['school', idx, 'finishedAt']}
+						name={['schools', idx, 'finishedAt']}
 						label="Finish date"
 						rules={[{ required: true, message: 'Please input the field!' }]}
 					>
@@ -58,7 +61,7 @@ const UserSchoolBlock = ({ visible, schools, onDelete, onAdd }: UserSchoolBlockP
 					</Form.Item>
 				</Col>
 			</Row>
-			<Form.Item name={['school', idx, 'description']} label="Description" style={{ marginBottom: 0 }}>
+			<Form.Item name={['schools', idx, 'description']} label="Description" style={{ marginBottom: 0 }}>
 				<BraftEditor
 					className={styles.textEditor}
 					controls={controls}

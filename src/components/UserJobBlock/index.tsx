@@ -6,6 +6,10 @@ import { ControlType } from 'braft-editor';
 import dynamic from 'next/dynamic';
 import styles from './UserJobBlock.module.less';
 
+const BraftEditor: any = dynamic(() => import('braft-editor').then((mod: any) => mod.default), {
+	ssr: false,
+});
+
 type UserJobBlockParams = {
 	visible?: boolean;
 	jobs?: any[];
@@ -14,10 +18,9 @@ type UserJobBlockParams = {
 };
 
 const UserJobBlock = ({ visible, jobs, onDelete, onAdd }: UserJobBlockParams) => {
-	const BraftEditor = dynamic(() => import('braft-editor'), { ssr: false });
 	const controls: ControlType[] = ['bold', 'italic', 'underline', 'text-color', 'separator', 'link', 'separator'];
 
-	const jobSection = (school: any, idx: number) => (
+	const jobSection = (job: any, idx: number) => (
 		<div className={styles.schoolSection} key={idx}>
 			<div className={styles.schoolSectionExtra}>
 				<Tooltip title="Delete job data">
@@ -34,7 +37,7 @@ const UserJobBlock = ({ visible, jobs, onDelete, onAdd }: UserJobBlockParams) =>
 			<Row>
 				<Col span={11}>
 					<Form.Item
-						name={['job', idx, 'company']}
+						name={['jobs', idx, 'company']}
 						label="Company name"
 						rules={[{ required: true, message: 'Please input the field!' }]}
 					>
@@ -43,7 +46,7 @@ const UserJobBlock = ({ visible, jobs, onDelete, onAdd }: UserJobBlockParams) =>
 				</Col>
 				<Col span={11} offset={2}>
 					<Form.Item
-						name={['job', idx, 'title']}
+						name={['jobs', idx, 'title']}
 						label="Job title"
 						rules={[{ required: true, message: 'Please input the field!' }]}
 					>
@@ -55,7 +58,7 @@ const UserJobBlock = ({ visible, jobs, onDelete, onAdd }: UserJobBlockParams) =>
 			<Row>
 				<Col span={5}>
 					<Form.Item
-						name={['job', idx, 'startedAt']}
+						name={['jobs', idx, 'startedAt']}
 						label="Start date"
 						rules={[{ required: true, message: 'Please input the field!' }]}
 					>
@@ -64,7 +67,7 @@ const UserJobBlock = ({ visible, jobs, onDelete, onAdd }: UserJobBlockParams) =>
 				</Col>
 				<Col span={5} offset={1}>
 					<Form.Item
-						name={['job', idx, 'finishedAt']}
+						name={['jobs', idx, 'finishedAt']}
 						label="Finish date"
 						rules={[{ required: true, message: 'Please input the field!' }]}
 					>
@@ -72,7 +75,7 @@ const UserJobBlock = ({ visible, jobs, onDelete, onAdd }: UserJobBlockParams) =>
 					</Form.Item>
 				</Col>
 			</Row>
-			<Form.Item name={['job', idx, 'description']} label="Description" style={{ marginBottom: 0 }}>
+			<Form.Item name={['jobs', idx, 'description']} label="Description" style={{ marginBottom: 0 }}>
 				<BraftEditor
 					className={styles.textEditor}
 					controls={controls}

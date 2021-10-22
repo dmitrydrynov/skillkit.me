@@ -8,6 +8,10 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import styles from './UserToolBlock.module.less';
 
+const BraftEditor: any = dynamic(() => import('braft-editor').then((mod: any) => mod.default), {
+	ssr: false,
+});
+
 type UserToolBlockParams = {
 	visible?: boolean;
 	tools?: any[];
@@ -23,11 +27,10 @@ const ToolLevelSvg = () => (
 const ToolLevelIcon = (props: any) => <Icon component={ToolLevelSvg} {...props} />;
 
 const UserToolBlock = ({ visible, tools, onDelete, onAdd }: UserToolBlockParams) => {
-	const BraftEditor = dynamic(() => import('braft-editor'), { ssr: false });
 	const controls: ControlType[] = ['bold', 'italic', 'underline', 'text-color', 'separator', 'link', 'separator'];
 	const userToolDesc = ['terrible', 'bad', 'normal', 'good', 'wonderful'];
 
-	const toolSection = (school: any, idx: number) => (
+	const toolSection = (tool: any, idx: number) => (
 		<div className={styles.schoolSection} key={idx}>
 			<div className={styles.schoolSectionExtra}>
 				<Tooltip title="Delete job data">
@@ -44,7 +47,7 @@ const UserToolBlock = ({ visible, tools, onDelete, onAdd }: UserToolBlockParams)
 			<Row>
 				<Col span={14}>
 					<Form.Item
-						name={['tool', idx, 'title']}
+						name={['tools', idx, 'title']}
 						label="Title"
 						rules={[{ required: true, message: 'Please input the field!' }]}
 					>
@@ -53,7 +56,7 @@ const UserToolBlock = ({ visible, tools, onDelete, onAdd }: UserToolBlockParams)
 				</Col>
 				<Col span={8} offset={2}>
 					<Form.Item
-						name={['tool', idx, 'level']}
+						name={['tools', idx, 'level']}
 						label="Level"
 						rules={[{ required: true, message: 'Please input the field!' }]}
 					>
@@ -62,7 +65,7 @@ const UserToolBlock = ({ visible, tools, onDelete, onAdd }: UserToolBlockParams)
 				</Col>
 			</Row>
 
-			<Form.Item name={['tool', idx, 'description']} label="Description" style={{ marginBottom: 0 }}>
+			<Form.Item name={['tools', idx, 'description']} label="Description" style={{ marginBottom: 0 }}>
 				<BraftEditor
 					className={styles.textEditor}
 					controls={controls}

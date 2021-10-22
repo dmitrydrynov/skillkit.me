@@ -26,6 +26,7 @@
     "jwt-decode": "^3.1.2",
     "less": "^4.1.1",
     "less-loader": "^10.0.1",
+    "moment": "^2.29.1",
     "next": "11.1.2",
     "next-compose-plugins": "^2.2.1",
     "next-with-less": "^1.0.1",

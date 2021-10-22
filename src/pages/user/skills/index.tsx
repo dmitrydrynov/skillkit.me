@@ -70,13 +70,9 @@ const ProfilePage: NextPageWithLayout = () => {
 					dataSource={userSkillsList.data?.userSkills}
 					locale={{ emptyText: 'No any skills yet. Add please the first.' }}
 					renderItem={(item: any) => (
-						<List.Item>
+						<List.Item className={styles.item} onClick={() => handleEditUserSkill(item.id)}>
 							<List.Item.Meta
-								title={
-									<Button type="link" onClick={() => handleEditUserSkill(item.id)}>
-										{item.skill.name}
-									</Button>
-								}
+								title={item.skill.name}
 								description={
 									<>
 										<p>

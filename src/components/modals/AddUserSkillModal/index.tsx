@@ -8,14 +8,16 @@ import { createUserSkillMutation } from '@services/graphql/queries/userSkill';
 import { RootState } from '@store/configure-store';
 import { SkillLevel, skillLevelsList } from 'src/definitions/skill';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Modal, Row, Select, Space, Tooltip, message } from 'antd';
+import { Button, Col, Form, Modal, Row, Select, Space, Tooltip, message, Spin } from 'antd';
 import { RefSelectProps } from 'antd/lib/select';
-import { ControlType, EditorState } from 'braft-editor';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useSelector } from 'react-redux';
 import { useMutation, useQuery } from 'urql';
 import styles from './AddUserSkillModal.module.less';
+import TextArea from 'rc-textarea';
+import { Moment } from 'moment';
+import moment from 'moment';
 
 type AddSkillArgs = {
 	visible: boolean;
@@ -26,7 +28,7 @@ type AddSkillArgs = {
 type UserSkill = {
 	skillId: string;
 	level: SkillLevel;
-	description?: EditorState | string;
+	description?: string;
 	tool?: UserTool[];
 	job?: UserJob[];
 	school?: UserSchool[];
@@ -34,30 +36,28 @@ type UserSkill = {
 
 type UserSchool = {
 	title: string;
-	startedAt?: Date;
-	finishedAt?: Date;
-	description?: EditorState | string;
+	startedAt?: Moment;
+	finishedAt?: Moment;
+	description?: string;
 };
 
 type UserJob = {
 	company: string;
 	title: string;
-	startedAt?: Date;
-	finishedAt?: Date;
-	description?: EditorState | string;
+	startedAt?: Moment;
+	finishedAt?: Moment;
+	description?: string;
 };
 
 type UserTool = {
 	title: string;
 	level: number;
-	description?: EditorState | string;
+	description?: string;
 };
 
 const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => {
-	const BraftEditor = dynamic(() => import('braft-editor'), { ssr: false });
 	const [form] = Form.useForm();
 	const skillRef = createRef<RefSelectProps>();
-	const controls: ControlType[] = ['bold', 'italic', 'underline', 'text-color', 'separator', 'link', 'separator'];
 	const [createUserSkillResponse] = useMutation(createUserMutation);
 	const [skillSearchQuery, setsSkillSearchQuery] = useState('');
 	const [visibleBlocks, setVisibleBlocks] = useState({
@@ -67,7 +67,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 		tools: false,
 	});
 	const userId = useSelector((state: RootState) => state.user.id);
-	const [{ data: searchSkillData }, searchSkills] = useQuery({
+	const [{ data: searchSkillData, fetching }, searchSkills] = useQuery({
 		query: searchSkillsQuery,
 		variables: { search: skillSearchQuery },
 		pause: true,
@@ -101,6 +101,44 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [skillSearchQuery]);
 
+	useEffect(() => {
+		if (getUserSkillData?.userSkill) {
+			const { id, level, skill, jobs, schools, tools, description } = getUserSkillData.userSkill;
+
+			setVisibleBlocks({
+				...visibleBlocks,
+				description: !!description?.length,
+				tools: !!tools?.length,
+				schools: !!schools?.length,
+				jobs: !!jobs?.length,
+			});
+
+			setTools(tools);
+			setJobs(jobs);
+			setSchools(schools);
+
+			form.setFieldsValue({
+				skillId: skill.id,
+				level,
+				description,
+				tools,
+				jobs: jobs.map((j: UserJob) => {
+					j.startedAt = moment(j.startedAt);
+					j.finishedAt = moment(j.finishedAt);
+
+					return j;
+				}),
+				schools: schools.map((s: UserSchool) => {
+					s.startedAt = moment(s.startedAt);
+					s.finishedAt = moment(s.finishedAt);
+
+					return s;
+				}),
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [getUserSkillData]);
+
 	const handleOk = () => {
 		console.log('handleOk', form.getFieldsValue());
 		form
@@ -112,16 +150,8 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 				let toolsCreateExtend: UserTool[] = [];
 
 				try {
-					if (description) {
-						description = description.toHTML();
-					}
-
 					if (tool) {
 						tool = tool.map((t: UserTool) => {
-							if (t.description) {
-								t.description = t.description.toHTML();
-							}
-
 							toolsCreateExtend.push({
 								title: t.title,
 								level: t.level,
@@ -134,10 +164,6 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 
 					if (job) {
 						job = job.map((j: UserJob) => {
-							if (j.description) {
-								j.description = j.description.toHTML();
-							}
-
 							jobsCreateExtend.push({
 								title: j.title,
 								company: j.company,
@@ -152,10 +178,6 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 
 					if (school) {
 						school = school.map((s: UserSchool) => {
-							if (s.description) {
-								s.description = s.description.toHTML();
-							}
-
 							schoolsCreateExtend.push({
 								title: s.title,
 								startedAt: s.startedAt,
@@ -300,120 +322,117 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 				</Button>,
 			]}
 		>
-			<Form
-				className={styles.form}
-				form={form}
-				layout="vertical"
-				name="form_in_modal"
-				initialValues={{ modifier: 'public' }}
-				requiredMark={false}
-			>
-				<Row>
-					<Col span={14}>
-						<Form.Item
-							name="skillId"
-							label="What can you do?"
-							rules={[
-								{
-									required: true,
-									message: 'Please input the skill name!',
-								},
-							]}
-						>
-							<Select
-								ref={skillRef}
-								showSearch
-								allowClear
-								defaultActiveFirstOption={false}
-								showArrow={false}
-								filterOption={false}
-								placeholder="What can you do?"
-								notFoundContent={null}
-								onSearch={(value: string) => setsSkillSearchQuery(value)}
+			<Spin spinning={fetching}>
+				<Form
+					className={styles.form}
+					form={form}
+					layout="vertical"
+					name="form_in_modal"
+					initialValues={{ modifier: 'public' }}
+					requiredMark={false}
+				>
+					<Row>
+						<Col span={14}>
+							<Form.Item
+								name="skillId"
+								label="What can you do?"
+								rules={[
+									{
+										required: true,
+										message: 'Please input the skill name!',
+									},
+								]}
 							>
-								{searchSkillData?.skills.map((d: any) => (
-									<Select.Option key={d.id} value={d.id}>
-										{d.name}
-									</Select.Option>
-								))}
-								{skillSearchQuery.length &&
-									searchSkillData?.skills.filter((d: { name: string }) => {
-										return skillSearchQuery.toLowerCase().trim() === d.name.toLowerCase();
-									}).length === 0 && (
-										<Select.Option
-											disabled
-											key={0}
-											value={''}
-											style={{
-												paddingBottom: 0,
-												paddingTop: 0,
-											}}
-										>
-											<Button type="link" style={{ padding: 0 }} onClick={handleAddNewSkill}>
-												<PlusOutlined /> Add new: &ldquo;{skillSearchQuery}&ldquo;
-											</Button>
+								<Select
+									ref={skillRef}
+									showSearch
+									allowClear
+									defaultActiveFirstOption={false}
+									showArrow={false}
+									filterOption={false}
+									placeholder="What can you do?"
+									notFoundContent={null}
+									onSearch={(value: string) => setsSkillSearchQuery(value)}
+								>
+									{searchSkillData?.skills.map((d: any) => (
+										<Select.Option key={d.id} value={d.id}>
+											{d.name}
 										</Select.Option>
-									)}
-							</Select>
-						</Form.Item>
-					</Col>
-					<Col span={8} offset={2}>
-						<Form.Item name="level" label="Level" rules={[{ required: true, message: 'Please input the email!' }]}>
-							<Select placeholder="Select a skill level">
-								{skillLevelsList.map((item, indx) => (
-									<Select.Option key={indx} value={item.label}>
-										<Tooltip title={item.description} placement="right">
-											<Image src={item.icon} alt="" /> {item.label}
-										</Tooltip>
-									</Select.Option>
-								))}
-							</Select>
-						</Form.Item>
-					</Col>
-				</Row>
-
-				<Space direction="vertical" style={{ width: '100%' }}>
-					<UserToolBlock
-						visible={visibleBlocks.tools}
-						tools={tools}
-						onDelete={handleRemoveTool}
-						onAdd={handleAddTool}
-					/>
-
-					<UserSchoolBlock
-						visible={visibleBlocks.schools}
-						schools={schools}
-						onDelete={handleRemoveSchool}
-						onAdd={handleAddSchool}
-					/>
-
-					<UserJobBlock visible={visibleBlocks.schools} jobs={jobs} onDelete={handleRemoveJob} onAdd={handleAddJob} />
-
-					<div className={styles.section}>
-						<h4>More details</h4>
-						<p>If you have something to add, write here</p>
-						{visibleBlocks.description ? (
-							<Form.Item name="description" style={{ marginBottom: 0 }}>
-								<BraftEditor
-									className={styles.textEditor}
-									controls={controls}
-									language="en"
-									contentClassName={styles.textEditorContent}
-								/>
+									))}
+									{skillSearchQuery.length &&
+										searchSkillData?.skills.filter((d: { name: string }) => {
+											return skillSearchQuery.toLowerCase().trim() === d.name.toLowerCase();
+										}).length === 0 && (
+											<Select.Option
+												disabled
+												key={0}
+												value={''}
+												style={{
+													paddingBottom: 0,
+													paddingTop: 0,
+												}}
+											>
+												<Button type="link" style={{ padding: 0 }} onClick={handleAddNewSkill}>
+													<PlusOutlined /> Add new: &ldquo;{skillSearchQuery}&ldquo;
+												</Button>
+											</Select.Option>
+										)}
+								</Select>
 							</Form.Item>
-						) : (
-							<Button
-								size="small"
-								type="text"
-								disabled={visibleBlocks.description}
-								onClick={() => setVisibleBlocks({ ...visibleBlocks, description: true })}
-							>
-								<PlusOutlined /> Add details
-							</Button>
-						)}
-					</div>
-				</Space>
-			</Form>
+						</Col>
+						<Col span={8} offset={2}>
+							<Form.Item name="level" label="Level" rules={[{ required: true, message: 'Please input the email!' }]}>
+								<Select placeholder="Select a skill level">
+									{skillLevelsList.map((item, indx) => (
+										<Select.Option key={indx} value={item.label}>
+											<Tooltip title={item.description} placement="right">
+												<Image src={item.icon} alt="" /> {item.label}
+											</Tooltip>
+										</Select.Option>
+									))}
+								</Select>
+							</Form.Item>
+						</Col>
+					</Row>
+
+					<Space direction="vertical" style={{ width: '100%' }}>
+						<UserToolBlock
+							visible={visibleBlocks.tools}
+							tools={tools}
+							onDelete={handleRemoveTool}
+							onAdd={handleAddTool}
+						/>
+
+						<UserSchoolBlock
+							visible={visibleBlocks.schools}
+							schools={schools}
+							onDelete={handleRemoveSchool}
+							onAdd={handleAddSchool}
+						/>
+
+						<UserJobBlock visible={visibleBlocks.schools} jobs={jobs} onDelete={handleRemoveJob} onAdd={handleAddJob} />
+
+						<div className={styles.section}>
+							<h4>More details</h4>
+							<p>If you have something to add, write here</p>
+							{visibleBlocks.description ? (
+								<Form.Item name="description" style={{ marginBottom: 0 }}>
+									<TextArea className={styles.textEditor} />
+								</Form.Item>
+							) : (
+								<Button
+									size="small"
+									type="text"
+									disabled={visibleBlocks.description}
+									onClick={() => setVisibleBlocks({ ...visibleBlocks, description: true })}
+								>
+									<PlusOutlined /> Add details
+								</Button>
+							)}
+						</div>
+					</Space>
+				</Form>
+			</Spin>
 		</Modal>
 	);
 };

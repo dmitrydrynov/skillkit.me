@@ -40,12 +40,17 @@ query($id: ID!) {
     jobs {
       id
       title
+      company
       description
+      startedAt
+      finishedAt
     }
     schools {
       id
       title
       description
+      startedAt
+      finishedAt
     }
     tools {
       title
