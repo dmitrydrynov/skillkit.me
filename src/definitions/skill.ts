@@ -48,5 +48,5 @@ export const skillLevelsList = [
 ];
 
 export const getSkillLevel = (levelName: string): SkillLevel => {
-	return skillLevelsList.filter((item) => item.label === levelName)[0];
+	return skillLevelsList.filter((item) => item.label.toLowerCase() === levelName)[0];
 };

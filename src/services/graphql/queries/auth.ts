@@ -14,8 +14,7 @@ export const authorizeMutation = `mutation ($email: String!, $password: String!)
       }
     }
     ...on UserAuthenticationWithPasswordFailure {
-      code
-      message
+      errorMessage: message
     }
   }
 }`;
@@ -68,8 +67,7 @@ mutation($email: String!, $token: String!) {
     }
 
     ...on RedeemUserMagicAuthTokenFailure {
-      code
-      message
+      errorMessage: message
     }
   }
 }

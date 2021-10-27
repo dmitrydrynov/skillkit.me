@@ -25,7 +25,7 @@ const Home: NextPage = () => {
 					token: magicAuth,
 				});
 
-				if (error || data.code) {
+				if (error || data.errorMessage) {
 					router.push('/');
 					return;
 				}

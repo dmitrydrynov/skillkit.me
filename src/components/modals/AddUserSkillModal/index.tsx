@@ -384,7 +384,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 							<Form.Item name="level" label="Level" rules={[{ required: true, message: 'Please input the email!' }]}>
 								<Select placeholder="Select a skill level">
 									{skillLevelsList.map((item, indx) => (
-										<Select.Option key={indx} value={item.label}>
+										<Select.Option key={indx} value={item.label.toLowerCase()}>
 											<Tooltip title={item.description} placement="right">
 												<Image src={item.icon} alt="" /> {item.label}
 											</Tooltip>

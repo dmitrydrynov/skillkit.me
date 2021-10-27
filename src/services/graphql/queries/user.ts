@@ -75,7 +75,7 @@ mutation(
   $lastName: String!
   $email: String!
   $country: String!
-  $birthdayDate: String!
+  $birthdayDate: DateTime!
   $avatar: ImageFieldInput
 ) {
   updateUser(

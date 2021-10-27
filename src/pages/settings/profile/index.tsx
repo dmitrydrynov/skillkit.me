@@ -62,6 +62,7 @@ const ProfilePage: NextPageWithLayout = () => {
 		const updateData = {
 			...values,
 			id: userId,
+			birthdayDate: new Date(values.birthdayDate).toISOString(),
 		};
 
 		if (values.avatar) {

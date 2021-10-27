@@ -6,6 +6,9 @@ query($userId: ID!) {
         id: { equals: $userId }
       }
     }
+    orderBy: {
+      level: desc
+    }
   ) {
     id
     description

@@ -45,8 +45,8 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 						return;
 					}
 
-					if (data.authenticateUserWithPassword.code) {
-						message.error(data.authenticateUserWithPassword.message);
+					if (data.authenticateUserWithPassword.errorMessage) {
+						message.error(data.authenticateUserWithPassword.errorMessage);
 						return;
 					}
 

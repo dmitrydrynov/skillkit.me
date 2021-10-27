@@ -6,7 +6,7 @@ import { userSkillsQuery } from '@services/graphql/queries/userSkill';
 import { RootState } from '@store/configure-store';
 import { SkillLevel, getSkillLevel } from 'src/definitions/skill';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, List, PageHeader, Skeleton } from 'antd';
+import { Button, List, PageHeader, Skeleton, Table } from 'antd';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useSelector } from 'react-redux';
@@ -36,7 +36,7 @@ const ProfilePage: NextPageWithLayout = () => {
 	return (
 		<>
 			<Head>
-				<title>Skills</title>
+				<title>My Skills</title>
 			</Head>
 			{visibleAddUserSkillModal && (
 				<AddUserSkillModal
@@ -63,28 +63,48 @@ const ProfilePage: NextPageWithLayout = () => {
 					</Button>,
 				]}
 			/>
-			{userSkillsList.fetching && <Skeleton loading={userSkillsList.fetching} active title round></Skeleton>}
-			{userSkillsList.data?.userSkills && (
-				<List
-					itemLayout="horizontal"
-					dataSource={userSkillsList.data?.userSkills}
-					locale={{ emptyText: 'No any skills yet. Add please the first.' }}
-					renderItem={(item: any) => (
-						<List.Item className={styles.item} onClick={() => handleEditUserSkill(item.id)}>
-							<List.Item.Meta
-								title={item.skill.name}
-								description={
-									<>
-										<p>
-											<Image src={getSkillLevelIcon(item.level)} alt="" /> {item.level}
-										</p>
-									</>
-								}
-							/>
-						</List.Item>
+			{/* {userSkillsList.fetching && <Skeleton loading={userSkillsList.fetching} active title round></Skeleton>}
+			{userSkillsList.data?.userSkills && ( */}
+			{/* // <List
+				// 	itemLayout="horizontal"
+				// 	dataSource={userSkillsList.data?.userSkills}
+				// 	locale={{ emptyText: 'No any skills yet. Add please the first.' }}
+				// 	renderItem={(item: any) => (
+				// 		<List.Item className={styles.item} onClick={() => handleEditUserSkill(item.id)}>
+				// 			<List.Item.Meta
+				// 				title={item.skill.name}
+				// 				description={
+				// 					<>
+				// 						<p>
+				// 							<Image src={getSkillLevelIcon(item.level)} alt="" /> {item.level}
+				// 						</p>
+				// 					</>
+				// 				}
+				// 			/>
+				// 		</List.Item>
+				// 	)}
+				// /> */}
+			<Table
+				className={styles.skillTable}
+				rowClassName={styles.skillTableRow}
+				dataSource={userSkillsList.data?.userSkills}
+				loading={userSkillsList.fetching}
+				size="large"
+			>
+				<Table.Column title="I can" dataIndex={['skill', 'name']} key="skillName" ellipsis={true} />
+				<Table.Column
+					title="Level"
+					width="140px"
+					dataIndex="level"
+					key="level"
+					render={(value) => (
+						<>
+							<Image src={getSkillLevelIcon(value)} alt="" /> {value[0].toUpperCase() + value.slice(1)}
+						</>
 					)}
 				/>
-			)}
+			</Table>
+			{/* )} */}
 		</>
 	);
 };
