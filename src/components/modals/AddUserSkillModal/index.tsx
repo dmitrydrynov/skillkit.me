@@ -4,25 +4,26 @@ import UserSchoolBlock from '@components/UserSchoolBlock';
 import UserToolBlock from '@components/UserToolBlock';
 import { createSkillMutation, getUserSkillQuery, searchSkillsQuery } from '@services/graphql/queries/skill';
 import { createUserMutation } from '@services/graphql/queries/user';
-import { createUserSkillMutation } from '@services/graphql/queries/userSkill';
+import { createUserSkillMutation, editUserSkillMutation } from '@services/graphql/queries/userSkill';
 import { RootState } from '@store/configure-store';
 import { SkillLevel, skillLevelsList } from 'src/definitions/skill';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Modal, Row, Select, Space, Tooltip, message, Spin } from 'antd';
+import { Button, Col, Form, Modal, Row, Select, Space, Tooltip, message, Spin, Dropdown, Menu } from 'antd';
 import { RefSelectProps } from 'antd/lib/select';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useSelector } from 'react-redux';
-import { useMutation, useQuery } from 'urql';
-import styles from './AddUserSkillModal.module.less';
+import { OperationResult, useMutation, useQuery } from 'urql';
+import styles from './style.module.less';
 import TextArea from 'rc-textarea';
 import { Moment } from 'moment';
 import moment from 'moment';
 
 type AddSkillArgs = {
+	operation?: 'create' | 'edit';
 	visible: boolean;
 	recordId?: string | null;
 	onClose: () => void;
+	onFinish: () => void;
 };
 
 type UserSkill = {
@@ -55,7 +56,7 @@ type UserTool = {
 	description?: string;
 };
 
-const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => {
+const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, recordId, onClose, onFinish }) => {
 	const [form] = Form.useForm();
 	const skillRef = createRef<RefSelectProps>();
 	const [createUserSkillResponse] = useMutation(createUserMutation);
@@ -81,6 +82,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 	});
 	const [addSkillResponse, addSkill] = useMutation(createSkillMutation);
 	const [addUserSkillResponse, addUserSkill] = useMutation(createUserSkillMutation);
+	const [editUserSkillResponse, editUserSkill] = useMutation(editUserSkillMutation);
 	const [schools, setSchools] = useState<UserSchool[]>([]);
 	const [jobs, setJobs] = useState<UserJob[]>([]);
 	const [tools, setTools] = useState<UserTool[]>([]);
@@ -140,7 +142,6 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 	}, [getUserSkillData]);
 
 	const handleOk = () => {
-		console.log('handleOk', form.getFieldsValue());
 		form
 			.validateFields()
 			.then(async (formData: UserSkill) => {
@@ -189,24 +190,45 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 						});
 					}
 
-					const { error } = await addUserSkill({
-						userId,
-						skillId,
-						level,
-						description,
-						tools: { create: toolsCreateExtend },
-						jobs: { create: jobsCreateExtend },
-						schools: { create: schoolsCreateExtend },
-					});
+					let resultOperation: OperationResult<any, object> | null = null;
+					if (operation === 'create') {
+						resultOperation = await addUserSkill({
+							userId,
+							skillId,
+							level,
+							description,
+							tools: { create: toolsCreateExtend },
+							jobs: { create: jobsCreateExtend },
+							schools: { create: schoolsCreateExtend },
+						});
+					}
 
-					if (error) {
-						message.error(error);
+					if (operation === 'edit') {
+						resultOperation = await editUserSkill({
+							recordId,
+							skillId,
+							level,
+							description,
+							tools: { create: toolsCreateExtend },
+							jobs: { create: jobsCreateExtend },
+							schools: { create: schoolsCreateExtend },
+						});
+					}
+
+					if (resultOperation?.error) {
+						const err = resultOperation.error.message.split(':');
 						addUserSkillResponse.fetching = false;
+						form.setFields([
+							{
+								name: 'skillId',
+								errors: [err[1].trim()],
+							},
+						]);
 						return;
 					}
 
 					message.success('New user skill added!');
-					onClose();
+					onFinish();
 				} catch (e: any) {
 					message.error(e.message);
 					addUserSkillResponse.fetching = false;
@@ -299,9 +321,33 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 		}
 	};
 
+	const addMoreMenu = (
+		<Menu className={styles.addMoreMenu}>
+			<Menu.Item disabled={visibleBlocks.tools} onClick={() => setVisibleBlocks({ ...visibleBlocks, tools: true })}>
+				<div className="title">Add tools</div>
+				<div className="extra">What tools do you use when using this skill?</div>
+			</Menu.Item>
+			<Menu.Item disabled={visibleBlocks.schools} onClick={() => setVisibleBlocks({ ...visibleBlocks, schools: true })}>
+				<div className="title">Add schools</div>
+				<div className="extra">Where did you learn this skill?</div>
+			</Menu.Item>
+			<Menu.Item disabled={visibleBlocks.jobs} onClick={() => setVisibleBlocks({ ...visibleBlocks, jobs: true })}>
+				<div className="title">Add experience</div>
+				<div className="extra">What job did you apply the skill in?</div>
+			</Menu.Item>
+			<Menu.Item
+				disabled={visibleBlocks.description}
+				onClick={() => setVisibleBlocks({ ...visibleBlocks, description: true })}
+			>
+				<div className="title">Add description</div>
+				<div className="extra">If you have something to add, write here</div>
+			</Menu.Item>
+		</Menu>
+	);
+
 	return (
 		<Modal
-			title="Add skill"
+			title={(operation === 'create' && 'Add skill') || (operation === 'edit' && 'Edit skill')}
 			visible={visible}
 			onOk={handleOk}
 			onCancel={handleCancel}
@@ -344,6 +390,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 								]}
 							>
 								<Select
+									disabled={operation === 'edit'}
 									ref={skillRef}
 									showSearch
 									allowClear
@@ -396,40 +443,49 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose }) => 
 					</Row>
 
 					<Space direction="vertical" style={{ width: '100%' }}>
-						<UserToolBlock
-							visible={visibleBlocks.tools}
-							tools={tools}
-							onDelete={handleRemoveTool}
-							onAdd={handleAddTool}
-						/>
+						{visibleBlocks.tools && (
+							<UserToolBlock
+								visible={visibleBlocks.tools}
+								tools={tools}
+								onDelete={handleRemoveTool}
+								onAdd={handleAddTool}
+							/>
+						)}
 
-						<UserSchoolBlock
-							visible={visibleBlocks.schools}
-							schools={schools}
-							onDelete={handleRemoveSchool}
-							onAdd={handleAddSchool}
-						/>
+						{visibleBlocks.schools && (
+							<UserSchoolBlock
+								visible={visibleBlocks.schools}
+								schools={schools}
+								onDelete={handleRemoveSchool}
+								onAdd={handleAddSchool}
+							/>
+						)}
 
-						<UserJobBlock visible={visibleBlocks.schools} jobs={jobs} onDelete={handleRemoveJob} onAdd={handleAddJob} />
+						{visibleBlocks.jobs && (
+							<UserJobBlock
+								visible={visibleBlocks.schools}
+								jobs={jobs}
+								onDelete={handleRemoveJob}
+								onAdd={handleAddJob}
+							/>
+						)}
 
-						<div className={styles.section}>
-							<h4>More details</h4>
-							<p>If you have something to add, write here</p>
-							{visibleBlocks.description ? (
+						{visibleBlocks.description && (
+							<div className={styles.section}>
+								<h4>Add more details</h4>
+								<p>If you have something to add, write here</p>
+
 								<Form.Item name="description" style={{ marginBottom: 0 }}>
 									<TextArea className={styles.textEditor} />
 								</Form.Item>
-							) : (
-								<Button
-									size="small"
-									type="text"
-									disabled={visibleBlocks.description}
-									onClick={() => setVisibleBlocks({ ...visibleBlocks, description: true })}
-								>
-									<PlusOutlined /> Add details
-								</Button>
-							)}
-						</div>
+							</div>
+						)}
+
+						<Dropdown overlay={addMoreMenu}>
+							<a onClick={(e) => e.preventDefault()}>
+								<PlusOutlined /> Add more details
+							</a>
+						</Dropdown>
 					</Space>
 				</Form>
 			</Spin>

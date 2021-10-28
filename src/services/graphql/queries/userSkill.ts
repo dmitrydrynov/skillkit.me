@@ -13,10 +13,10 @@ query($userId: ID!) {
     id
     description
     level
-    skill {
-    	id
-      name
-  	}
+    skill {id, name}
+    tools {id, title}
+    jobs {id, title}
+    schools {id, title}
   }
 }
 `;
@@ -38,6 +38,37 @@ mutation(
       }
     }
     skill: { 
+      connect: {
+        id: $skillId
+      }
+    }
+    schools: $schools
+    jobs: $jobs
+    tools: $tools
+    level: $level
+    description: $description
+  }) {
+    id
+  }
+}
+`;
+
+export const editUserSkillMutation = `
+mutation(
+  $recordId: ID!
+  $skillId: ID!
+  $level: String!
+  $description: String
+  $schools: UserSchoolRelateToManyForCreateInput
+  $tools: UserToolRelateToManyForCreateInput
+  $jobs: UserJobRelateToManyForCreateInput
+) {
+  updateUserSkill(
+    where: {
+      id: $recordId
+    }
+    data: {
+    skill: {
       connect: {
         id: $skillId
       }
