@@ -1,5 +1,4 @@
 import React, { ReactElement, useState } from 'react';
-import AddUserSkillModal from '@components/modals/AddUserSkillModal';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { userSkillsQuery } from '@services/graphql/queries/userSkill';
@@ -7,11 +6,14 @@ import { RootState } from '@store/configure-store';
 import { SkillLevel, getSkillLevel } from 'src/definitions/skill';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, PageHeader, Table } from 'antd';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useSelector } from 'react-redux';
 import { useQuery } from 'urql';
 import styles from './SkillsPage.module.less';
+
+const AddUserSkillModal = dynamic(() => import('@components/modals/AddUserSkillModal'), { ssr: false });
 
 const ProfilePage: NextPageWithLayout = () => {
 	const [visibleAddUserSkillModal, setVisibleAddUserSkillModal] = useState(false);

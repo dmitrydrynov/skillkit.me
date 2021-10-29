@@ -2,21 +2,22 @@ import React, { FC, createRef, useEffect, useState } from 'react';
 import UserJobBlock from '@components/UserJobBlock';
 import UserSchoolBlock from '@components/UserSchoolBlock';
 import UserToolBlock from '@components/UserToolBlock';
-import { createSkillMutation, getUserSkillQuery, searchSkillsQuery } from '@services/graphql/queries/skill';
+import { createSkillMutation, searchSkillsQuery } from '@services/graphql/queries/skill';
 import { createUserMutation } from '@services/graphql/queries/user';
-import { createUserSkillMutation, editUserSkillMutation } from '@services/graphql/queries/userSkill';
+import { createUserSkillMutation, editUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
+import { updateUserToolsMutation } from '@services/graphql/queries/userTool';
 import { RootState } from '@store/configure-store';
 import { SkillLevel, skillLevelsList } from 'src/definitions/skill';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Modal, Row, Select, Space, Tooltip, message, Spin, Dropdown, Menu } from 'antd';
 import { RefSelectProps } from 'antd/lib/select';
+import BraftEditor, { ControlType, EditorState } from 'braft-editor';
+import { Moment } from 'moment';
+import moment from 'moment';
 import Image from 'next/image';
 import { useSelector } from 'react-redux';
 import { OperationResult, useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
-import TextArea from 'rc-textarea';
-import { Moment } from 'moment';
-import moment from 'moment';
 
 type AddSkillArgs = {
 	operation?: 'create' | 'edit';
@@ -29,34 +30,38 @@ type AddSkillArgs = {
 type UserSkill = {
 	skillId: string;
 	level: SkillLevel;
-	description?: string;
-	tool?: UserTool[];
-	job?: UserJob[];
-	school?: UserSchool[];
+	description?: EditorState;
+	tools?: UserTool[];
+	jobs?: UserJob[];
+	schools?: UserSchool[];
 };
 
 type UserSchool = {
+	id?: string;
 	title: string;
 	startedAt?: Moment;
 	finishedAt?: Moment;
-	description?: string;
+	description?: EditorState;
 };
 
 type UserJob = {
+	id?: string;
 	company: string;
 	title: string;
 	startedAt?: Moment;
 	finishedAt?: Moment;
-	description?: string;
+	description?: EditorState;
 };
 
 type UserTool = {
+	id?: string;
 	title: string;
 	level: number;
-	description?: string;
+	description?: EditorState;
 };
 
 const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, recordId, onClose, onFinish }) => {
+	const controls: ControlType[] = ['bold', 'italic', 'underline', 'text-color', 'separator', 'link', 'separator'];
 	const [form] = Form.useForm();
 	const skillRef = createRef<RefSelectProps>();
 	const [createUserSkillResponse] = useMutation(createUserMutation);
@@ -83,6 +88,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 	const [addSkillResponse, addSkill] = useMutation(createSkillMutation);
 	const [addUserSkillResponse, addUserSkill] = useMutation(createUserSkillMutation);
 	const [editUserSkillResponse, editUserSkill] = useMutation(editUserSkillMutation);
+	const [, updateUserTools] = useMutation(updateUserToolsMutation);
 	const [schools, setSchools] = useState<UserSchool[]>([]);
 	const [jobs, setJobs] = useState<UserJob[]>([]);
 	const [tools, setTools] = useState<UserTool[]>([]);
@@ -122,7 +128,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 			form.setFieldsValue({
 				skillId: skill.id,
 				level,
-				description,
+				description: BraftEditor.createEditorState(description),
 				tools,
 				jobs: jobs.map((j: UserJob) => {
 					j.startedAt = moment(j.startedAt);
@@ -145,27 +151,49 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 		form
 			.validateFields()
 			.then(async (formData: UserSkill) => {
-				let { skillId, level, description, tool, job, school } = formData;
-				let schoolsCreateExtend: UserSchool[] = [];
-				let jobsCreateExtend: UserJob[] = [];
-				let toolsCreateExtend: UserTool[] = [];
+				let { skillId, level, description, tools, jobs, schools } = formData;
+				let createData: { tools: UserTool[]; schools: UserSchool[]; jobs: UserJob[] } = {
+					tools: [],
+					schools: [],
+					jobs: [],
+				};
+				let updateData: { tools: any; schools: any; jobs: any } = {
+					tools: [],
+					schools: [],
+					jobs: [],
+				};
 
 				try {
-					if (tool) {
-						tool = tool.map((t: UserTool) => {
-							toolsCreateExtend.push({
+					if (tools) {
+						tools.map((t: UserTool) => {
+							const data = {
 								title: t.title,
 								level: t.level,
-								description: t.description,
-							});
+								description: t.description?.toHTML(),
+							};
+
+							if (t.id) {
+								updateData.tools.push({
+									where: { id: t.id },
+									data,
+								});
+							} else {
+								createData.tools.push(data);
+							}
 
 							return t;
 						});
+
+						if (updateData.tools.length) {
+							await updateUserTools({
+								data: updateData.tools,
+							});
+						}
 					}
 
-					if (job) {
-						job = job.map((j: UserJob) => {
-							jobsCreateExtend.push({
+					if (jobs) {
+						jobs.map((j: UserJob) => {
+							createData.jobs.push({
 								title: j.title,
 								company: j.company,
 								startedAt: j.startedAt,
@@ -177,9 +205,9 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 						});
 					}
 
-					if (school) {
-						school = school.map((s: UserSchool) => {
-							schoolsCreateExtend.push({
+					if (schools) {
+						schools.map((s: UserSchool) => {
+							createData.schools.push({
 								title: s.title,
 								startedAt: s.startedAt,
 								finishedAt: s.finishedAt,
@@ -196,10 +224,10 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 							userId,
 							skillId,
 							level,
-							description,
-							tools: { create: toolsCreateExtend },
-							jobs: { create: jobsCreateExtend },
-							schools: { create: schoolsCreateExtend },
+							description: description?.toHTML(),
+							tools: { create: createData.tools },
+							jobs: { create: createData.jobs },
+							schools: { create: createData.schools },
 						});
 					}
 
@@ -208,10 +236,10 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 							recordId,
 							skillId,
 							level,
-							description,
-							tools: { create: toolsCreateExtend },
-							jobs: { create: jobsCreateExtend },
-							schools: { create: schoolsCreateExtend },
+							description: description?.toHTML(),
+							tools: { create: createData.tools },
+							jobs: { create: createData.jobs },
+							schools: { create: createData.schools },
 						});
 					}
 
@@ -476,7 +504,12 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 								<p>If you have something to add, write here</p>
 
 								<Form.Item name="description" style={{ marginBottom: 0 }}>
-									<TextArea className={styles.textEditor} />
+									<BraftEditor
+										className={styles.textEditor}
+										controls={controls}
+										language="en"
+										contentClassName={styles.textEditorContent}
+									/>
 								</Form.Item>
 							</div>
 						)}

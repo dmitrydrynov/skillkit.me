@@ -44,6 +44,8 @@ const UserToolBlock = ({ visible, tools, onDelete, onAdd }: UserToolBlockParams)
 				</Tooltip>
 			</div>
 
+			<Form.Item name={['tools', idx, 'id']} hidden={true} />
+
 			<Row>
 				<Col span={14}>
 					<Form.Item

@@ -1,3 +1,42 @@
+export const getUserSkillQuery = `
+query($id: ID!) {
+  userSkill(
+    where: {
+      id: $id
+    }
+  ) {
+    id
+    description
+    level
+    skill {
+    	id
+      name
+  	}
+    jobs {
+      id
+      title
+      company
+      description
+      startedAt
+      finishedAt
+    }
+    schools {
+      id
+      title
+      description
+      startedAt
+      finishedAt
+    }
+    tools {
+      id
+      title
+      description
+      level
+    }
+  }
+}
+`;
+
 export const userSkillsQuery = `
 query($userId: ID!) {
   userSkills(
@@ -59,27 +98,26 @@ mutation(
   $skillId: ID!
   $level: String!
   $description: String
-  $schools: UserSchoolRelateToManyForCreateInput
-  $tools: UserToolRelateToManyForCreateInput
-  $jobs: UserJobRelateToManyForCreateInput
+  $schools: UserSchoolRelateToManyForUpdateInput
+  $tools: UserToolRelateToManyForUpdateInput
+  $jobs: UserJobRelateToManyForUpdateInput
 ) {
   updateUserSkill(
     where: {
       id: $recordId
     }
     data: {
-    skill: {
-      connect: {
-        id: $skillId
+      skill: {
+        connect: {
+          id: $skillId
+        }
       }
+      schools: $schools
+      jobs: $jobs
+      tools: $tools
+      level: $level
+      description: $description
     }
-    schools: $schools
-    jobs: $jobs
-    tools: $tools
-    level: $level
-    description: $description
-  }) {
-    id
-  }
+  ) { id }
 }
 `;
