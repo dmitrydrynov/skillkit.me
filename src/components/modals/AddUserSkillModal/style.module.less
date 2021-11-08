@@ -71,6 +71,23 @@
 .addMoreMenu {
 	:global {
 		.ant-dropdown-menu-item {
+
+			&-disabled {
+				svg > path {
+					stroke: @gray-5;
+				}
+			}
+
+			&-icon {
+				width: 24px;
+				height: auto;
+				margin-right: 16px;
+				
+				path {
+					stroke: #2582af;
+				}
+			}
+
 			.title {
 				font-weight: bold;
 			}

@@ -27,7 +27,7 @@ export const authenticatedUserQuery = `
         name
         email
         avatar {
-          src
+          url
         }
         role {
           name

@@ -50,10 +50,10 @@ const UserMenu: FC = () => {
 
 	const userMenu = (
 		<Menu>
-			{userMenuItems.map((menuItem) => (
-				<div key={menuItem.link}>
+			{userMenuItems.map((menuItem, idx) => (
+				<>
 					{!!menuItem.before && menuItem.before}
-					<Menu.Item key={menuItem.link}>
+					<Menu.Item key={idx.toString()}>
 						{!!menuItem.link && (
 							<Link href={menuItem.link}>
 								<a>{menuItem.title}</a>
@@ -66,7 +66,7 @@ const UserMenu: FC = () => {
 							</span>
 						)}
 					</Menu.Item>
-				</div>
+				</>
 			))}
 		</Menu>
 	);
@@ -80,7 +80,7 @@ const UserMenu: FC = () => {
 					setActiveUserMenu(visible);
 				}}
 			>
-				<Menu.Item key="userMenu">
+				<Menu.Item key="userMenuItem">
 					<Space align="center">
 						<div className={styles.info}>
 							<p className={styles.name}>{authUser.name}</p>
@@ -89,7 +89,7 @@ const UserMenu: FC = () => {
 						{authUser.avatar ? (
 							<Avatar
 								size={40}
-								src={IMAGES_HOST + authUser.avatar.src}
+								src={IMAGES_HOST + authUser.avatar.url}
 								className={`${styles.avatar} ant-dropdown-link`}
 							/>
 						) : (

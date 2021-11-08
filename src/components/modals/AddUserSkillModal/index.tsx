@@ -1,70 +1,36 @@
+/// <reference path="index.d.ts" />
 import React, { FC, createRef, useEffect, useState } from 'react';
-import UserJobBlock from '@components/UserJobBlock';
-import UserSchoolBlock from '@components/UserSchoolBlock';
-import UserToolBlock from '@components/UserToolBlock';
+import UserJobBlock from '@components/modals/AddUserSkillModal/UserJobBlock';
+import UserSchoolBlock from '@components/modals/AddUserSkillModal/UserSchoolBlock';
+import UserToolBlock from '@components/modals/AddUserSkillModal/UserToolBlock';
 import { createSkillMutation, searchSkillsQuery } from '@services/graphql/queries/skill';
-import { createUserMutation } from '@services/graphql/queries/user';
+import { deleteUserJobMutation, updateUserJobsMutation } from '@services/graphql/queries/userJob';
+import { deleteUserSchoolMutation, updateUserSchoolsMutation } from '@services/graphql/queries/userSchool';
 import { createUserSkillMutation, editUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
-import { updateUserToolsMutation } from '@services/graphql/queries/userTool';
+import { deleteUserToolMutation, updateUserToolsMutation } from '@services/graphql/queries/userTool';
 import { RootState } from '@store/configure-store';
-import { SkillLevel, skillLevelsList } from 'src/definitions/skill';
+import { skillLevelsList } from 'src/definitions/skill';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Modal, Row, Select, Space, Tooltip, message, Spin, Dropdown, Menu } from 'antd';
 import { RefSelectProps } from 'antd/lib/select';
-import BraftEditor, { ControlType, EditorState } from 'braft-editor';
-import { Moment } from 'moment';
+import BraftEditor, { ControlType } from 'braft-editor';
 import moment from 'moment';
 import Image from 'next/image';
+import { GrCertificate, GrChat, GrTools } from 'react-icons/gr';
+import { HiOutlineBriefcase } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 import { OperationResult, useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
-type AddSkillArgs = {
-	operation?: 'create' | 'edit';
-	visible: boolean;
-	recordId?: string | null;
-	onClose: () => void;
-	onFinish: () => void;
-};
-
-type UserSkill = {
-	skillId: string;
-	level: SkillLevel;
-	description?: EditorState;
-	tools?: UserTool[];
-	jobs?: UserJob[];
-	schools?: UserSchool[];
-};
-
-type UserSchool = {
-	id?: string;
-	title: string;
-	startedAt?: Moment;
-	finishedAt?: Moment;
-	description?: EditorState;
-};
-
-type UserJob = {
-	id?: string;
-	company: string;
-	title: string;
-	startedAt?: Moment;
-	finishedAt?: Moment;
-	description?: EditorState;
-};
-
-type UserTool = {
-	id?: string;
-	title: string;
-	level: number;
-	description?: EditorState;
-};
-
 const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, recordId, onClose, onFinish }) => {
+	/** Local variables */
 	const controls: ControlType[] = ['bold', 'italic', 'underline', 'text-color', 'separator', 'link', 'separator'];
-	const [form] = Form.useForm();
 	const skillRef = createRef<RefSelectProps>();
-	const [createUserSkillResponse] = useMutation(createUserMutation);
+	const [form] = Form.useForm();
+	/** Local state */
+	const [schools, setSchools] = useState<UserSchool[]>([]);
+	const [jobs, setJobs] = useState<UserJob[]>([]);
+	const [tools, setTools] = useState<UserTool[]>([]);
 	const [skillSearchQuery, setsSkillSearchQuery] = useState('');
 	const [visibleBlocks, setVisibleBlocks] = useState({
 		description: false,
@@ -72,7 +38,9 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 		jobs: false,
 		tools: false,
 	});
+	/** Selectors from Redux */
 	const userId = useSelector((state: RootState) => state.user.id);
+	/** Queries */
 	const [{ data: searchSkillData, fetching }, searchSkills] = useQuery({
 		query: searchSkillsQuery,
 		variables: { search: skillSearchQuery },
@@ -85,13 +53,17 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 		pause: true,
 		requestPolicy: 'network-only',
 	});
+
+	/** Mutations */
 	const [addSkillResponse, addSkill] = useMutation(createSkillMutation);
 	const [addUserSkillResponse, addUserSkill] = useMutation(createUserSkillMutation);
 	const [editUserSkillResponse, editUserSkill] = useMutation(editUserSkillMutation);
 	const [, updateUserTools] = useMutation(updateUserToolsMutation);
-	const [schools, setSchools] = useState<UserSchool[]>([]);
-	const [jobs, setJobs] = useState<UserJob[]>([]);
-	const [tools, setTools] = useState<UserTool[]>([]);
+	const [, updateUserJobs] = useMutation(updateUserJobsMutation);
+	const [, updateUserSchools] = useMutation(updateUserSchoolsMutation);
+	const [, deleteUserTool] = useMutation(deleteUserToolMutation);
+	const [, deleteUserJob] = useMutation(deleteUserJobMutation);
+	const [, deleteUserSchool] = useMutation(deleteUserSchoolMutation);
 
 	useEffect(() => {
 		form.resetFields();
@@ -102,16 +74,15 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 	}, [form, getUserSkill, recordId]);
 
 	useEffect(() => {
-		const asyncFunc = async () => {
+		(async () => {
 			await searchSkills();
-		};
-		asyncFunc();
+		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [skillSearchQuery]);
 
 	useEffect(() => {
 		if (getUserSkillData?.userSkill) {
-			const { id, level, skill, jobs, schools, tools, description } = getUserSkillData.userSkill;
+			const { level, skill, jobs, schools, tools, description } = getUserSkillData.userSkill;
 
 			setVisibleBlocks({
 				...visibleBlocks,
@@ -129,16 +100,22 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 				skillId: skill.id,
 				level,
 				description: BraftEditor.createEditorState(description),
-				tools,
+				tools: tools.map((t: UserTool) => {
+					t.description = BraftEditor.createEditorState(t.description);
+
+					return t;
+				}),
 				jobs: jobs.map((j: UserJob) => {
 					j.startedAt = moment(j.startedAt);
 					j.finishedAt = moment(j.finishedAt);
+					j.description = BraftEditor.createEditorState(j.description);
 
 					return j;
 				}),
 				schools: schools.map((s: UserSchool) => {
 					s.startedAt = moment(s.startedAt);
 					s.finishedAt = moment(s.finishedAt);
+					s.description = BraftEditor.createEditorState(s.description);
 
 					return s;
 				}),
@@ -147,17 +124,106 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [getUserSkillData]);
 
+	const getPreSaveToolsData = async (tools: UserTool[]): Promise<UserTool[]> => {
+		let createData: UserTool[] = [];
+		let updateData: { where: { id: string }; data: UserTool }[] = [];
+
+		tools.map((t: UserTool) => {
+			const data = {
+				title: t.title,
+				level: t.level,
+				description: t.description?.toHTML(),
+			};
+
+			if (t.id) {
+				updateData.push({
+					where: { id: t.id },
+					data,
+				});
+			} else {
+				createData.push(data);
+			}
+		});
+
+		if (updateData.length) {
+			await updateUserTools({
+				data: updateData,
+			});
+		}
+
+		return createData;
+	};
+
+	const getPreSaveJobsData = async (jobs: UserJob[]): Promise<UserJob[]> => {
+		let createData: UserJob[] = [];
+		let updateData: { where: { id: string }; data: UserJob }[] = [];
+
+		jobs.map((j: UserJob) => {
+			const data = {
+				title: j.title,
+				company: j.company,
+				startedAt: j.startedAt,
+				finishedAt: j.finishedAt,
+				description: j.description?.toHTML(),
+			};
+
+			if (j.id) {
+				updateData.push({
+					where: { id: j.id },
+					data,
+				});
+			} else {
+				createData.push(data);
+			}
+		});
+
+		if (updateData.length) {
+			await updateUserJobs({
+				data: updateData,
+			});
+		}
+
+		return createData;
+	};
+
+	const getPreSaveSchoolsData = async (newData: UserSchool[]): Promise<UserSchool[]> => {
+		let createData: UserSchool[] = [];
+		let updateData: { where: { id?: string }; data: UserSchool }[] = [];
+
+		newData.map((s: UserSchool) => {
+			const data = {
+				title: s.title,
+				startedAt: s.startedAt,
+				finishedAt: s.finishedAt,
+				description: s.description?.toHTML(),
+			};
+
+			if (s.id) {
+				updateData.push({
+					where: { id: s.id },
+					data,
+				});
+			} else {
+				createData.push(data);
+			}
+		});
+
+		if (updateData.length) {
+			await updateUserSchools({
+				data: updateData,
+			});
+		}
+
+		return createData;
+	};
+
 	const handleOk = () => {
 		form
 			.validateFields()
 			.then(async (formData: UserSkill) => {
 				let { skillId, level, description, tools, jobs, schools } = formData;
-				let createData: { tools: UserTool[]; schools: UserSchool[]; jobs: UserJob[] } = {
-					tools: [],
-					schools: [],
-					jobs: [],
-				};
-				let updateData: { tools: any; schools: any; jobs: any } = {
+				let resultOperation: OperationResult<any, object> | null = null;
+				let createData: PreSaveData = {
 					tools: [],
 					schools: [],
 					jobs: [],
@@ -165,60 +231,17 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 
 				try {
 					if (tools) {
-						tools.map((t: UserTool) => {
-							const data = {
-								title: t.title,
-								level: t.level,
-								description: t.description?.toHTML(),
-							};
-
-							if (t.id) {
-								updateData.tools.push({
-									where: { id: t.id },
-									data,
-								});
-							} else {
-								createData.tools.push(data);
-							}
-
-							return t;
-						});
-
-						if (updateData.tools.length) {
-							await updateUserTools({
-								data: updateData.tools,
-							});
-						}
+						createData.tools = await getPreSaveToolsData(tools);
 					}
 
 					if (jobs) {
-						jobs.map((j: UserJob) => {
-							createData.jobs.push({
-								title: j.title,
-								company: j.company,
-								startedAt: j.startedAt,
-								finishedAt: j.finishedAt,
-								description: j.description,
-							});
-
-							return j;
-						});
+						createData.jobs = await getPreSaveJobsData(jobs);
 					}
 
 					if (schools) {
-						schools.map((s: UserSchool) => {
-							createData.schools.push({
-								title: s.title,
-								startedAt: s.startedAt,
-								finishedAt: s.finishedAt,
-								description: s.description,
-							});
-
-							return s;
-						});
+						createData.schools = await getPreSaveSchoolsData(schools);
 					}
 
-					let resultOperation: OperationResult<any, object> | null = null;
 					if (operation === 'create') {
 						resultOperation = await addUserSkill({
 							userId,
@@ -231,7 +254,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 						});
 					}
 
-					if (operation === 'edit') {
+					if (operation === 'update') {
 						resultOperation = await editUserSkill({
 							recordId,
 							skillId,
@@ -301,13 +324,35 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 		}
 	};
 
-	const handleRemoveSchool = (index: number) => {
-		setSchools((prevData) => {
-			return prevData.filter((item, idx) => index !== idx);
-		});
+	const handleRemoveSchool = async (schoolId: string | null, index: number) => {
+		try {
+			if (schoolId) {
+				const { data, error } = await deleteUserSchool({ where: { id: schoolId } });
 
-		if (schools.length === 0) {
-			setVisibleBlocks({ ...visibleBlocks, schools: false });
+				if (error) {
+					message.error(error.message);
+					return Promise.resolve(false);
+				}
+
+				if (!data.deleteUserSchool) {
+					message.error("We can't delete this school");
+					return Promise.resolve(false);
+				}
+
+				message.success('The school deleted successfully');
+
+				return Promise.resolve(true);
+			}
+
+			setSchools((prevData) => {
+				return prevData.filter((item, idx) => index !== idx);
+			});
+
+			if (schools.length === 0) {
+				setVisibleBlocks({ ...visibleBlocks, schools: false });
+			}
+		} catch (error) {
+			return Promise.resolve(false);
 		}
 	};
 
@@ -320,13 +365,35 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 		}
 	};
 
-	const handleRemoveJob = (index: number) => {
-		setJobs((prevData) => {
-			return prevData.filter((item, idx) => index !== idx);
-		});
+	const handleRemoveJob = async (jobId: string | null, index: number) => {
+		try {
+			if (jobId) {
+				const { data, error } = await deleteUserJob({ where: { id: jobId } });
 
-		if (jobs.length === 0) {
-			setVisibleBlocks({ ...visibleBlocks, jobs: false });
+				if (error) {
+					message.error(error.message);
+					return Promise.resolve(false);
+				}
+
+				if (!data.deleteUserJob) {
+					message.error("We can't delete this job");
+					return Promise.resolve(false);
+				}
+
+				message.success('The job deleted successfully');
+
+				return Promise.resolve(true);
+			}
+
+			setJobs((prevData) => {
+				return prevData.filter((item, idx) => index !== idx);
+			});
+
+			if (jobs.length === 0) {
+				setVisibleBlocks({ ...visibleBlocks, jobs: false });
+			}
+		} catch (error) {
+			return Promise.resolve(false);
 		}
 	};
 
@@ -339,31 +406,68 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 		}
 	};
 
-	const handleRemoveTool = (index: number) => {
-		setTools((prevData) => {
-			return prevData.filter((item, idx) => index !== idx);
-		});
+	const handleRemoveTool = async (toolId: string | null, index: number) => {
+		try {
+			if (toolId) {
+				const { data, error } = await deleteUserTool({ where: { id: toolId } });
 
-		if (jobs.length === 0) {
-			setVisibleBlocks({ ...visibleBlocks, tools: false });
+				if (error) {
+					message.error(error.message);
+					return Promise.resolve(false);
+				}
+
+				if (!data.deleteUserTool) {
+					message.error("We can't delete this tool");
+					return Promise.resolve(false);
+				}
+
+				message.success('The tool deleted successfully');
+
+				return Promise.resolve(true);
+			}
+
+			setTools(tools.filter((item, idx) => idx !== index));
+
+			if (tools.length === 0) {
+				setVisibleBlocks({ ...visibleBlocks, tools: false });
+			}
+		} catch (error) {
+			return Promise.resolve(false);
 		}
 	};
 
 	const addMoreMenu = (
 		<Menu className={styles.addMoreMenu}>
-			<Menu.Item disabled={visibleBlocks.tools} onClick={() => setVisibleBlocks({ ...visibleBlocks, tools: true })}>
+			<Menu.Item
+				key="addTools"
+				icon={<GrTools />}
+				disabled={visibleBlocks.tools}
+				onClick={() => setVisibleBlocks({ ...visibleBlocks, tools: true })}
+			>
 				<div className="title">Add tools</div>
 				<div className="extra">What tools do you use when using this skill?</div>
 			</Menu.Item>
-			<Menu.Item disabled={visibleBlocks.schools} onClick={() => setVisibleBlocks({ ...visibleBlocks, schools: true })}>
+			<Menu.Item
+				key="addSchools"
+				icon={<GrCertificate />}
+				disabled={visibleBlocks.schools}
+				onClick={() => setVisibleBlocks({ ...visibleBlocks, schools: true })}
+			>
 				<div className="title">Add schools</div>
 				<div className="extra">Where did you learn this skill?</div>
 			</Menu.Item>
-			<Menu.Item disabled={visibleBlocks.jobs} onClick={() => setVisibleBlocks({ ...visibleBlocks, jobs: true })}>
+			<Menu.Item
+				key="addJobs"
+				icon={<HiOutlineBriefcase />}
+				disabled={visibleBlocks.jobs}
+				onClick={() => setVisibleBlocks({ ...visibleBlocks, jobs: true })}
+			>
 				<div className="title">Add experience</div>
 				<div className="extra">What job did you apply the skill in?</div>
 			</Menu.Item>
 			<Menu.Item
+				key="addDescription"
+				icon={<GrChat />}
 				disabled={visibleBlocks.description}
 				onClick={() => setVisibleBlocks({ ...visibleBlocks, description: true })}
 			>
@@ -375,7 +479,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 
 	return (
 		<Modal
-			title={(operation === 'create' && 'Add skill') || (operation === 'edit' && 'Edit skill')}
+			title={(operation === 'create' && 'Add skill') || (operation === 'update' && 'Edit skill')}
 			visible={visible}
 			onOk={handleOk}
 			onCancel={handleCancel}
@@ -388,15 +492,16 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 					key="submit"
 					type="primary"
 					size="large"
-					loading={createUserSkillResponse.fetching}
+					loading={addUserSkillResponse.fetching || editUserSkillResponse.fetching}
 					onClick={handleOk}
 					className={styles.submitBtn}
+					disabled={fetching}
 				>
 					Save
 				</Button>,
 			]}
 		>
-			<Spin spinning={fetching}>
+			<Spin spinning={fetching || addUserSkillResponse.fetching || editUserSkillResponse.fetching}>
 				<Form
 					className={styles.form}
 					form={form}
@@ -418,7 +523,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 								]}
 							>
 								<Select
-									disabled={operation === 'edit'}
+									disabled={operation === 'update'}
 									ref={skillRef}
 									showSearch
 									allowClear
@@ -440,7 +545,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 										}).length === 0 && (
 											<Select.Option
 												disabled
-												key={0}
+												key={'emptyOption'}
 												value={''}
 												style={{
 													paddingBottom: 0,
@@ -459,7 +564,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 							<Form.Item name="level" label="Level" rules={[{ required: true, message: 'Please input the email!' }]}>
 								<Select placeholder="Select a skill level">
 									{skillLevelsList.map((item, indx) => (
-										<Select.Option key={indx} value={item.label.toLowerCase()}>
+										<Select.Option key={indx.toString()} value={item.label.toLowerCase()}>
 											<Tooltip title={item.description} placement="right">
 												<Image src={item.icon} alt="" /> {item.label}
 											</Tooltip>
@@ -472,35 +577,20 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 
 					<Space direction="vertical" style={{ width: '100%' }}>
 						{visibleBlocks.tools && (
-							<UserToolBlock
-								visible={visibleBlocks.tools}
-								tools={tools}
-								onDelete={handleRemoveTool}
-								onAdd={handleAddTool}
-							/>
+							<UserToolBlock form={form} tools={tools} onDelete={handleRemoveTool} onAdd={handleAddTool} />
 						)}
 
 						{visibleBlocks.schools && (
-							<UserSchoolBlock
-								visible={visibleBlocks.schools}
-								schools={schools}
-								onDelete={handleRemoveSchool}
-								onAdd={handleAddSchool}
-							/>
+							<UserSchoolBlock form={form} schools={schools} onDelete={handleRemoveSchool} onAdd={handleAddSchool} />
 						)}
 
 						{visibleBlocks.jobs && (
-							<UserJobBlock
-								visible={visibleBlocks.schools}
-								jobs={jobs}
-								onDelete={handleRemoveJob}
-								onAdd={handleAddJob}
-							/>
+							<UserJobBlock form={form} jobs={jobs} onDelete={handleRemoveJob} onAdd={handleAddJob} />
 						)}
 
 						{visibleBlocks.description && (
 							<div className={styles.section}>
-								<h4>Add more details</h4>
+								<h4>Description</h4>
 								<p>If you have something to add, write here</p>
 
 								<Form.Item name="description" style={{ marginBottom: 0 }}>

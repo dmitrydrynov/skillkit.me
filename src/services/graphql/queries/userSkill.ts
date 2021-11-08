@@ -7,6 +7,7 @@ query($id: ID!) {
   ) {
     id
     description
+    isVisible
     level
     skill {
     	id
@@ -51,6 +52,7 @@ query($userId: ID!) {
   ) {
     id
     description
+    isVisible
     level
     skill {id, name}
     tools {id, title}
@@ -119,5 +121,29 @@ mutation(
       description: $description
     }
   ) { id }
+}
+`;
+
+export const deleteUserSkillMutation = `
+mutation ($where: UserSkillWhereUniqueInput!) {
+  deleteUserSkill(where: $where) {
+    id
+  }
+}
+`;
+
+export const updateUserSkillVisibilityMutation = `
+mutation(
+  $recordId: ID!
+  $isVisible: Boolean!
+) {
+  updateUserSkill(
+    where: {
+      id: $recordId
+    }
+    data: {
+      isVisible: $isVisible
+    }
+  ) { id isVisible }
 }
 `;

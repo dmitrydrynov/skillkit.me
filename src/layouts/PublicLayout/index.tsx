@@ -70,7 +70,7 @@ const PublicLayout: FC = ({ children }) => {
 								className={styles.publicLayout_header_menu}
 							>
 								{headerMenu.map((menuItem, indx) => (
-									<Menu.Item key={indx}>
+									<Menu.Item key={indx.toString()}>
 										<Link href={menuItem.link}>
 											<a>{menuItem.title}</a>
 										</Link>

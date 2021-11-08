@@ -5,3 +5,11 @@ mutation ($data: [UserToolUpdateArgs!]!) {
   }
 }
 `;
+
+export const deleteUserToolMutation = `
+mutation ($where: UserToolWhereUniqueInput!) {
+  deleteUserTool(where: $where) {
+    id
+  }
+}
+`;

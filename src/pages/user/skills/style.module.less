@@ -18,7 +18,14 @@
   :global {
     .ant-table-thead > tr > th {
       background-color: unset;
-      border: 0;
+      // border: 0;
+
+      &::before {
+        display: none;
+      }
+    }
+    .ant-table-tbody > tr > td {
+      border: unset;
     }
   }
 }

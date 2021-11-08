@@ -1,6 +1,7 @@
 module.exports = {
 	plugins: ['prettier'],
 	extends: ['next/core-web-vitals', 'plugin:prettier/recommended'],
+	ignorePatterns: ['node_modules/*'],
 	rules: {
 		'prettier/prettier': 'error',
 		'import/order': [

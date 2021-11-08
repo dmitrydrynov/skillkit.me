@@ -42,7 +42,7 @@ const ProfilePage: NextPageWithLayout = () => {
 			const { firstName, lastName, email, country, birthdayDate, avatar } = data.user;
 
 			if (avatar) {
-				setAvatarUrl(avatar.src);
+				setAvatarUrl(avatar.url);
 			}
 
 			form.setFieldsValue({
@@ -217,11 +217,7 @@ const ProfilePage: NextPageWithLayout = () => {
 								label="Date of birth"
 								rules={[{ required: true, message: 'Please input the email!' }]}
 							>
-								<DatePicker
-									placeholder="Birthday date"
-									defaultPickerValue={moment().subtract(10, 'years').startOf('day')}
-									format="DD.MM.YYYY"
-								/>
+								<DatePicker placeholder="Birthday date" defaultPickerValue={moment()} format="DD.MM.YYYY" />
 							</Form.Item>
 
 							<Form.Item>

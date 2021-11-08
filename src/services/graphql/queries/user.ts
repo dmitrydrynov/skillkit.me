@@ -62,7 +62,7 @@ query ($id: ID) {
     country
     birthdayDate
     avatar {
-      src
+      url
     }
   }
 }

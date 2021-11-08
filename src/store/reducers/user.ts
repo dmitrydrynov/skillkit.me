@@ -6,7 +6,7 @@ export type UserState = {
 	name: string;
 	email: string;
 	avatar?: {
-		src: string;
+		url: string;
 	};
 	role: UserRole;
 };
