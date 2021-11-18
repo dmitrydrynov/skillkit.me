@@ -1,10 +1,23 @@
-version: '3'
+version: '3.6'
+
 services:
-  gdhub-frontend:
+  frontend:
     build:
-      context: .
+      context: ./
+      args:
+        - API_HOST=localhost
+        - API_PORT=3000
+    container_name: gamelab_frontend
+    env_file:
+      - .env
+    hostname: gamelab_frontend
+    networks: 
+      - gamelab_default
+    expose:
+      - 3000
     ports:
       - '3000:3000'
-    container_name: gdhub-frontend
-    volumes:
-      - ./:/app
+    restart: unless-stopped
+
+networks:
+  gamelab_default:
