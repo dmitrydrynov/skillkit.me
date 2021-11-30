@@ -69,9 +69,11 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 		form.resetFields();
 
 		if (recordId) {
-			getUserSkill();
+			(async () => {
+				await getUserSkill();
+			})();
 		}
-	}, [form, getUserSkill, recordId]);
+	}, [recordId]);
 
 	useEffect(() => {
 		(async () => {
