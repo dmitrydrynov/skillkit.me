@@ -25,5 +25,12 @@
         "action": "debugWithChrome"
       }
     }
-  ]
+  ],
+  "tasks": {
+			"type": "eslint",
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"label": "eslint: lint whole folder",
+		}
 }
