@@ -3,7 +3,9 @@ import { UserRole } from '../../definitions/user';
 
 export type UserState = {
 	id: string;
-	name: string;
+	firstName: string;
+	lastName: string;
+	fullName: string;
 	email: string;
 	avatar?: {
 		url: string;
@@ -13,7 +15,9 @@ export type UserState = {
 
 const initialState: UserState = {
 	id: '',
-	name: '',
+	firstName: '',
+	lastName: '',
+	fullName: '',
 	email: '',
 	role: UserRole.UNKNOWN,
 };
@@ -34,8 +38,6 @@ const userReducer = (state = initialState, action: AnyAction): UserState => {
 };
 
 export const setUserData = (payload: UserState): AnyAction => {
-	console.log();
-
 	return {
 		type: 'SET_USER_DATA',
 		payload,

@@ -1,41 +1,47 @@
-export const authorizeMutation = `mutation ($email: String!, $password: String!) {
-  authenticateUserWithPassword(email: $email, password: $password) {
-    ...on UserAuthenticationWithPasswordSuccess {
-      sessionToken
-      item {
-        name
-        email
-        id
-        role {
-          id
-          name
-          canManageUsers
-        }
-      }
+export const signInMutation = `
+mutation ($email: String!, $password: String) {
+  signIn(email: $email, password: $password) {
+    ... on AuthNextResponse {
+      next
     }
-    ...on UserAuthenticationWithPasswordFailure {
-      errorMessage: message
+    ... on AuthTokenResponse {
+      token
+      user {
+        id
+        firstName
+        lastName
+        fullName
+        email
+      }
     }
   }
 }`;
 
 export const authenticatedUserQuery = `
-  {
-    authenticatedItem {
-      ...on User {
-        id
-        name
-        email
-        avatar {
-          url
-        }
-        role {
-          name
-          canManageUsers
-        }
-      }
+query {
+  authenticatedUser {
+    id
+    firstName
+    lastName
+    fullName
+    email
+  }
+}
+`;
+
+export const signInByCodeQuery = `
+query($code: String!, $state: String) {
+  signInByCode(code: $code, state: $state) {
+    token
+    user {
+      id
+      firstName
+      lastName
+      fullName
+      email
     }
   }
+}
 `;
 
 export const endSessionMutation = `

@@ -83,7 +83,7 @@ const UserMenu: FC = () => {
 				<Menu.Item key="userMenuItem">
 					<Space align="center">
 						<div className={styles.info}>
-							<p className={styles.name}>{authUser.name}</p>
+							<p className={styles.name}>{authUser.fullName}</p>
 							<p className={styles.email}>{authUser.email}</p>
 						</div>
 						{authUser.avatar ? (

@@ -3,15 +3,16 @@ import { getCookie } from '@helpers/cookie';
 import PublicLayout from '@layouts/PublicLayout';
 import '@styles/globals.less';
 import { graphqlClient } from '@services/graphql/client';
-import { authenticatedUserQuery } from '@services/graphql/queries/auth';
+import { authenticatedUserQuery, signInByCodeQuery } from '@services/graphql/queries/auth';
 import { store } from '@store/configure-store';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
 import ProgressBar from '@badrap/bar-of-progress';
 import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { Provider as StoreProvider, useDispatch } from 'react-redux';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Provider as UrqlProvider, useQuery } from 'urql';
 
 export type NextPageWithLayout = NextPage & {
@@ -31,10 +32,17 @@ const progress = new ProgressBar({
 
 const AuthProvider: FC = ({ children }): any => {
 	const dispatch = useDispatch();
+	const { query: queryParams } = useRouter();
 	const [sessionToken, setSessionToken] = useState<string | null>(null);
 	const [userData] = useQuery({
 		query: authenticatedUserQuery,
 		pause: !sessionToken,
+	});
+
+	const [userDataByCode] = useQuery({
+		query: signInByCodeQuery,
+		variables: { code: queryParams.code, state: queryParams.state },
+		pause: !queryParams,
 	});
 
 	useEffect(() => {
@@ -50,11 +58,13 @@ const AuthProvider: FC = ({ children }): any => {
 	useEffect(() => {
 		const { data } = userData;
 
+		console.log('queryParams', queryParams);
+
 		if (data && sessionToken) {
 			dispatch(setLogin({ token: sessionToken }));
-			dispatch(setUserData(data.authenticatedItem));
+			dispatch(setUserData(data.authenticatedUser));
 		}
-	}, [dispatch, sessionToken, userData]);
+	}, [dispatch, sessionToken, userData, userDataByCode]);
 
 	return children;
 };

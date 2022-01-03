@@ -1,4 +1,8 @@
 export const getCookie = (name: string): string => {
+	if (typeof document === 'undefined') {
+		return '';
+	}
+
 	const cookieArray: Array<string> = document.cookie.split(';');
 	const cookieArrayLength: number = cookieArray.length;
 	const cookieName = `${name}=`;

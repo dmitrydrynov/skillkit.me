@@ -1,10 +1,8 @@
 import React, { FC } from 'react';
 import gdhubLogo from '@assets/images/gdhub-logo.svg';
 import UserMenu from '@components/UserMenu';
-// import { RootState } from '@store/configure-store';
+import withAuth from '@helpers/withAuth';
 import { Col, Layout, Row } from 'antd';
-// import { useRouter } from 'next/router';
-// import { useSelector } from 'react-redux';
 import Image from 'next/image';
 import styles from './ProtectedLayout.module.less';
 
@@ -37,4 +35,4 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children }) => {
 	);
 };
 
-export default ProtectedLayout;
+export default withAuth(ProtectedLayout);
