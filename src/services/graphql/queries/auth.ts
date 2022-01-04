@@ -25,6 +25,7 @@ query {
     lastName
     fullName
     email
+    avatar
   }
 }
 `;
@@ -39,6 +40,7 @@ query($code: String!, $state: String, $serviceName: String!) {
       lastName
       fullName
       email
+      avatar
     }
   }
 }
