@@ -32,7 +32,7 @@ const headerMenu: HeaderMenu[] = [
 const PublicLayout: FC = ({ children }) => {
 	const router = useRouter();
 	const [currentHeaderMenuItem, setCurrentHeaderMenuItem] = useState('');
-	const { loggedIn } = useSelector((state: RootState) => state.auth);
+	const { loggedIn, logginingIn } = useSelector((state: RootState) => state.auth);
 	const [visibleSignInModal, setVisibleSignInModal] = useState(false);
 	const [visibleSignUpModal, setVisibleSignUpModal] = useState(false);
 
@@ -79,7 +79,7 @@ const PublicLayout: FC = ({ children }) => {
 							</Menu>
 						</Col>
 						<Col>
-							{!loggedIn ? (
+							{!loggedIn && !logginingIn ? (
 								<Space>
 									<Button type="text" onClick={handleSignIn}>
 										Sign in

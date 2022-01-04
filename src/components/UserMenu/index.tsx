@@ -3,7 +3,7 @@ import { endSessionMutation } from '@services/graphql/queries/auth';
 import { RootState } from '@store/configure-store';
 import { setLogout } from '@store/reducers/auth';
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown, Menu, Space } from 'antd';
+import { Avatar, Dropdown, Menu, Space, Skeleton } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,6 +24,7 @@ const UserMenu: FC = () => {
 	const router = useRouter();
 	const [activeUserMenu, setActiveUserMenu] = useState(false);
 	const [, endSession] = useMutation(endSessionMutation);
+	const { loggedIn, logginingIn } = useSelector((state: RootState) => state.auth);
 	const authUser = useSelector((state: RootState) => state.user);
 
 	const userMenuItems: MenuItem[] = [
@@ -74,28 +75,42 @@ const UserMenu: FC = () => {
 	return (
 		<Menu className={styles.userMenu} defaultActiveFirst={false} selectedKeys={activeUserMenu ? ['userMenu'] : []}>
 			<Dropdown
-				overlay={userMenu}
+				overlay={logginingIn ? null : userMenu}
 				trigger={['click']}
 				onVisibleChange={(visible: boolean) => {
 					setActiveUserMenu(visible);
 				}}
 			>
 				<Menu.Item key="userMenuItem">
-					<Space align="center">
-						<div className={styles.info}>
-							<p className={styles.name}>{authUser.fullName}</p>
-							<p className={styles.email}>{authUser.email}</p>
-						</div>
-						{authUser.avatar ? (
-							<Avatar
-								size={40}
-								src={IMAGES_HOST + authUser.avatar.url}
-								className={`${styles.avatar} ant-dropdown-link`}
-							/>
-						) : (
-							<Avatar size={40} icon={<UserOutlined />} className={`${styles.avatar} ant-dropdown-link`} />
-						)}
-					</Space>
+					{logginingIn ? (
+						<Space align="center">
+							<div className={styles.info}>
+								<p className={styles.name}>
+									<Skeleton.Button style={{ width: 100 }} shape="round" size={18} active={true} />
+								</p>
+								<p className={styles.email}>
+									<Skeleton.Button style={{ width: 130 }} shape="round" size={14} active={true} />
+								</p>
+							</div>
+							<Skeleton.Avatar size={40} active={true} />
+						</Space>
+					) : (
+						<Space align="center">
+							<div className={styles.info}>
+								<p className={styles.name}>{authUser.fullName}</p>
+								<p className={styles.email}>{authUser.email}</p>
+							</div>
+							{authUser.avatar ? (
+								<Avatar
+									size={40}
+									src={IMAGES_HOST + authUser.avatar.url}
+									className={`${styles.avatar} ant-dropdown-link`}
+								/>
+							) : (
+								<Avatar size={40} icon={<UserOutlined />} className={`${styles.avatar} ant-dropdown-link`} />
+							)}
+						</Space>
+					)}
 				</Menu.Item>
 			</Dropdown>
 		</Menu>

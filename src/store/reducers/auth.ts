@@ -14,10 +14,12 @@ export interface ActionRes<P = unknown> {
 
 export type AuthState = {
 	loggedIn: boolean;
+	logginingIn: boolean;
 };
 
 const initialState = {
 	loggedIn: false,
+	logginingIn: false,
 };
 
 const authReducer = (state = initialState, action: AnyAction): AuthState => {
@@ -31,6 +33,9 @@ const authReducer = (state = initialState, action: AnyAction): AuthState => {
 			}
 
 			return state;
+		}
+		case 'LOGINING-IN': {
+			return { ...state, logginingIn: payload };
 		}
 		case 'LOGOUT': {
 			if (process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
@@ -46,6 +51,10 @@ const authReducer = (state = initialState, action: AnyAction): AuthState => {
 
 export const setLogin = (payload: { token: string }): AnyAction => {
 	return { type: 'LOGIN', payload };
+};
+
+export const setLoginingIn = (payload: boolean): AnyAction => {
+	return { type: 'LOGINING-IN', payload };
 };
 
 export const setLogout = (): AppThunk => {

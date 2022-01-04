@@ -30,8 +30,8 @@ query {
 `;
 
 export const signInByCodeQuery = `
-query($code: String!, $state: String) {
-  signInByCode(code: $code, state: $state) {
+query($code: String!, $state: String, $serviceName: String!) {
+  signInByCode(code: $code, state: $state, serviceName: $serviceName) {
     token
     user {
       id

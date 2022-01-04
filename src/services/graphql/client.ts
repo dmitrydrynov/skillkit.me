@@ -10,9 +10,11 @@ export const graphqlClient = createClient({
 
 		return {
 			credentials: 'include',
-			headers: {
-				Authorization: token || '',
-			},
+			headers: token
+				? {
+						Authorization: token || '',
+				  }
+				: null,
 		};
 	},
 });
