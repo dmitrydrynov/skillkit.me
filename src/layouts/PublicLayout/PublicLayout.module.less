@@ -1,35 +1,37 @@
 .layout {
-    position: absolute;
-    min-height: 100% !important;
-    width: 100%;
+	position: absolute;
+	min-height: 100% !important;
+	width: 100%;
 }
 
 .publicLayout {
-    &_header {
-        background-color: @layout-body-background !important;
+	padding: 40px 80px;
 
-        &_menu {
-            background-color: transparent !important;
-            border-bottom: 0 !important;
+	&_header {
+		background-color: @layout-body-background !important;
 
-            :global {
-                .ant-menu-item {
-                    .ant-menu-title-content {
-                        padding: 8px 16px;
-                        border-radius: @border-radius-base;
-                        transition: background 0.3s;
-                        height: @height-base;
-                    }
-                }
-            }
-        }
-    }
+		&_menu {
+			background-color: transparent !important;
+			border-bottom: 0 !important;
+
+			:global {
+				.ant-menu-item {
+					.ant-menu-title-content {
+						padding: 8px 16px;
+						border-radius: @border-radius-base;
+						transition: background 0.3s;
+						height: @height-base;
+					}
+				}
+			}
+		}
+	}
 }
 
 .logo {
-    float: left;
-    width: 120px;
-    height: 31px;
-    margin: 16px 24px 16px 0;
-    // background: rgba(0, 0, 0, 0.2);
+	float: left;
+	width: 120px;
+	height: 31px;
+	margin: 16px 24px 16px 0;
+	// background: rgba(0, 0, 0, 0.2);
 }

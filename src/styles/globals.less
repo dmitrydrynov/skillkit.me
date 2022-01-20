@@ -2,6 +2,7 @@
 // @tailwind components;
 // @tailwind utilities;
 
+@import '../assets/fonts//comfortaa/stylesheet.css';
 @import '~antd/dist/antd.less';
 @import '~flag-icon-css/css/flag-icon.css';
 @import '~braft-editor/dist/index.css';
@@ -49,6 +50,23 @@
 	color: @gray-13;
 	font-weight: 600;
 	background-color: @gray-4;
+}
+
+.ant-btn {
+	padding: 16px 72px;
+
+	> span {
+		font-size: 20px;
+		font-weight: 700;
+	}
+}
+
+.ant-btn-lg {
+	padding: 24px 120px !important;
+
+	> span {
+		font-size: 32px;
+	}
 }
 
 .ant-btn-link > span {

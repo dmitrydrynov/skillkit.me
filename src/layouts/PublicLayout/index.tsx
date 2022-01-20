@@ -60,10 +60,8 @@ const PublicLayout: FC = ({ children }) => {
 				<Header className={styles.publicLayout_header}>
 					<Row align="middle">
 						<Col flex="1">
-							<div className={styles.logo}>
-								<Image src={gdhubLogo} width="100%" alt="gdhub logo" />
-							</div>
-							<Menu
+							<Image src={gdhubLogo} className={styles.logo} alt="gdhub logo" />
+							{/* <Menu
 								onClick={handleClick}
 								selectedKeys={[currentHeaderMenuItem]}
 								mode="horizontal"
@@ -76,15 +74,15 @@ const PublicLayout: FC = ({ children }) => {
 										</Link>
 									</Menu.Item>
 								))}
-							</Menu>
+							</Menu> */}
 						</Col>
 						<Col>
 							{!loggedIn && !logginingIn ? (
 								<Space>
-									<Button type="text" onClick={handleSignIn}>
+									<Button type="secondary" shape="round" onClick={handleSignIn}>
 										Sign in
 									</Button>
-									<Button type="primary" onClick={handleSignUp}>
+									<Button type="primary" shape="round" onClick={handleSignUp}>
 										Sign up
 									</Button>
 								</Space>
