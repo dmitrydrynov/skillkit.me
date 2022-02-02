@@ -53,7 +53,9 @@ const Home: NextPage = () => {
 					The more flexible alternative to the classic resume. Build your professional skillset and share it with
 					customers and employers.
 				</p>
-				<Button shape="round" size="large" type="primary">Start Now</Button>
+				<Button shape="round" size="large" type="primary">
+					Start Now
+				</Button>
 			</div>
 		</>
 	);

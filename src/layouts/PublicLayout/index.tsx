@@ -54,8 +54,8 @@ const PublicLayout: FC = ({ children }) => {
 
 	return (
 		<>
-			{visibleSignInModal && <SignInModal visible={visibleSignInModal} onClose={() => setVisibleSignInModal(false)} />}
-			{visibleSignUpModal && <SignUpModal visible={visibleSignUpModal} onClose={() => setVisibleSignUpModal(false)} />}
+			{<SignInModal visible={visibleSignInModal} onClose={() => setVisibleSignInModal(false)} />}
+			{<SignUpModal visible={visibleSignUpModal} onClose={() => setVisibleSignUpModal(false)} />}
 			<Layout className={styles.layout}>
 				<Header className={styles.publicLayout_header}>
 					<Row align="middle">
