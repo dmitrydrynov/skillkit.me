@@ -17,7 +17,7 @@
     "@heroicons/react": "^1.0.4",
     "@keystone-next/document-renderer": "^4.0.1",
     "@urql/exchange-auth": "^0.1.7",
-    "@urql/exchange-multipart-fetch": "^0.1.13",
+    "@urql/exchange-multipart-fetch": "^0.1.14",
     "antd": "^4.16.13",
     "braft-editor": "^2.3.9",
     "cross-env": "^7.0.3",

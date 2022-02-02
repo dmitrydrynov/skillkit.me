@@ -52,7 +52,7 @@ mutation($email: String!) {
 `;
 
 export const userDataQuery = `
-query ($id: ID) {
+query ($id: Float!) {
   user(where: {
     id: $id
   }) {
@@ -61,22 +61,20 @@ query ($id: ID) {
     email
     country
     birthdayDate
-    avatar {
-      url
-    }
+    avatar
   }
 }
 `;
 
 export const updateUserMutation = `
 mutation(
-  $id: ID
+  $id: Float!
   $firstName: String!
   $lastName: String!
   $email: String!
   $country: String!
   $birthdayDate: DateTime!
-  $avatar: ImageFieldInput
+  $avatar: Upload
 ) {
   updateUser(
     where: {id: $id}

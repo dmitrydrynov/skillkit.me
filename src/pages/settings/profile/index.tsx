@@ -33,6 +33,7 @@ const ProfilePage: NextPageWithLayout = () => {
 	const [{ data, fetching }] = useQuery({
 		query: userDataQuery,
 		variables: { id: userId },
+		pause: !userId,
 	});
 	const [avatarLoading, setAvatarLoading] = useState(false);
 	const [avatarUrl, setAvatarUrl] = useState(null);
@@ -40,6 +41,7 @@ const ProfilePage: NextPageWithLayout = () => {
 	useEffect(() => {
 		if (data?.user) {
 			const { firstName, lastName, email, country, birthdayDate, avatar } = data.user;
+			const countryData = countries.find((c) => c.value.toLowerCase() === country.toLowerCase());
 
 			if (avatar) {
 				setAvatarUrl(avatar.url);
@@ -49,27 +51,30 @@ const ProfilePage: NextPageWithLayout = () => {
 				firstName,
 				lastName,
 				email,
-				country: country || undefined,
-				birthdayDate: moment(birthdayDate) || null,
+				country: countryData?.label || undefined,
+				birthdayDate: birthdayDate ? moment(birthdayDate) : null,
 			});
 		}
-	}, [data, form]);
+	}, [countries, data, form]);
 
 	const countryFlag = (countryCode: string) => <span className={`flag-icon flag-icon-${countryCode.toLowerCase()}`} />;
 
 	const handleFinish = async () => {
 		const values = form.getFieldsValue();
+		const countryData = countries.find((c) => c.label.toLowerCase() === values.country.toLowerCase());
+
 		const updateData = {
 			...values,
 			id: userId,
 			birthdayDate: new Date(values.birthdayDate).toISOString(),
+			country: countryData?.value.toLowerCase() || null,
 		};
 
 		if (values.avatar) {
-			updateData.avatar = {
-				upload: values.avatar.file.originFileObj,
-			};
+			updateData.avatar = values.avatar.file.originFileObj;
 		}
+
+		debugger;
 
 		try {
 			const { error } = await updateUserData(updateData);
@@ -127,7 +132,16 @@ const ProfilePage: NextPageWithLayout = () => {
 				<Col flex="1" className={styles.content}>
 					<h3>Profile settings</h3>
 					<Spin spinning={fetching}>
-						<Form className={styles.form} form={form} layout="vertical" onFinish={handleFinish} requiredMark={false}>
+						<Form
+							className={styles.form}
+							form={form}
+							layout="vertical"
+							onFinish={handleFinish}
+							requiredMark={false}
+							autoComplete="off"
+							autoCorrect="off"
+							spellCheck="false"
+						>
 							<Form.Item name="avatar" label="Photo">
 								<Upload
 									listType="picture-card"
@@ -194,18 +208,17 @@ const ProfilePage: NextPageWithLayout = () => {
 							<Form.Item
 								name="country"
 								label="Country"
-								rules={[{ required: true, message: 'Please input the email!' }]}
+								rules={[{ required: true, message: 'Please input the field!' }]}
 							>
 								<AutoComplete
 									allowClear
 									placeholder="Country"
 									filterOption={(inputValue, option) =>
-										option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+										option!.title.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1
 									}
-									suffixIcon={<span className="flag-icon flag-icon-by" />}
 								>
 									{countries.map(({ value, label }: any) => (
-										<AutoComplete.Option key={value} value={label}>
+										<AutoComplete.Option key={value} value={label} title={label}>
 											{countryFlag(value)} {label}
 										</AutoComplete.Option>
 									))}
@@ -217,7 +230,7 @@ const ProfilePage: NextPageWithLayout = () => {
 								label="Date of birth"
 								rules={[{ required: true, message: 'Please input the email!' }]}
 							>
-								<DatePicker placeholder="Birthday date" defaultPickerValue={moment()} format="DD.MM.YYYY" />
+								<DatePicker placeholder="Birthday date" defaultPickerValue={moment()} format="MM/DD/YYYY" />
 							</Form.Item>
 
 							<Form.Item>
