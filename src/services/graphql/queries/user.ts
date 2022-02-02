@@ -52,7 +52,7 @@ mutation($email: String!) {
 `;
 
 export const userDataQuery = `
-query ($id: ID) {
+query ($id: Float!) {
   user(where: {
     id: $id
   }) {
@@ -61,9 +61,7 @@ query ($id: ID) {
     email
     country
     birthdayDate
-    avatar {
-      url
-    }
+    avatar
   }
 }
 `;
