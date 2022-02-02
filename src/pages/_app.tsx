@@ -49,7 +49,7 @@ const AuthProvider: FC = ({ children }): any => {
 
 			if (token) {
 				setSessionToken(token);
-				routerPush('/');
+				// routerPush('/');
 			}
 		}
 	}, []);

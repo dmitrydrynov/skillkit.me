@@ -33,6 +33,7 @@ const ProfilePage: NextPageWithLayout = () => {
 	const [{ data, fetching }] = useQuery({
 		query: userDataQuery,
 		variables: { id: userId },
+		pause: !userId,
 	});
 	const [avatarLoading, setAvatarLoading] = useState(false);
 	const [avatarUrl, setAvatarUrl] = useState(null);
@@ -50,7 +51,7 @@ const ProfilePage: NextPageWithLayout = () => {
 				lastName,
 				email,
 				country: country || undefined,
-				birthdayDate: moment(birthdayDate) || null,
+				birthdayDate: birthdayDate ? moment(birthdayDate) : null,
 			});
 		}
 	}, [data, form]);

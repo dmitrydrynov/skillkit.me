@@ -21,8 +21,6 @@ export const authenticatedUserQuery = `
 query {
   authenticatedUser {
     id
-    firstName
-    lastName
     fullName
     email
     avatar
