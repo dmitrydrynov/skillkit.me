@@ -98,15 +98,15 @@ mutation(
 
 export const changeUserPasswordMutation = `
 mutation(
-  $id: ID
-  $password: String!
+  $useOTP: Boolean!
+  $oldPassword: String
+  $newPassword: String
+  $confirmPassword: String
 ) {
-  updateUser(
-    where: {id: $id}
-    data: {
-      password: $password
-    }
-  ) {
-    id
-  }
+  changeUserPassword(
+    useOTP: $useOTP
+    oldPassword: $oldPassword
+    newPassword: $newPassword
+    confirmPassword: $confirmPassword
+  )
 }`;

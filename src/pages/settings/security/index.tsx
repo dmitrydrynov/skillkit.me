@@ -1,10 +1,10 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import SettingsMenu from '@components/menus/SettingsMenu';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { changeUserPasswordMutation } from '@services/graphql/queries/user';
 import { RootState } from '@store/configure-store';
-import { Button, Col, Form, Input, Row, message } from 'antd';
+import { Button, Col, Form, Input, Row, message, Checkbox, Switch } from 'antd';
 import Head from 'next/head';
 import { useSelector } from 'react-redux';
 import { useMutation } from 'urql';
@@ -14,19 +14,22 @@ const SecurityPage: NextPageWithLayout = () => {
 	const [form] = Form.useForm();
 	const userId = useSelector((state: RootState) => state.user.id);
 	const [, changeUserPassword] = useMutation(changeUserPasswordMutation);
+	const [isOTP, setIsOTP] = useState(false);
 
 	const handleFinish = async () => {
-		const { newPassword, confirmPassword } = form.getFieldsValue();
-
-		if (!newPassword || newPassword !== confirmPassword) {
+		const { useOTP, oldPassword, newPassword, confirmPassword } = form.getFieldsValue();
+		debugger;
+		if (newPassword !== confirmPassword) {
 			message.error('Password mismatch!');
 			return;
 		}
 
 		try {
 			const { error } = await changeUserPassword({
-				password: newPassword,
-				id: userId,
+				useOTP,
+				oldPassword,
+				newPassword,
+				confirmPassword,
 			});
 
 			if (error) {
@@ -54,12 +57,23 @@ const SecurityPage: NextPageWithLayout = () => {
 				<Col flex="1" className={styles.content}>
 					<h3>Security settings</h3>
 					<Form className={styles.form} form={form} layout="vertical" onFinish={handleFinish} requiredMark={false}>
-						<Form.Item name="newPassword" rules={[{ required: true, message: 'Please input a new password!' }]}>
-							<Input.Password placeholder="New password" />
+						<Form.Item name="useOTP" label="Use one time password (OTP)" valuePropName="checked">
+							{/* <Checkbox onChange={(el) => setIsOTP(el.target.checked)}>Use one time password (OTP)</Checkbox> */}
+							<Switch onChange={(value) => setIsOTP(value)} />
 						</Form.Item>
-						<Form.Item name="confirmPassword" rules={[{ required: true, message: 'Please confirm the password!' }]}>
-							<Input.Password placeholder="Confirm password" />
-						</Form.Item>
+						{!isOTP && (
+							<>
+								<Form.Item name="oldPassword" rules={[{ required: true, message: 'Please input an old password!' }]}>
+									<Input.Password placeholder="Old password" />
+								</Form.Item>
+								<Form.Item name="newPassword" rules={[{ required: true, message: 'Please input a new password!' }]}>
+									<Input.Password placeholder="New password" />
+								</Form.Item>
+								<Form.Item name="confirmPassword" rules={[{ required: true, message: 'Please confirm the password!' }]}>
+									<Input.Password placeholder="Confirm password" />
+								</Form.Item>
+							</>
+						)}
 						<Form.Item>
 							<Button type="primary" htmlType="submit" style={{ marginTop: '15px' }}>
 								Change password
