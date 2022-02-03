@@ -44,7 +44,7 @@ const ProfilePage: NextPageWithLayout = () => {
 			const countryData = countries.find((c) => c.value.toLowerCase() === country.toLowerCase());
 
 			if (avatar) {
-				setAvatarUrl(avatar.url);
+				setAvatarUrl(IMAGES_HOST + avatar);
 			}
 
 			form.setFieldsValue({
@@ -74,10 +74,8 @@ const ProfilePage: NextPageWithLayout = () => {
 			updateData.avatar = values.avatar.file.originFileObj;
 		}
 
-		debugger;
-
 		try {
-			const { error } = await updateUserData(updateData);
+			const { data, error } = await updateUserData(updateData);
 
 			if (error) {
 				message.error(error.message);
@@ -86,7 +84,7 @@ const ProfilePage: NextPageWithLayout = () => {
 
 			message.success('Profile saved!');
 
-			dispatch(setUserData(updateData));
+			dispatch(setUserData(data.updateUser));
 		} catch (error: any) {
 			message.error(error.message);
 		}
@@ -147,20 +145,10 @@ const ProfilePage: NextPageWithLayout = () => {
 									listType="picture-card"
 									className="avatar-uploader"
 									showUploadList={false}
-									// customRequest={uploadAvatar}
-									// action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-									// beforeUpload={beforeUpload}
 									onChange={handleAvatarChange}
 								>
 									{avatarUrl ? (
-										<Image
-											loader={({ src }) => IMAGES_HOST + src}
-											src={avatarUrl}
-											alt="avatar"
-											className={styles.avatar}
-											width="200px"
-											height="200px"
-										/>
+										<Image src={avatarUrl} alt="avatar" className={styles.avatar} width="200px" height="200px" />
 									) : (
 										uploadButton
 									)}

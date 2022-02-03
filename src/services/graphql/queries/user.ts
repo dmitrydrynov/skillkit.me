@@ -87,7 +87,12 @@ mutation(
       avatar: $avatar
     }
   ) {
-    id
+    firstName
+    lastName
+    email
+    country
+    birthdayDate
+    avatar
   }
 }`;
 
