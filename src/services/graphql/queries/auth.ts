@@ -24,6 +24,7 @@ query {
     fullName
     email
     avatar
+    useOTP
   }
 }
 `;

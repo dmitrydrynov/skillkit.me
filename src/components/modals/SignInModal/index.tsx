@@ -40,9 +40,10 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 	}, [form]);
 
 	useEffect(() => {
-		const { data, error, fetching } = authorizedResponse;
+		const { data, error } = authorizedResponse;
 
 		if (!data && !error) {
+			authorizedResponse.fetching = false;
 			return;
 		}
 
@@ -76,6 +77,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 
 	const handleOk = async () => {
 		const { email, password }: SignInRequest = await form.validateFields();
+
 		setState({
 			...state,
 			email: email ? email : state.email,
@@ -95,6 +97,8 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 	const handleDiscordOk = async () => {};
 
 	const handleCancel = () => {
+		setState({ step: FormStep.Email });
+		authorizedResponse.fetching = false;
 		onClose();
 	};
 

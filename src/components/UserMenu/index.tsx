@@ -103,7 +103,7 @@ const UserMenu: FC = () => {
 							{authUser.avatar ? (
 								<Avatar
 									size={40}
-									src={IMAGES_HOST + authUser.avatar}
+									src={authUser.avatar.includes('https://') ? authUser.avatar : IMAGES_HOST + authUser.avatar}
 									className={`${styles.avatar} ant-dropdown-link`}
 								/>
 							) : (

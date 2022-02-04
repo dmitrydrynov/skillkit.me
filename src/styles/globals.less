@@ -2,7 +2,7 @@
 // @tailwind components;
 // @tailwind utilities;
 
-@import '../assets/fonts//comfortaa/stylesheet.css';
+@import '../assets/fonts/als-story/stylesheet.css';
 @import '~antd/dist/antd.less';
 @import '~flag-icon-css/css/flag-icon.css';
 @import '~braft-editor/dist/index.css';
@@ -53,16 +53,22 @@
 }
 
 .ant-btn {
-	padding: 16px 72px;
+	// border-radius: calc(@border-radius-base);
+
+	&:not(.ant-btn-text) {
+		padding-left: 24px;
+		padding-right: 24px;
+		border-radius: calc(@border-radius-base * 2);
+	}
 
 	> span {
-		font-size: 20px;
 		font-weight: 700;
 	}
 }
 
 .ant-btn-lg {
-	padding: 24px 120px !important;
+	padding-left: 60px !important;
+	padding-right: 60px !important;
 
 	> span {
 		font-size: 32px;
@@ -80,4 +86,9 @@
 .ant-btn-link:focus > span {
 	color: @link-hover-color;
 	text-decoration: underline;
+}
+
+.ant-message-notice-content {
+	padding: 16px 32px;
+	border-radius: calc(@border-radius-base * 2);
 }

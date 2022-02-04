@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, ReactElement, ReactNode, useEffect, useState } from 'react';
 import { getCookie, setCookie } from '@helpers/cookie';
 import PublicLayout from '@layouts/PublicLayout';
@@ -27,20 +28,21 @@ const progress = new ProgressBar({
 	size: 2,
 	className: 'bar-of-progress',
 	delay: 100,
+	color: '#C057FF',
 });
 
 const AuthProvider: FC = ({ children }): any => {
 	const dispatch = useDispatch();
 	const { query: queryParams, push: routerPush } = useRouter();
 	const [sessionToken, setSessionToken] = useState<string | null>(null);
-	const [userData] = useQuery({
-		query: authenticatedUserQuery,
-		pause: !sessionToken,
-	});
 	const [userDataByCode] = useQuery({
 		query: signInByCodeQuery,
 		variables: { code: queryParams.code, state: queryParams.state, serviceName: 'discord' },
 		pause: !queryParams?.code,
+	});
+	const [userData] = useQuery({
+		query: authenticatedUserQuery,
+		pause: !sessionToken,
 	});
 
 	useEffect(() => {
@@ -49,7 +51,6 @@ const AuthProvider: FC = ({ children }): any => {
 
 			if (token) {
 				setSessionToken(token);
-				// routerPush('/');
 			}
 		}
 	}, []);
@@ -74,6 +75,11 @@ const AuthProvider: FC = ({ children }): any => {
 			dispatch(setLogin({ token: sessionToken }));
 			dispatch(setUserData(data.authenticatedUser));
 		}
+		// else {
+		// 	setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, null);
+		// 	setSessionToken(null);
+		// 	routerPush('/');
+		// }
 	}, [dispatch, sessionToken, userData, userDataByCode]);
 
 	return children;

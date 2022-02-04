@@ -43,6 +43,11 @@
 		.ant-modal-body {
 			padding: 24px 48px;
 		}
+		.ant-modal-title {
+			h2 {
+				margin: 0;
+			}
+		}
 		.ant-modal-footer {
 			padding: 24px 48px;
 			text-align: center;
@@ -71,7 +76,6 @@
 .addMoreMenu {
 	:global {
 		.ant-dropdown-menu-item {
-
 			&-disabled {
 				svg > path {
 					stroke: @gray-5;
@@ -82,9 +86,9 @@
 				width: 24px;
 				height: auto;
 				margin-right: 16px;
-				
+
 				path {
-					stroke: #2582af;
+					stroke: @primary-color;
 				}
 			}
 

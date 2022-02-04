@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import gdhubLogo from '@assets/images/gdhub-logo.svg';
+import skillKitLogo from '@assets/images/skillkit-logo.svg';
 import SignInModal from '@components/modals/SignInModal';
 import SignUpModal from '@components/modals/SignUpModal';
 import UserMenu from '@components/UserMenu';
@@ -60,7 +60,9 @@ const PublicLayout: FC = ({ children }) => {
 				<Header className={styles.publicLayout_header}>
 					<Row align="middle">
 						<Col flex="1">
-							<Image src={gdhubLogo} className={styles.logo} alt="gdhub logo" />
+							<div className={styles.logo}>
+								<Image src={skillKitLogo} alt="skillKit logo" />
+							</div>
 							{/* <Menu
 								onClick={handleClick}
 								selectedKeys={[currentHeaderMenuItem]}

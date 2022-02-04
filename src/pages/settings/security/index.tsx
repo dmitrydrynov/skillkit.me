@@ -1,28 +1,39 @@
-import React, { ReactElement, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { ReactElement, useEffect, useState } from 'react';
 import SettingsMenu from '@components/menus/SettingsMenu';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
-import { changeUserPasswordMutation } from '@services/graphql/queries/user';
+import { changeUserPasswordMutation, userDataQuery } from '@services/graphql/queries/user';
 import { RootState } from '@store/configure-store';
+import { setOTP } from '@store/reducers/user';
 import { Button, Col, Form, Input, Row, message, Checkbox, Switch } from 'antd';
 import Head from 'next/head';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from 'urql';
 import styles from './SecurityPage.module.less';
 
 const SecurityPage: NextPageWithLayout = () => {
 	const [form] = Form.useForm();
-	const userId = useSelector((state: RootState) => state.user.id);
+	const dispatch = useDispatch();
+	const [sudmitting, setSubmitting] = useState(false);
+	const userUseOTP = useSelector((state: RootState) => state.user.useOTP);
+	const [isOTP, setIsOTP] = useState(true);
 	const [, changeUserPassword] = useMutation(changeUserPasswordMutation);
-	const [isOTP, setIsOTP] = useState(false);
+
+	useEffect(() => {
+		form.setFieldsValue({ useOTP: userUseOTP });
+		setIsOTP(userUseOTP);
+	}, [userUseOTP]);
 
 	const handleFinish = async () => {
 		const { useOTP, oldPassword, newPassword, confirmPassword } = form.getFieldsValue();
-		debugger;
+
 		if (newPassword !== confirmPassword) {
 			message.error('Password mismatch!');
 			return;
 		}
+
+		setSubmitting(true);
 
 		try {
 			const { error } = await changeUserPassword({
@@ -40,8 +51,12 @@ const SecurityPage: NextPageWithLayout = () => {
 			message.success('Password changed!');
 
 			form.resetFields();
+			form.setFieldsValue({ useOTP: isOTP });
+			dispatch(setOTP(isOTP));
+			setSubmitting(false);
 		} catch (error: any) {
 			message.error(error.message);
+			setSubmitting(false);
 		}
 	};
 
@@ -56,16 +71,30 @@ const SecurityPage: NextPageWithLayout = () => {
 			<Row>
 				<Col flex="1" className={styles.content}>
 					<h3>Security settings</h3>
-					<Form className={styles.form} form={form} layout="vertical" onFinish={handleFinish} requiredMark={false}>
-						<Form.Item name="useOTP" label="Use one time password (OTP)" valuePropName="checked">
-							{/* <Checkbox onChange={(el) => setIsOTP(el.target.checked)}>Use one time password (OTP)</Checkbox> */}
-							<Switch onChange={(value) => setIsOTP(value)} />
+					<Form
+						className={styles.form}
+						form={form}
+						initialValues={{ useOTP: userUseOTP }}
+						layout="vertical"
+						onFinish={handleFinish}
+						requiredMark={false}
+					>
+						<Form.Item
+							name="useOTP"
+							style={{ flexDirection: 'row-reverse', alignItems: 'center' }}
+							labelCol={{ span: 20 }}
+							label="Use one time password (OTP)"
+							valuePropName="checked"
+						>
+							<Switch style={{ flex: 'unset' }} onChange={(value) => setIsOTP(value)} />
 						</Form.Item>
 						{!isOTP && (
 							<>
-								<Form.Item name="oldPassword" rules={[{ required: true, message: 'Please input an old password!' }]}>
-									<Input.Password placeholder="Old password" />
-								</Form.Item>
+								{!userUseOTP && (
+									<Form.Item name="oldPassword" rules={[{ required: true, message: 'Please input an old password!' }]}>
+										<Input.Password placeholder="Old password" />
+									</Form.Item>
+								)}
 								<Form.Item name="newPassword" rules={[{ required: true, message: 'Please input a new password!' }]}>
 									<Input.Password placeholder="New password" />
 								</Form.Item>
@@ -75,7 +104,7 @@ const SecurityPage: NextPageWithLayout = () => {
 							</>
 						)}
 						<Form.Item>
-							<Button type="primary" htmlType="submit" style={{ marginTop: '15px' }}>
+							<Button type="primary" loading={sudmitting} htmlType="submit" style={{ marginTop: '15px' }}>
 								Change password
 							</Button>
 						</Form.Item>

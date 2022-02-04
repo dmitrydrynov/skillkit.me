@@ -41,10 +41,10 @@ const ProfilePage: NextPageWithLayout = () => {
 	useEffect(() => {
 		if (data?.user) {
 			const { firstName, lastName, email, country, birthdayDate, avatar } = data.user;
-			const countryData = countries.find((c) => c.value.toLowerCase() === country.toLowerCase());
+			const countryData = country ? countries.find((c) => c.value.toLowerCase() === country.toLowerCase()) : null;
 
 			if (avatar) {
-				setAvatarUrl(IMAGES_HOST + avatar);
+				setAvatarUrl(avatar.includes('https://') ? avatar : IMAGES_HOST + avatar);
 			}
 
 			form.setFieldsValue({

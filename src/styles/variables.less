@@ -1,6 +1,6 @@
 @import '~antd/lib/style/themes/default.less';
 
-@font-family: 'Comfortaa', sans-serif;
+@font-family: 'ALSStory', sans-serif;
 
 @gray-1: #ffffff;
 @gray-2: #fafafa;
@@ -19,7 +19,7 @@
 @input-shadow-size: 4px;
 
 // -------- Colors -----------
-@primary-color: #5C3EDB;
+@primary-color: #f558a1;
 @info-color: @primary-color;
 @success-color: @green-6;
 @processing-color: @gray-12;
@@ -31,33 +31,38 @@
 @black: @gray-12;
 
 // LINK
-@link-color: @blue-7;
+@link-color: @primary-color;
 @link-hover-color: color(~`colorPalette('@{link-color}', 5) `);
 @link-active-color: color(~`colorPalette('@{link-color}', 7) `);
 
 @success-color: #52c41a; // success state color
 @warning-color: #faad14; // warning state color
 @error-color: #f5222d; // error state color
-@font-size-base: 14px; // major text font size
 @line-height-base: 20px;
 @heading-color: rgba(0, 0, 0, 0.85); // heading text color
 @text-color: rgba(0, 0, 0, 0.65); // major text color
 @text-color-secondary: rgba(0, 0, 0, 0.45); // secondary text color
 @disabled-color: rgba(0, 0, 0, 0.25); // disable state color
-@border-radius-base: 0.25rem; // major border radius
+@border-radius-base: 0.5rem; // major border radius
 // @border-color-base: transparent; // major border color
 // @border-width-base: 0;
 @box-shadow-base: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08),
 	0 9px 28px 8px rgba(0, 0, 0, 0.05); // major shadow for layers
 
 // height rules
-// @height-base: 40px;
+@height-base: 40px;
 @height-lg: 48px;
 @height-sm: 32px;
 
-@btn-height-base: 54px;
-@btn-height-lg: 84px;
-@btn-font-size: 20px;
+@btn-height-base: 48px;
+@btn-height-lg: 56px;
+
+@font-size-base: 15px; // major text font size
+@font-size-lg: @font-size-base + 2px;
+@font-size-sm: @font-size-base - 3px;
+@btn-font-size: @font-size-base + 5px;
+@btn-font-size-lg: @font-size-lg + 5px;
+@btn-font-size-sm: @font-size-sm + 5px;
 
 @menu-bg: transparent;
 

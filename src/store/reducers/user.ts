@@ -7,10 +7,9 @@ export type UserState = {
 	lastName: string;
 	fullName: string;
 	email: string;
-	avatar?: {
-		url: string;
-	};
+	avatar?: string;
 	role: UserRole;
+	useOTP: boolean;
 };
 
 const initialState: UserState = {
@@ -20,6 +19,7 @@ const initialState: UserState = {
 	fullName: '',
 	email: '',
 	role: UserRole.UNKNOWN,
+	useOTP: false,
 };
 
 const userReducer = (state = initialState, action: AnyAction): UserState => {
@@ -28,6 +28,9 @@ const userReducer = (state = initialState, action: AnyAction): UserState => {
 	switch (type) {
 		case 'SET_USER_DATA': {
 			return { ...state, ...payload };
+		}
+		case 'SET_USER_OTP_DATA': {
+			return { ...state, useOTP: payload };
 		}
 		case 'CLEAR_USER_DATA': {
 			return initialState;
@@ -40,6 +43,13 @@ const userReducer = (state = initialState, action: AnyAction): UserState => {
 export const setUserData = (payload: UserState): AnyAction => {
 	return {
 		type: 'SET_USER_DATA',
+		payload,
+	};
+};
+
+export const setOTP = (payload: boolean): AnyAction => {
+	return {
+		type: 'SET_USER_OTP_DATA',
 		payload,
 	};
 };

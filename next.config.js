@@ -30,7 +30,7 @@ const mainConfig = {
 /** Image hosts */
 if (imagesHost) {
 	mainConfig.images = {
-		domains: [imagesHost.hostname],
+		domains: [imagesHost.hostname, 'cdn.discordapp.com'],
 	};
 }
 

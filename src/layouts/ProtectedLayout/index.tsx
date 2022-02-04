@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import gdhubLogo from '@assets/images/gdhub-logo.svg';
+import skillKitLogo from '@assets/images/skillkit-logo.svg';
 import UserMenu from '@components/UserMenu';
 import withAuth from '@helpers/withAuth';
 import { Col, Layout, Row } from 'antd';
@@ -15,9 +15,9 @@ type ProtectedLayoutParams = {
 const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children }) => {
 	return (
 		<Layout style={{ minHeight: '100vh' }}>
-			<Sider className={styles.sider} width="250px">
+			<Sider className={styles.sider} breakpoint="lg">
 				<div className={styles.logo}>
-					<Image src={gdhubLogo} width="100%" alt="gdhub logo" />
+					<Image src={skillKitLogo} layout="intrinsic" alt="gdhub logo" />
 				</div>
 			</Sider>
 			<Layout className="site-layout">

@@ -481,7 +481,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 
 	return (
 		<Modal
-			title={(operation === 'create' && 'Add skill') || (operation === 'update' && 'Edit skill')}
+			title={(operation === 'create' && <h2>Add skill</h2>) || (operation === 'update' && <h2>Edit skill</h2>)}
 			visible={visible}
 			onOk={handleOk}
 			onCancel={handleCancel}
@@ -493,7 +493,6 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 				<Button
 					key="submit"
 					type="primary"
-					size="large"
 					loading={addUserSkillResponse.fetching || editUserSkillResponse.fetching}
 					onClick={handleOk}
 					className={styles.submitBtn}
