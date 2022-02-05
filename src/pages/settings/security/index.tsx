@@ -15,7 +15,7 @@ import styles from './SecurityPage.module.less';
 const SecurityPage: NextPageWithLayout = () => {
 	const [form] = Form.useForm();
 	const dispatch = useDispatch();
-	const [sudmitting, setSubmitting] = useState(false);
+	const [submitting, setSubmitting] = useState(false);
 	const userUseOTP = useSelector((state: RootState) => state.user.useOTP);
 	const [isOTP, setIsOTP] = useState(true);
 	const [, changeUserPassword] = useMutation(changeUserPasswordMutation);
@@ -104,7 +104,7 @@ const SecurityPage: NextPageWithLayout = () => {
 							</>
 						)}
 						<Form.Item>
-							<Button type="primary" loading={sudmitting} htmlType="submit" style={{ marginTop: '15px' }}>
+							<Button type="primary" loading={submitting} htmlType="submit" style={{ marginTop: '15px' }}>
 								Change password
 							</Button>
 						</Form.Item>

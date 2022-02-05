@@ -24,20 +24,20 @@ import styles from './style.module.less';
 
 const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, recordId, onClose, onFinish }) => {
 	/** Local variables */
-	const controls: ControlType[] = ['bold', 'italic', 'underline', 'text-color', 'separator', 'link', 'separator'];
+	// const controls: ControlType[] = ['bold', 'italic', 'underline', 'text-color', 'separator', 'link', 'separator'];
 	const skillRef = createRef<RefSelectProps>();
 	const [form] = Form.useForm();
 	/** Local state */
-	const [schools, setSchools] = useState<UserSchool[]>([]);
-	const [jobs, setJobs] = useState<UserJob[]>([]);
-	const [tools, setTools] = useState<UserTool[]>([]);
+	// const [schools, setSchools] = useState<UserSchool[]>([]);
+	// const [jobs, setJobs] = useState<UserJob[]>([]);
+	// const [tools, setTools] = useState<UserTool[]>([]);
 	const [skillSearchQuery, setsSkillSearchQuery] = useState('');
-	const [visibleBlocks, setVisibleBlocks] = useState({
-		description: false,
-		schools: false,
-		jobs: false,
-		tools: false,
-	});
+	// const [visibleBlocks, setVisibleBlocks] = useState({
+	// 	description: false,
+	// 	schools: false,
+	// 	jobs: false,
+	// 	tools: false,
+	// });
 	/** Selectors from Redux */
 	const userId = useSelector((state: RootState) => state.user.id);
 	/** Queries */
@@ -58,12 +58,12 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 	const [addSkillResponse, addSkill] = useMutation(createSkillMutation);
 	const [addUserSkillResponse, addUserSkill] = useMutation(createUserSkillMutation);
 	const [editUserSkillResponse, editUserSkill] = useMutation(editUserSkillMutation);
-	const [, updateUserTools] = useMutation(updateUserToolsMutation);
-	const [, updateUserJobs] = useMutation(updateUserJobsMutation);
-	const [, updateUserSchools] = useMutation(updateUserSchoolsMutation);
-	const [, deleteUserTool] = useMutation(deleteUserToolMutation);
-	const [, deleteUserJob] = useMutation(deleteUserJobMutation);
-	const [, deleteUserSchool] = useMutation(deleteUserSchoolMutation);
+	// const [, updateUserTools] = useMutation(updateUserToolsMutation);
+	// const [, updateUserJobs] = useMutation(updateUserJobsMutation);
+	// const [, updateUserSchools] = useMutation(updateUserSchoolsMutation);
+	// const [, deleteUserTool] = useMutation(deleteUserToolMutation);
+	// const [, deleteUserJob] = useMutation(deleteUserJobMutation);
+	// const [, deleteUserSchool] = useMutation(deleteUserSchoolMutation);
 
 	useEffect(() => {
 		form.resetFields();
@@ -86,138 +86,138 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 		if (getUserSkillData?.userSkill) {
 			const { level, skill, jobs, schools, tools, description } = getUserSkillData.userSkill;
 
-			setVisibleBlocks({
-				...visibleBlocks,
-				description: !!description?.length,
-				tools: !!tools?.length,
-				schools: !!schools?.length,
-				jobs: !!jobs?.length,
-			});
+			// setVisibleBlocks({
+			// 	...visibleBlocks,
+			// 	description: !!description?.length,
+			// 	tools: !!tools?.length,
+			// 	schools: !!schools?.length,
+			// 	jobs: !!jobs?.length,
+			// });
 
-			setTools(tools);
-			setJobs(jobs);
-			setSchools(schools);
+			// setTools(tools);
+			// setJobs(jobs);
+			// setSchools(schools);
 
 			form.setFieldsValue({
 				skillId: skill.id,
 				level,
-				description: BraftEditor.createEditorState(description),
-				tools: tools.map((t: UserTool) => {
-					t.description = BraftEditor.createEditorState(t.description);
+				// description: BraftEditor.createEditorState(description),
+				// tools: tools.map((t: UserTool) => {
+				// 	t.description = BraftEditor.createEditorState(t.description);
 
-					return t;
-				}),
-				jobs: jobs.map((j: UserJob) => {
-					j.startedAt = moment(j.startedAt);
-					j.finishedAt = moment(j.finishedAt);
-					j.description = BraftEditor.createEditorState(j.description);
+				// 	return t;
+				// }),
+				// jobs: jobs.map((j: UserJob) => {
+				// 	j.startedAt = moment(j.startedAt);
+				// 	j.finishedAt = moment(j.finishedAt);
+				// 	j.description = BraftEditor.createEditorState(j.description);
 
-					return j;
-				}),
-				schools: schools.map((s: UserSchool) => {
-					s.startedAt = moment(s.startedAt);
-					s.finishedAt = moment(s.finishedAt);
-					s.description = BraftEditor.createEditorState(s.description);
+				// 	return j;
+				// }),
+				// schools: schools.map((s: UserSchool) => {
+				// 	s.startedAt = moment(s.startedAt);
+				// 	s.finishedAt = moment(s.finishedAt);
+				// 	s.description = BraftEditor.createEditorState(s.description);
 
-					return s;
-				}),
+				// 	return s;
+				// }),
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [getUserSkillData]);
 
-	const getPreSaveToolsData = async (tools: UserTool[]): Promise<UserTool[]> => {
-		let createData: UserTool[] = [];
-		let updateData: { where: { id: string }; data: UserTool }[] = [];
+	// const getPreSaveToolsData = async (tools: UserTool[]): Promise<UserTool[]> => {
+	// 	let createData: UserTool[] = [];
+	// 	let updateData: { where: { id: string }; data: UserTool }[] = [];
 
-		tools.map((t: UserTool) => {
-			const data = {
-				title: t.title,
-				level: t.level,
-				description: t.description?.toHTML(),
-			};
+	// 	tools.map((t: UserTool) => {
+	// 		const data = {
+	// 			title: t.title,
+	// 			level: t.level,
+	// 			description: t.description?.toHTML(),
+	// 		};
 
-			if (t.id) {
-				updateData.push({
-					where: { id: t.id },
-					data,
-				});
-			} else {
-				createData.push(data);
-			}
-		});
+	// 		if (t.id) {
+	// 			updateData.push({
+	// 				where: { id: t.id },
+	// 				data,
+	// 			});
+	// 		} else {
+	// 			createData.push(data);
+	// 		}
+	// 	});
 
-		if (updateData.length) {
-			await updateUserTools({
-				data: updateData,
-			});
-		}
+	// 	if (updateData.length) {
+	// 		await updateUserTools({
+	// 			data: updateData,
+	// 		});
+	// 	}
 
-		return createData;
-	};
+	// 	return createData;
+	// };
 
-	const getPreSaveJobsData = async (jobs: UserJob[]): Promise<UserJob[]> => {
-		let createData: UserJob[] = [];
-		let updateData: { where: { id: string }; data: UserJob }[] = [];
+	// const getPreSaveJobsData = async (jobs: UserJob[]): Promise<UserJob[]> => {
+	// 	let createData: UserJob[] = [];
+	// 	let updateData: { where: { id: string }; data: UserJob }[] = [];
 
-		jobs.map((j: UserJob) => {
-			const data = {
-				title: j.title,
-				company: j.company,
-				startedAt: j.startedAt,
-				finishedAt: j.finishedAt,
-				description: j.description?.toHTML(),
-			};
+	// 	jobs.map((j: UserJob) => {
+	// 		const data = {
+	// 			title: j.title,
+	// 			company: j.company,
+	// 			startedAt: j.startedAt,
+	// 			finishedAt: j.finishedAt,
+	// 			description: j.description?.toHTML(),
+	// 		};
 
-			if (j.id) {
-				updateData.push({
-					where: { id: j.id },
-					data,
-				});
-			} else {
-				createData.push(data);
-			}
-		});
+	// 		if (j.id) {
+	// 			updateData.push({
+	// 				where: { id: j.id },
+	// 				data,
+	// 			});
+	// 		} else {
+	// 			createData.push(data);
+	// 		}
+	// 	});
 
-		if (updateData.length) {
-			await updateUserJobs({
-				data: updateData,
-			});
-		}
+	// 	if (updateData.length) {
+	// 		await updateUserJobs({
+	// 			data: updateData,
+	// 		});
+	// 	}
 
-		return createData;
-	};
+	// 	return createData;
+	// };
 
-	const getPreSaveSchoolsData = async (newData: UserSchool[]): Promise<UserSchool[]> => {
-		let createData: UserSchool[] = [];
-		let updateData: { where: { id?: string }; data: UserSchool }[] = [];
+	// const getPreSaveSchoolsData = async (newData: UserSchool[]): Promise<UserSchool[]> => {
+	// 	let createData: UserSchool[] = [];
+	// 	let updateData: { where: { id?: string }; data: UserSchool }[] = [];
 
-		newData.map((s: UserSchool) => {
-			const data = {
-				title: s.title,
-				startedAt: s.startedAt,
-				finishedAt: s.finishedAt,
-				description: s.description?.toHTML(),
-			};
+	// 	newData.map((s: UserSchool) => {
+	// 		const data = {
+	// 			title: s.title,
+	// 			startedAt: s.startedAt,
+	// 			finishedAt: s.finishedAt,
+	// 			description: s.description?.toHTML(),
+	// 		};
 
-			if (s.id) {
-				updateData.push({
-					where: { id: s.id },
-					data,
-				});
-			} else {
-				createData.push(data);
-			}
-		});
+	// 		if (s.id) {
+	// 			updateData.push({
+	// 				where: { id: s.id },
+	// 				data,
+	// 			});
+	// 		} else {
+	// 			createData.push(data);
+	// 		}
+	// 	});
 
-		if (updateData.length) {
-			await updateUserSchools({
-				data: updateData,
-			});
-		}
+	// 	if (updateData.length) {
+	// 		await updateUserSchools({
+	// 			data: updateData,
+	// 		});
+	// 	}
 
-		return createData;
-	};
+	// 	return createData;
+	// };
 
 	const handleOk = () => {
 		form
@@ -232,39 +232,37 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 				};
 
 				try {
-					if (tools) {
-						createData.tools = await getPreSaveToolsData(tools);
-					}
+					// if (tools) {
+					// 	createData.tools = await getPreSaveToolsData(tools);
+					// }
 
-					if (jobs) {
-						createData.jobs = await getPreSaveJobsData(jobs);
-					}
+					// if (jobs) {
+					// 	createData.jobs = await getPreSaveJobsData(jobs);
+					// }
 
-					if (schools) {
-						createData.schools = await getPreSaveSchoolsData(schools);
-					}
+					// if (schools) {
+					// 	createData.schools = await getPreSaveSchoolsData(schools);
+					// }
 
 					if (operation === 'create') {
 						resultOperation = await addUserSkill({
-							userId,
 							skillId,
 							level,
-							description: description?.toHTML(),
-							tools: { create: createData.tools },
-							jobs: { create: createData.jobs },
-							schools: { create: createData.schools },
+							// description: description?.toHTML(),
+							// tools: { create: createData.tools },
+							// jobs: { create: createData.jobs },
+							// schools: { create: createData.schools },
 						});
 					}
 
 					if (operation === 'update') {
 						resultOperation = await editUserSkill({
-							recordId,
 							skillId,
 							level,
-							description: description?.toHTML(),
-							tools: { create: createData.tools },
-							jobs: { create: createData.jobs },
-							schools: { create: createData.schools },
+							// description: description?.toHTML(),
+							// tools: { create: createData.tools },
+							// jobs: { create: createData.jobs },
+							// schools: { create: createData.schools },
 						});
 					}
 
@@ -293,6 +291,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 	};
 
 	const handleCancel = () => {
+		form.resetFields();
 		onClose();
 	};
 
@@ -317,167 +316,167 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 		}
 	};
 
-	const handleAddSchool = () => {
-		if (schools.length === 0 && !visibleBlocks.schools) {
-			setSchools([{ title: '' }]);
-			setVisibleBlocks({ ...visibleBlocks, schools: true });
-		} else {
-			setSchools([...schools, { title: '' }]);
-		}
-	};
+	// const handleAddSchool = () => {
+	// 	if (schools.length === 0 && !visibleBlocks.schools) {
+	// 		setSchools([{ title: '' }]);
+	// 		setVisibleBlocks({ ...visibleBlocks, schools: true });
+	// 	} else {
+	// 		setSchools([...schools, { title: '' }]);
+	// 	}
+	// };
 
-	const handleRemoveSchool = async (schoolId: string | null, index: number) => {
-		try {
-			if (schoolId) {
-				const { data, error } = await deleteUserSchool({ where: { id: schoolId } });
+	// const handleRemoveSchool = async (schoolId: string | null, index: number) => {
+	// 	try {
+	// 		if (schoolId) {
+	// 			const { data, error } = await deleteUserSchool({ where: { id: schoolId } });
 
-				if (error) {
-					message.error(error.message);
-					return Promise.resolve(false);
-				}
+	// 			if (error) {
+	// 				message.error(error.message);
+	// 				return Promise.resolve(false);
+	// 			}
 
-				if (!data.deleteUserSchool) {
-					message.error("We can't delete this school");
-					return Promise.resolve(false);
-				}
+	// 			if (!data.deleteUserSchool) {
+	// 				message.error("We can't delete this school");
+	// 				return Promise.resolve(false);
+	// 			}
 
-				message.success('The school deleted successfully');
+	// 			message.success('The school deleted successfully');
 
-				return Promise.resolve(true);
-			}
+	// 			return Promise.resolve(true);
+	// 		}
 
-			setSchools((prevData) => {
-				return prevData.filter((item, idx) => index !== idx);
-			});
+	// 		setSchools((prevData) => {
+	// 			return prevData.filter((item, idx) => index !== idx);
+	// 		});
 
-			if (schools.length === 0) {
-				setVisibleBlocks({ ...visibleBlocks, schools: false });
-			}
-		} catch (error) {
-			return Promise.resolve(false);
-		}
-	};
+	// 		if (schools.length === 0) {
+	// 			setVisibleBlocks({ ...visibleBlocks, schools: false });
+	// 		}
+	// 	} catch (error) {
+	// 		return Promise.resolve(false);
+	// 	}
+	// };
 
-	const handleAddJob = () => {
-		if (jobs.length === 0 && !visibleBlocks.jobs) {
-			setJobs([{ title: '', company: '' }]);
-			setVisibleBlocks({ ...visibleBlocks, jobs: true });
-		} else {
-			setJobs([...jobs, { title: '', company: '' }]);
-		}
-	};
+	// const handleAddJob = () => {
+	// 	if (jobs.length === 0 && !visibleBlocks.jobs) {
+	// 		setJobs([{ title: '', company: '' }]);
+	// 		setVisibleBlocks({ ...visibleBlocks, jobs: true });
+	// 	} else {
+	// 		setJobs([...jobs, { title: '', company: '' }]);
+	// 	}
+	// };
 
-	const handleRemoveJob = async (jobId: string | null, index: number) => {
-		try {
-			if (jobId) {
-				const { data, error } = await deleteUserJob({ where: { id: jobId } });
+	// const handleRemoveJob = async (jobId: string | null, index: number) => {
+	// 	try {
+	// 		if (jobId) {
+	// 			const { data, error } = await deleteUserJob({ where: { id: jobId } });
 
-				if (error) {
-					message.error(error.message);
-					return Promise.resolve(false);
-				}
+	// 			if (error) {
+	// 				message.error(error.message);
+	// 				return Promise.resolve(false);
+	// 			}
 
-				if (!data.deleteUserJob) {
-					message.error("We can't delete this job");
-					return Promise.resolve(false);
-				}
+	// 			if (!data.deleteUserJob) {
+	// 				message.error("We can't delete this job");
+	// 				return Promise.resolve(false);
+	// 			}
 
-				message.success('The job deleted successfully');
+	// 			message.success('The job deleted successfully');
 
-				return Promise.resolve(true);
-			}
+	// 			return Promise.resolve(true);
+	// 		}
 
-			setJobs((prevData) => {
-				return prevData.filter((item, idx) => index !== idx);
-			});
+	// 		setJobs((prevData) => {
+	// 			return prevData.filter((item, idx) => index !== idx);
+	// 		});
 
-			if (jobs.length === 0) {
-				setVisibleBlocks({ ...visibleBlocks, jobs: false });
-			}
-		} catch (error) {
-			return Promise.resolve(false);
-		}
-	};
+	// 		if (jobs.length === 0) {
+	// 			setVisibleBlocks({ ...visibleBlocks, jobs: false });
+	// 		}
+	// 	} catch (error) {
+	// 		return Promise.resolve(false);
+	// 	}
+	// };
 
-	const handleAddTool = () => {
-		if (jobs.length === 0 && !visibleBlocks.tools) {
-			setTools([{ title: '', level: 0 }]);
-			setVisibleBlocks({ ...visibleBlocks, tools: true });
-		} else {
-			setTools([...tools, { title: '', level: 0 }]);
-		}
-	};
+	// const handleAddTool = () => {
+	// 	if (jobs.length === 0 && !visibleBlocks.tools) {
+	// 		setTools([{ title: '', level: 0 }]);
+	// 		setVisibleBlocks({ ...visibleBlocks, tools: true });
+	// 	} else {
+	// 		setTools([...tools, { title: '', level: 0 }]);
+	// 	}
+	// };
 
-	const handleRemoveTool = async (toolId: string | null, index: number) => {
-		try {
-			if (toolId) {
-				const { data, error } = await deleteUserTool({ where: { id: toolId } });
+	// const handleRemoveTool = async (toolId: string | null, index: number) => {
+	// 	try {
+	// 		if (toolId) {
+	// 			const { data, error } = await deleteUserTool({ where: { id: toolId } });
 
-				if (error) {
-					message.error(error.message);
-					return Promise.resolve(false);
-				}
+	// 			if (error) {
+	// 				message.error(error.message);
+	// 				return Promise.resolve(false);
+	// 			}
 
-				if (!data.deleteUserTool) {
-					message.error("We can't delete this tool");
-					return Promise.resolve(false);
-				}
+	// 			if (!data.deleteUserTool) {
+	// 				message.error("We can't delete this tool");
+	// 				return Promise.resolve(false);
+	// 			}
 
-				message.success('The tool deleted successfully');
+	// 			message.success('The tool deleted successfully');
 
-				return Promise.resolve(true);
-			}
+	// 			return Promise.resolve(true);
+	// 		}
 
-			setTools(tools.filter((item, idx) => idx !== index));
+	// 		setTools(tools.filter((item, idx) => idx !== index));
 
-			if (tools.length === 0) {
-				setVisibleBlocks({ ...visibleBlocks, tools: false });
-			}
-		} catch (error) {
-			return Promise.resolve(false);
-		}
-	};
+	// 		if (tools.length === 0) {
+	// 			setVisibleBlocks({ ...visibleBlocks, tools: false });
+	// 		}
+	// 	} catch (error) {
+	// 		return Promise.resolve(false);
+	// 	}
+	// };
 
-	const addMoreMenu = (
-		<Menu className={styles.addMoreMenu}>
-			<Menu.Item
-				key="addTools"
-				icon={<GrTools />}
-				disabled={visibleBlocks.tools}
-				onClick={() => setVisibleBlocks({ ...visibleBlocks, tools: true })}
-			>
-				<div className="title">Add tools</div>
-				<div className="extra">What tools do you use when using this skill?</div>
-			</Menu.Item>
-			<Menu.Item
-				key="addSchools"
-				icon={<GrCertificate />}
-				disabled={visibleBlocks.schools}
-				onClick={() => setVisibleBlocks({ ...visibleBlocks, schools: true })}
-			>
-				<div className="title">Add schools</div>
-				<div className="extra">Where did you learn this skill?</div>
-			</Menu.Item>
-			<Menu.Item
-				key="addJobs"
-				icon={<HiOutlineBriefcase />}
-				disabled={visibleBlocks.jobs}
-				onClick={() => setVisibleBlocks({ ...visibleBlocks, jobs: true })}
-			>
-				<div className="title">Add experience</div>
-				<div className="extra">What job did you apply the skill in?</div>
-			</Menu.Item>
-			<Menu.Item
-				key="addDescription"
-				icon={<GrChat />}
-				disabled={visibleBlocks.description}
-				onClick={() => setVisibleBlocks({ ...visibleBlocks, description: true })}
-			>
-				<div className="title">Add description</div>
-				<div className="extra">If you have something to add, write here</div>
-			</Menu.Item>
-		</Menu>
-	);
+	// const addMoreMenu = (
+	// 	<Menu className={styles.addMoreMenu}>
+	// 		<Menu.Item
+	// 			key="addTools"
+	// 			icon={<GrTools />}
+	// 			disabled={visibleBlocks.tools}
+	// 			onClick={() => setVisibleBlocks({ ...visibleBlocks, tools: true })}
+	// 		>
+	// 			<div className="title">Add tools</div>
+	// 			<div className="extra">What tools do you use when using this skill?</div>
+	// 		</Menu.Item>
+	// 		<Menu.Item
+	// 			key="addSchools"
+	// 			icon={<GrCertificate />}
+	// 			disabled={visibleBlocks.schools}
+	// 			onClick={() => setVisibleBlocks({ ...visibleBlocks, schools: true })}
+	// 		>
+	// 			<div className="title">Add schools</div>
+	// 			<div className="extra">Where did you learn this skill?</div>
+	// 		</Menu.Item>
+	// 		<Menu.Item
+	// 			key="addJobs"
+	// 			icon={<HiOutlineBriefcase />}
+	// 			disabled={visibleBlocks.jobs}
+	// 			onClick={() => setVisibleBlocks({ ...visibleBlocks, jobs: true })}
+	// 		>
+	// 			<div className="title">Add experience</div>
+	// 			<div className="extra">What job did you apply the skill in?</div>
+	// 		</Menu.Item>
+	// 		<Menu.Item
+	// 			key="addDescription"
+	// 			icon={<GrChat />}
+	// 			disabled={visibleBlocks.description}
+	// 			onClick={() => setVisibleBlocks({ ...visibleBlocks, description: true })}
+	// 		>
+	// 			<div className="title">Add description</div>
+	// 			<div className="extra">If you have something to add, write here</div>
+	// 		</Menu.Item>
+	// 	</Menu>
+	// );
 
 	return (
 		<Modal
@@ -576,7 +575,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 						</Col>
 					</Row>
 
-					<Space direction="vertical" style={{ width: '100%' }}>
+					{/* <Space direction="vertical" style={{ width: '100%' }}>
 						{visibleBlocks.tools && (
 							<UserToolBlock form={form} tools={tools} onDelete={handleRemoveTool} onAdd={handleAddTool} />
 						)}
@@ -610,7 +609,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 								<PlusOutlined /> Add more details
 							</a>
 						</Dropdown>
-					</Space>
+					</Space> */}
 				</Form>
 			</Spin>
 		</Modal>

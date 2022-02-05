@@ -35,6 +35,7 @@ const ProfilePage: NextPageWithLayout = () => {
 		variables: { id: userId },
 		pause: !userId,
 	});
+	const [submitting, setSubmitting] = useState(false);
 	const [avatarLoading, setAvatarLoading] = useState(false);
 	const [avatarUrl, setAvatarUrl] = useState(null);
 
@@ -74,6 +75,8 @@ const ProfilePage: NextPageWithLayout = () => {
 			updateData.avatar = values.avatar.file.originFileObj;
 		}
 
+		setSubmitting(true);
+
 		try {
 			const { data, error } = await updateUserData(updateData);
 
@@ -85,8 +88,10 @@ const ProfilePage: NextPageWithLayout = () => {
 			message.success('Profile saved!');
 
 			dispatch(setUserData(data.updateUser));
+			setSubmitting(false);
 		} catch (error: any) {
 			message.error(error.message);
+			setSubmitting(false);
 		}
 	};
 
@@ -222,7 +227,7 @@ const ProfilePage: NextPageWithLayout = () => {
 							</Form.Item>
 
 							<Form.Item>
-								<Button type="primary" htmlType="submit" style={{ marginTop: '15px' }}>
+								<Button type="primary" htmlType="submit" loading={submitting} style={{ marginTop: '15px' }}>
 									Save settings
 								</Button>
 							</Form.Item>

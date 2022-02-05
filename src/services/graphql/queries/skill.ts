@@ -14,9 +14,7 @@ query($search: String) {
 
 export const createSkillMutation = `
 mutation($name: String!) {
-  createSkill(data: {
-    name: $name
-  }) {
+  createSkill(name: $name) {
     id
     name
   }
