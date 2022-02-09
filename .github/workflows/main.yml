@@ -1,0 +1,37 @@
+# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Staging Workflow
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+    
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: install # will run `yarn install` command
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: lint # will run `yarn lint` command
+  
+  deploy:
+    runs-on: self-hosted
+    needs: [build]
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set environment variables
+        env:
+          NEXT_PUBLIC_BACKEND_URL: http://localhost:8000/graphql
+          NEXT_PUBLIC_AUTH_COOKIE_NAME: gamelab-session
+          NEXT_PUBLIC_IMAGES_HOST: http://localhost:8000/storage
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: build # will run `yarn install` command
