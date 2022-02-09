@@ -86,10 +86,10 @@ const UserMenu: FC = () => {
 						<Space align="center">
 							<div className={styles.info}>
 								<p className={styles.name}>
-									<Skeleton.Button style={{ width: 100 }} shape="round" size={18} active={true} />
+									<Skeleton.Button style={{ width: 100, height: '18px' }} shape="round" active={true} />
 								</p>
 								<p className={styles.email}>
-									<Skeleton.Button style={{ width: 130 }} shape="round" size={14} active={true} />
+									<Skeleton.Button style={{ width: 130, height: '14px' }} shape="round" active={true} />
 								</p>
 							</div>
 							<Skeleton.Avatar size={40} active={true} />
