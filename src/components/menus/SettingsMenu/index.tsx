@@ -1,24 +1,32 @@
+import { ArrowLeftOutlined, UserOutlined, SecurityScanOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 type SettingsMenuParams = {
 	selectedItem: string;
 };
 
-const SettingsMenu = ({ selectedItem }: SettingsMenuParams) => {
-	const handleProfileMenu = () => {};
+const SettingsMenu = ({ selectedItem = 'profile' }: SettingsMenuParams) => {
+	const router = useRouter();
+
+	const handleProfileMenu = ({ key }) => {
+		if (key === 'back') {
+			router.back();
+		} else {
+			router.push(key);
+		}
+	};
 
 	return (
-		<Menu onSelect={handleProfileMenu} mode="horizontal" defaultSelectedKeys={[selectedItem]}>
-			<Menu.Item key="profile">
-				<Link href="/settings/profile">
-					<a>Profile</a>
-				</Link>
+		<Menu onClick={handleProfileMenu} mode="inline" defaultSelectedKeys={[selectedItem]}>
+			<Menu.Item key="/user/skills" icon={<ArrowLeftOutlined />}>
+				Back to my skills
 			</Menu.Item>
-			<Menu.Item key="security">
-				<Link href="/settings/security">
-					<a>Security</a>
-				</Link>
+			<Menu.Item key="/settings/profile" icon={<UserOutlined />}>
+				Profile
+			</Menu.Item>
+			<Menu.Item key="/settings/security" icon={<SecurityScanOutlined />}>
+				Security
 			</Menu.Item>
 		</Menu>
 	);

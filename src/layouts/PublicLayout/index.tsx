@@ -1,8 +1,8 @@
 import { FC, useEffect, useState } from 'react';
 import skillKitLogo from '@assets/images/skillkit-logo.svg';
+import UserMenu from '@components/menus/UserMenu';
 import SignInModal from '@components/modals/SignInModal';
 import SignUpModal from '@components/modals/SignUpModal';
-import UserMenu from '@components/UserMenu';
 import { RootState } from '@store/configure-store';
 import { Button, Col, Layout, Menu, Row, Space } from 'antd';
 import Image from 'next/image';
@@ -81,7 +81,7 @@ const PublicLayout: FC = ({ children }) => {
 						<Col>
 							{!loggedIn && !logginingIn ? (
 								<Space>
-									<Button type="secondary" shape="round" onClick={handleSignIn}>
+									<Button type="default" shape="round" onClick={handleSignIn}>
 										Sign in
 									</Button>
 									<Button type="primary" shape="round" onClick={handleSignUp}>

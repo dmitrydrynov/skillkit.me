@@ -62,6 +62,7 @@ query ($id: Float!) {
     country
     birthdayDate
     avatar
+    about
   }
 }
 `;
@@ -75,6 +76,7 @@ mutation(
   $country: String!
   $birthdayDate: DateTime!
   $avatar: Upload
+  $about: String
 ) {
   updateUser(
     where: {id: $id}
@@ -85,6 +87,7 @@ mutation(
       country: $country
       birthdayDate: $birthdayDate
       avatar: $avatar
+      about: $about
     }
   ) {
     firstName
@@ -93,6 +96,7 @@ mutation(
     country
     birthdayDate
     avatar
+    about
   }
 }`;
 

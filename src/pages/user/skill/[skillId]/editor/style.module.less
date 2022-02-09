@@ -1,0 +1,69 @@
+.container {
+	width: 100%;
+}
+
+.title {
+	font-size: 30px;
+}
+
+.titleAbove {
+	// margin-bottom: 16px;
+}
+
+.descriptionEmpty {
+	color: #999;
+	font-style: italic;
+}
+
+.levelName {
+	font-size: 14px;
+}
+
+.progressBar {
+	:global {
+		.ant-progress-steps-item {
+			width: 24px !important;
+			height: 24px !important;
+
+			&:first-child {
+				border-radius: 4px 0 0 4px;
+			}
+
+			&:last-child {
+				border-radius: 0 4px 4px 0;
+			}
+		}
+	}
+}
+
+.headerContainer {
+	display: flex;
+	align-items: center;
+	margin-bottom: 20px;
+
+	h2,
+	h3 {
+		margin: 0 !important;
+	}
+
+	button {
+		margin-left: 10px;
+	}
+}
+
+.titleInput {
+	font-size: 30px;
+	font-weight: 500;
+	color: rgba(0, 0, 0, 0.85);
+	width: auto;
+	// border-radius: initial;
+	// border-bottom: 3px solid #e7e7e7;
+
+	// padding-left: 0;
+
+	// &:hover,
+	// &:focus {
+	// 	box-shadow: unset !important;
+	// 	border-bottom: 3px solid #e7e7e7;
+	// }
+}

@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import introImage from '@assets/images/home/intro.png';
+import SignInModal from '@components/modals/SignInModal';
 import { redeemUserMagicAuthTokenMutation } from '@services/graphql/queries/auth';
+import { RootState } from '@store/configure-store';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
 import styles from '@styles/home.module.less';
@@ -10,13 +12,15 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from 'urql';
 
 const Home: NextPage = () => {
 	const router = useRouter();
 	const dispatch = useDispatch();
+	const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
 	const [, redeemUserMagicAuthToken] = useMutation(redeemUserMagicAuthTokenMutation);
+	const [visibleSignInModal, setVisibleSignInModal] = useState(false);
 
 	useEffect(() => {
 		const { magicAuth, email }: any = router.query;
@@ -56,14 +60,17 @@ const Home: NextPage = () => {
 						The more flexible alternative to the classic resume. Build your professional skillset and share it with
 						customers and employers.
 					</p>
-					<Button shape="round" size="large" type="primary">
-						Start Now
-					</Button>
+					{!loggedIn && (
+						<Button shape="round" size="large" type="primary" onClick={() => setVisibleSignInModal(true)}>
+							Start Now
+						</Button>
+					)}
 				</Col>
 				<Col span={12}>
 					<Image src={introImage} alt="" />
 				</Col>
 			</Row>
+			{!loggedIn && <SignInModal visible={visibleSignInModal} onClose={() => setVisibleSignInModal(false)} />}
 		</>
 	);
 };

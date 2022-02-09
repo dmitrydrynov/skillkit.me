@@ -8,11 +8,13 @@ import {
 } from '@services/graphql/queries/userSkill';
 import { RootState } from '@store/configure-store';
 import { SkillLevel, getSkillLevel } from 'src/definitions/skill';
-import Icon, { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditTwoTone, NotificationTwoTone, PlusOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Dropdown, Menu, message, PageHeader, Switch, Table } from 'antd';
+import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { HiDotsVertical } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 import { useMutation, useQuery } from 'urql';
@@ -21,11 +23,11 @@ import styles from './style.module.less';
 const AddUserSkillModal = dynamic(() => import('@components/modals/AddUserSkillModal'), { ssr: false });
 
 const ProfilePage: NextPageWithLayout = () => {
+	const router = useRouter();
 	const [visibleAddUserSkillModal, setVisibleAddUserSkillModal] = useState(false);
 	const userId = useSelector((state: RootState) => state.user.id);
 	const [userSkills, reexecuteUserSkills] = useQuery({
 		query: userSkillsQuery,
-		variables: { userId },
 		pause: !userId,
 		requestPolicy: 'network-only',
 	});
@@ -65,6 +67,7 @@ const ProfilePage: NextPageWithLayout = () => {
 	const handleDeleteUserSkill = async (recordId?: string) => {
 		try {
 			if (recordId) {
+				const userSkillData = userSkills.data.userSkills.find((d) => d.id === recordId);
 				const { data, error } = await deleteUserSkill({ where: { id: recordId } });
 
 				if (error) {
@@ -77,7 +80,12 @@ const ProfilePage: NextPageWithLayout = () => {
 					return Promise.resolve(false);
 				}
 
-				message.success('The user skill deleted successfully');
+				message.success(
+					<>
+						The user skill <strong>{userSkillData.skill.name}</strong> deleted successfully
+					</>,
+				);
+				await reexecuteUserSkills();
 
 				return Promise.resolve(true);
 			}
@@ -110,7 +118,7 @@ const ProfilePage: NextPageWithLayout = () => {
 	return (
 		<>
 			<Head>
-				<title>My Skills</title>
+				<title>My Skills - SkillKit</title>
 			</Head>
 			<AddUserSkillModal
 				operation={userSkillId?.operation}
@@ -145,27 +153,13 @@ const ProfilePage: NextPageWithLayout = () => {
 					loading={userSkills.fetching}
 					pagination={false}
 					size="large"
-					onRow={(record) => {
-						return {
-							onClick: (event) => {
-								handleEditUserSkill(record.id);
-							},
-						};
-					}}
 				>
 					<Table.Column
 						title="I can"
 						dataIndex={['skill', 'name']}
 						key="skillName"
 						ellipsis={true}
-						render={(value, record: any) => (
-							<>
-								<h4>{value}</h4>
-								{record.tools.length > 0 && (
-									<span>Use: {record.tools.map((t: { title: string }) => t.title).join(', ')}</span>
-								)}
-							</>
-						)}
+						render={(value) => <h4>{value}</h4>}
 					/>
 					<Table.Column
 						title="Level"
@@ -179,21 +173,30 @@ const ProfilePage: NextPageWithLayout = () => {
 						)}
 					/>
 					<Table.Column
-						title="Visible"
+						title="Last updated"
 						width="120px"
-						key="isVisible"
-						dataIndex="isVisible"
-						render={(data: boolean, record: UserSkill) => (
-							<Switch
-								checked={data}
-								loading={userSkillVisibility.fetching}
-								onChange={async (value: boolean, e) => {
-									e.stopPropagation();
-									if (record.id) {
-										await handleSwitchVisibility(record.id, value);
-									}
-								}}
-							/>
+						key="updatedAt"
+						dataIndex="updatedAt"
+						render={(data: unknown, record: UserSkill) => moment(data).fromNow()}
+					/>
+					<Table.Column
+						width="250px"
+						key="preview"
+						align="right"
+						render={(value, record: UserSkill) => (
+							<>
+								<Button
+									type="text"
+									size="small"
+									icon={<EditTwoTone twoToneColor="#eb2f96" />}
+									onClick={() => router.push(`/user/skill/${record.id}/editor`)}
+								>
+									Editor
+								</Button>
+								<Button type="text" size="small" icon={<NotificationTwoTone twoToneColor="#eb2f96" />}>
+									Share
+								</Button>
+							</>
 						)}
 					/>
 					<Table.Column

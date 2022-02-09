@@ -96,7 +96,6 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 				<Button
 					key="submit"
 					type="primary"
-					size="large"
 					loading={createUserResponse.fetching}
 					onClick={handleOk}
 					className={styles.submitBtn}

@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import SignModalIllustration from '@assets/images/sign-modal-illustration.svg';
 import { signInMutation } from '@services/graphql/queries/auth';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
-import { Button, Form, Input, Modal, message } from 'antd';
+import { Button, Form, Input, Modal, message, Divider } from 'antd';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { useMutation } from 'urql';
@@ -119,26 +119,29 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 			maskClosable={false}
 			className={styles.modal}
 			footer={[
-				<Button
-					key="submit"
-					type="primary"
-					size="large"
-					loading={authorizedResponse.fetching && !authorizedResponse.error}
-					onClick={handleOk}
-					className={styles.submitBtn}
-				>
-					{state.step === FormStep.Email && 'Next'}
-					{state.step === FormStep.Password && 'Sign in'}
-				</Button>,
-				<a key="discord-login" href="http://localhost:8000/auth/discord">
-					Sign in with Discord
-				</a>,
+				<>
+					<Button
+						key="submit"
+						type="primary"
+						loading={authorizedResponse.fetching && !authorizedResponse.error}
+						onClick={handleOk}
+						className={styles.submitBtn}
+					>
+						{state.step === FormStep.Email && 'Next'}
+						{state.step === FormStep.Password && 'Sign in'}
+					</Button>
+					<Divider>or</Divider>
+					<Button key="discord-login" type="text" href="http://localhost:8000/auth/discord">
+						Sign in with Discord
+					</Button>
+				</>,
 			]}
 		>
 			{/* <div className={styles.imageContainer}>
 				<Image src={SignModalIllustration} alt="image for sign up form" />
 			</div> */}
-			<h2 className={styles.title}>Welcome back</h2>
+			<h2 className={styles.title}>Sign in</h2>
+			<p>Enter your email address to sign in your account</p>
 			<Form
 				className={styles.form}
 				form={form}

@@ -8,7 +8,8 @@ type AddSkillArgs = {
 
 type UserSkill = {
 	id?: string;
-	skillId: string;
+	skillId: number;
+	skillName?: string;
 	level: SkillLevel;
 	description?: EditorState;
 	tools?: UserTool[];

@@ -29,12 +29,12 @@ const UserMenu: FC = () => {
 
 	const userMenuItems: MenuItem[] = [
 		{
-			link: '/settings/profile',
-			title: 'Profile',
+			link: '/user/skills',
+			title: 'My skills',
 		},
 		{
-			link: '/user/skills',
-			title: 'Skills',
+			link: '/settings/profile',
+			title: 'Settings',
 		},
 		{
 			title: 'Sign out',

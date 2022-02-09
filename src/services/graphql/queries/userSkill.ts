@@ -7,88 +7,46 @@ query($id: ID!) {
   ) {
     id
     description
-    isVisible
+    isDraft
     level
     skill {
     	id
       name
   	}
-    jobs {
-      id
-      title
-      company
-      description
-      startedAt
-      finishedAt
-    }
-    schools {
-      id
-      title
-      description
-      startedAt
-      finishedAt
-    }
-    tools {
-      id
-      title
-      description
-      level
-    }
   }
 }
 `;
 
 export const userSkillsQuery = `
-query($userId: ID!) {
+query {
   userSkills(
-    where: {
-      user: {
-        id: { equals: $userId }
-      }
-    }
     orderBy: {
       level: desc
     }
   ) {
     id
-    description
-    isVisible
+    skill {
+      id
+      name
+    }
     level
-    skill {id, name}
-    tools {id, title}
-    jobs {id, title}
-    schools {id, title}
+    isDraft
+    publishedAt
+    createdAt
+    updatedAt
   }
 }
 `;
 
 export const createUserSkillMutation = `
 mutation(
-  $userId: ID!
   $skillId: ID!
-  $level: String!
-  $description: String
-  $schools: UserSchoolRelateToManyForCreateInput
-  $tools: UserToolRelateToManyForCreateInput
-  $jobs: UserJobRelateToManyForCreateInput
+  $level: UserSkillLevelEnum!
 ) {
-  createUserSkill(data: {
-    user: { 
-      connect: {
-        id: $userId
-      }
-    }
-    skill: { 
-      connect: {
-        id: $skillId
-      }
-    }
-    schools: $schools
-    jobs: $jobs
-    tools: $tools
+  createUserSkill(
+    skillId: $skillId
     level: $level
-    description: $description
-  }) {
+  ) {
     id
   }
 }
@@ -125,10 +83,8 @@ mutation(
 `;
 
 export const deleteUserSkillMutation = `
-mutation ($where: UserSkillWhereUniqueInput!) {
-  deleteUserSkill(where: $where) {
-    id
-  }
+mutation ($where: WhereUniqueInput!) {
+  deleteUserSkill(where: $where)
 }
 `;
 

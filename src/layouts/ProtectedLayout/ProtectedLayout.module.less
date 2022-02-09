@@ -1,17 +1,33 @@
+.container {
+	min-height: '100vh';
+	max-width: 1440px;
+	margin: 0px auto;
+}
+
 .logo {
 	// height: 32px;
 	// margin: 16px 32px;
 	text-align: center;
 
 	img {
-		padding: 16px 24px !important;
+		padding: 16px 36px !important;
 	}
 }
 
 .sider {
 	background: #fff;
 	border-right: 1px solid #efefef;
+
+	&:global(.ant-layout-sider-collapsed) {
+		img {
+			padding: 16px 12px !important;
+		}
+	}
 }
+
+// .sider:global(.ant-layout-sider-collapsed) {
+// 	background-color: red;
+// }
 
 .header {
 	background-color: @layout-body-background !important;
@@ -20,7 +36,10 @@
 }
 
 .content {
-	padding: 16px 50px;
+	padding: 40px 50px;
+	margin: 45px;
+	background: white;
+	box-shadow: 0 0 16px -4px #b1b1b1;
 }
 
 .pageHeader {
