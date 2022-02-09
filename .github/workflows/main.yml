@@ -6,6 +6,7 @@ name: Staging Workflow
 on:
   push:
     branches: [master]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,11 +14,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: npm install -g yarn
-      - run: yarn install --frozen-lockfile
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: install # will run `yarn install` command
       - name: Set environment variables
         env:
-          NEXT_PUBLIC_BACKEND_URL: http://localhost:8000/api/graphql
+          NEXT_PUBLIC_BACKEND_URL: http://localhost:8000/graphql
           NEXT_PUBLIC_AUTH_COOKIE_NAME: gamelab-session
+          NEXT_PUBLIC_IMAGES_HOST: http://localhost:8000/storage
+      - name: Run lint
         run: yarn lint
       - run: yarn build
+  
+  deploy:
+    runs-on: self-hosted
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: build # will run `yarn install` command
