@@ -23,12 +23,14 @@ jobs:
           NEXT_PUBLIC_AUTH_COOKIE_NAME: gamelab-session
           NEXT_PUBLIC_IMAGES_HOST: http://localhost:8000/storage
       - name: Run lint
-        run: yarn lint
-      - run: yarn build
+        uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: lint # will run `yarn lint` command
   
   deploy:
     runs-on: self-hosted
     needs: [build]
+    
     steps:
       - uses: actions/checkout@v2
       - uses: borales/actions-yarn@v2.3.0
