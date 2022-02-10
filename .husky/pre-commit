@@ -4,6 +4,8 @@ ROOT_DIRECTORY=$(dirname "${CURRENT_DIRECTORY}")
 
 . "${CURRENT_DIRECTORY}/_/husky.sh"
 
+echo ${CURRENT_DIRECTORY}
+
 cd "${ROOT_DIRECTORY}" || exit 1
 
 npm run lint

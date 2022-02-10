@@ -30,7 +30,7 @@ jobs:
       - name: Install SWC
         uses: borales/actions-yarn@v2.3.0
         with:
-          cmd: install -D @swc/cli @swc/core # will run `install -D @swc/cli @swc/core` command
+          cmd: add @swc/cli @swc/core -D # will run `yarn add @swc/cli @swc/core -D` command
       - name: Build
         uses: borales/actions-yarn@v2.3.0
         with:
