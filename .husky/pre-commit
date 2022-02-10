@@ -1,4 +1,9 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+CURRENT_DIRECTORY=$(dirname "$0")
+ROOT_DIRECTORY=$(dirname "${CURRENT_DIRECTORY}")
+
+. "${CURRENT_DIRECTORY}/_/husky.sh"
+
+cd "${ROOT_DIRECTORY}" || exit 1
 
 npm run lint

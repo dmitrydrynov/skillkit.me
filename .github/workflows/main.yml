@@ -27,6 +27,10 @@ jobs:
           NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
           NEXT_PUBLIC_AUTH_COOKIE_NAME: ${{ secrets.NEXT_PUBLIC_AUTH_COOKIE_NAME }}
           NEXT_PUBLIC_IMAGES_HOST: ${{ secrets.NEXT_PUBLIC_IMAGES_HOST }}
+      - name: Install SWC
+        uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: install -D @swc/cli @swc/core # will run `install -D @swc/cli @swc/core` command
       - name: Build
         uses: borales/actions-yarn@v2.3.0
         with:
