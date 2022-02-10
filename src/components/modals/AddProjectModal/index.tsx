@@ -1,15 +1,10 @@
 import React, { FC, useEffect } from 'react';
-import SignModalIllustration from '@assets/images/sign-modal-illustration.svg';
-import { authorizeMutation } from '@services/graphql/queries/auth';
 import { createProjectMutation } from '@services/graphql/queries/project';
 import { RootState } from '@store/configure-store';
-import { setLogin } from '@store/reducers/auth';
-import { setUserData } from '@store/reducers/user';
 import { UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, message, Row, Col, Avatar } from 'antd';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useMutation } from 'urql';
 import styles from './style.module.less';
 
@@ -117,13 +112,13 @@ const AddProjectModal: FC<AddProjectModalArgs> = ({ recordId, operation, visible
 							{authUser.avatar ? (
 								<Avatar
 									size={24}
-									src={IMAGES_HOST + authUser.avatar.url}
+									src={IMAGES_HOST + authUser.avatar}
 									className={`${styles.avatar} ant-dropdown-link`}
 								/>
 							) : (
 								<Avatar size={40} icon={<UserOutlined />} className={`${styles.avatar} ant-dropdown-link`} />
 							)}
-							{authUser.name}
+							{authUser.fullName}
 						</div>
 					</Col>
 				</Row>
