@@ -15,22 +15,21 @@ jobs:
     steps:
       - name: Check access
         uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'yarn'
       - name: Install dependencies
-        uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: install # will run `yarn install` command
+        run: yarn install
       - name: Check lint
-        uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: lint # will run `yarn lint` command
+        run: yarn lint
         env:
           NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
           NEXT_PUBLIC_AUTH_COOKIE_NAME: ${{ secrets.NEXT_PUBLIC_AUTH_COOKIE_NAME }}
           NEXT_PUBLIC_IMAGES_HOST: ${{ secrets.NEXT_PUBLIC_IMAGES_HOST }}
       - name: Build
-        uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: build # will run `yarn build` command
+        run: yarn build
         env:
           NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
           NEXT_PUBLIC_AUTH_COOKIE_NAME: ${{ secrets.NEXT_PUBLIC_AUTH_COOKIE_NAME }}
