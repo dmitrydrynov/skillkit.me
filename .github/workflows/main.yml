@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         uses: borales/actions-yarn@v2.3.0
         with:
-          cmd: install --ignore-optional # will run `yarn install` command
+          cmd: install # will run `yarn install` command
       - name: Check lint
         uses: borales/actions-yarn@v2.3.0
         with:
