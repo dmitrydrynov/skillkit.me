@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         uses: borales/actions-yarn@v2.3.0
         with:
-          cmd: install # will run `yarn install` command
+          cmd: install --ignore-optional # will run `yarn install` command
       - name: Check lint
         uses: borales/actions-yarn@v2.3.0
         with:
@@ -27,9 +27,6 @@ jobs:
           NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
           NEXT_PUBLIC_AUTH_COOKIE_NAME: ${{ secrets.NEXT_PUBLIC_AUTH_COOKIE_NAME }}
           NEXT_PUBLIC_IMAGES_HOST: ${{ secrets.NEXT_PUBLIC_IMAGES_HOST }}
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: -W caniuse-lite
       - name: Build
         uses: borales/actions-yarn@v2.3.0
         with:
