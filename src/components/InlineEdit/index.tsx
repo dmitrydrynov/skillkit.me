@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, message } from 'antd';
+import { Button } from 'antd';
 import styles from './style.module.less';
 
 export type InlineEditRequest = {

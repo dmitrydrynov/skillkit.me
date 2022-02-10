@@ -21,13 +21,13 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 	let [skillSearchQuery, setsSkillSearchQuery] = useState('');
 
 	/** Queries */
-	let [{ data: searchSkillData, fetching }, searchSkills] = useQuery({
+	let [{ data: searchSkillData }, searchSkills] = useQuery({
 		query: searchSkillsQuery,
 		variables: { search: skillSearchQuery },
 		pause: true,
 		requestPolicy: 'network-only',
 	});
-	let [{ data: getUserSkillData }, getUserSkill] = useQuery({
+	let [{ data: getUserSkillData }] = useQuery({
 		query: getUserSkillQuery,
 		variables: { id: recordId },
 		pause: true,

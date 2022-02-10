@@ -1,9 +1,15 @@
 module.exports = {
-	plugins: ['prettier'],
+	plugins: ['unused-imports', 'prettier'],
 	extends: ['next/core-web-vitals', 'plugin:prettier/recommended'],
 	ignorePatterns: ['node_modules/*'],
 	rules: {
 		'prettier/prettier': 'error',
+		'@typescript-eslint/no-unused-vars': 'off',
+		'unused-imports/no-unused-imports-ts': 'error',
+		'unused-imports/no-unused-imports-ts': [
+			'warn',
+			{ vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
+		],
 		'import/order': [
 			'error',
 			{

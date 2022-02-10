@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 type AddSkillArgs = {
 	operation?: 'create' | 'update';
 	visible: boolean;

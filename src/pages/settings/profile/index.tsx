@@ -18,7 +18,7 @@ import styles from './ProfilePage.module.less';
 const IMAGES_HOST = process.env.NEXT_PUBLIC_IMAGES_HOST;
 
 // eslint-disable-next-line no-unused-vars
-function getBase64(img: Blob, callback: (args: any) => void) {
+function getBase64(img: Blob, callback: (fileReaderResult: string | ArrayBuffer) => void) {
 	const reader = new FileReader();
 	reader.addEventListener('load', () => callback(reader.result));
 	reader.readAsDataURL(img);
@@ -109,7 +109,7 @@ const ProfilePage: NextPageWithLayout = () => {
 		if (info.file.status === 'uploading') {
 			setAvatarLoading(true);
 
-			getBase64(info.file.originFileObj, (imageUrl) => {
+			getBase64(info.file.originFileObj, (imageUrl: string) => {
 				setAvatarUrl(imageUrl);
 				setAvatarLoading(false);
 			});

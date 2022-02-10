@@ -24,7 +24,7 @@ const UserMenu: FC = () => {
 	const router = useRouter();
 	const [activeUserMenu, setActiveUserMenu] = useState(false);
 	const [, endSession] = useMutation(endSessionMutation);
-	const { loggedIn, logginingIn } = useSelector((state: RootState) => state.auth);
+	const { logginingIn } = useSelector((state: RootState) => state.auth);
 	const authUser = useSelector((state: RootState) => state.user);
 
 	const userMenuItems: MenuItem[] = [

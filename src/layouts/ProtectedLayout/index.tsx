@@ -1,11 +1,10 @@
-import React, { FC, ReactElement, ReactNode, useEffect } from 'react';
+import React, { FC, ReactElement } from 'react';
 import skillKitLogo from '@assets/images/skillkit-logo.svg';
 import UserMenu from '@components/menus/UserMenu';
 import withAuth from '@helpers/withAuth';
 import { ProfileOutlined } from '@ant-design/icons';
 import { Col, Layout, Menu, Row } from 'antd';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styles from './ProtectedLayout.module.less';
 

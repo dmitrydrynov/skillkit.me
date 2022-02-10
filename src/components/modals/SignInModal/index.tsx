@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { FC, useEffect, useRef, useState } from 'react';
-import SignModalIllustration from '@assets/images/sign-modal-illustration.svg';
+import React, { FC, useEffect, useState } from 'react';
 import { signInMutation } from '@services/graphql/queries/auth';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
@@ -20,15 +19,15 @@ type SignInRequest = {
 	password?: string;
 };
 
-enum FormStep {
-	Email = 'email',
-	Password = 'password',
+enum _FormStep {
+	_Email = 'email',
+	_Password = 'password',
 }
 
 const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 	const [form] = Form.useForm();
-	const [state, setState] = useState<SignInRequest & { step: FormStep }>({
-		step: FormStep.Email,
+	const [state, setState] = useState<SignInRequest & { step: _FormStep }>({
+		step: _FormStep._Email,
 	});
 	const dispatch = useDispatch();
 	const router = useRouter();
@@ -36,7 +35,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 
 	useEffect(() => {
 		form.resetFields();
-		setState({ step: FormStep.Email });
+		setState({ step: _FormStep._Email });
 	}, [form]);
 
 	useEffect(() => {
@@ -60,7 +59,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 		}
 
 		if (data.signIn.next) {
-			setState({ ...state, step: FormStep.Password });
+			setState({ ...state, step: _FormStep._Password });
 			return;
 		}
 
@@ -94,10 +93,8 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 		}
 	};
 
-	const handleDiscordOk = async () => {};
-
 	const handleCancel = () => {
-		setState({ step: FormStep.Email });
+		setState({ step: _FormStep._Email });
 		authorizedResponse.fetching = false;
 		onClose();
 	};
@@ -127,8 +124,8 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 						onClick={handleOk}
 						className={styles.submitBtn}
 					>
-						{state.step === FormStep.Email && 'Next'}
-						{state.step === FormStep.Password && 'Sign in'}
+						{state.step === _FormStep._Email && 'Next'}
+						{state.step === _FormStep._Password && 'Sign in'}
 					</Button>
 					<Divider>or</Divider>
 					<Button key="discord-login" type="text" href="http://localhost:8000/auth/discord">
@@ -151,12 +148,12 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 				requiredMark={false}
 				onKeyUp={handleKeyUpForm}
 			>
-				{state.step === FormStep.Email && (
+				{state.step === _FormStep._Email && (
 					<Form.Item name="email" rules={[{ required: true, message: 'Please input the email!' }]}>
 						<Input autoFocus={true} placeholder="Email" />
 					</Form.Item>
 				)}
-				{state.step === FormStep.Password && (
+				{state.step === _FormStep._Password && (
 					<Form.Item name="password" rules={[{ required: true, message: 'Please input the password!' }]}>
 						<Input.Password autoFocus={true} placeholder="Password" />
 					</Form.Item>

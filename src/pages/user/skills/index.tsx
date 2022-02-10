@@ -1,15 +1,11 @@
 import React, { ReactElement, useState } from 'react';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
-import {
-	deleteUserSkillMutation,
-	updateUserSkillVisibilityMutation,
-	userSkillsQuery,
-} from '@services/graphql/queries/userSkill';
+import { deleteUserSkillMutation, userSkillsQuery } from '@services/graphql/queries/userSkill';
 import { RootState } from '@store/configure-store';
 import { SkillLevel, getSkillLevel } from 'src/definitions/skill';
 import { DeleteOutlined, EditTwoTone, NotificationTwoTone, PlusOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider, Dropdown, Menu, message, PageHeader, Switch, Table } from 'antd';
+import { Button, ConfigProvider, Dropdown, Menu, message, PageHeader, Table } from 'antd';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
@@ -32,17 +28,11 @@ const ProfilePage: NextPageWithLayout = () => {
 		requestPolicy: 'network-only',
 	});
 	const [, deleteUserSkill] = useMutation(deleteUserSkillMutation);
-	const [userSkillVisibility, updateUserSkillVisibility] = useMutation(updateUserSkillVisibilityMutation);
 	const [userSkillId, setUserSkillId] = useState<{ id: string | null; operation: 'create' | 'update' } | null>(null);
 
 	const getSkillLevelIcon = (levelName: string): string => {
 		const skillLevel: SkillLevel = getSkillLevel(levelName);
 		return skillLevel.icon;
-	};
-
-	const handleEditUserSkill = (id: string) => {
-		setVisibleAddUserSkillModal(true);
-		setUserSkillId({ id, operation: 'update' });
 	};
 
 	const handleAddUserSkill = async () => {
@@ -99,21 +89,6 @@ const ProfilePage: NextPageWithLayout = () => {
 			<p>You haven&apos;t listed any skills yet. You can add a new one.</p>
 		</div>
 	);
-
-	const handleSwitchVisibility = async (recordId: string, visible: boolean) => {
-		try {
-			const { data } = await updateUserSkillVisibility({
-				recordId,
-				isVisible: visible,
-			});
-			userSkillVisibility.fetching = false;
-
-			return data?.updateUserSkill.isVisible;
-		} catch (error: any) {
-			message.error(error.message);
-			userSkillVisibility.fetching = false;
-		}
-	};
 
 	return (
 		<>
@@ -177,7 +152,7 @@ const ProfilePage: NextPageWithLayout = () => {
 						width="120px"
 						key="updatedAt"
 						dataIndex="updatedAt"
-						render={(data: unknown, record: UserSkill) => moment(data).fromNow()}
+						render={(data: unknown) => moment(data).fromNow()}
 					/>
 					<Table.Column
 						width="250px"

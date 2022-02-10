@@ -1,7 +1,8 @@
 import React from 'react';
-import BraftEditor, { ControlType, EditorState } from 'braft-editor';
+import BraftEditor from 'braft-editor';
 
 interface OnChangeHandler {
+	// eslint-disable-next-line unused-imports/no-unused-vars
 	(e: any): void;
 }
 
@@ -12,7 +13,7 @@ type Props = {
 	onChange?: OnChangeHandler;
 };
 
-const TextEditor: React.FC<Props> = ({ value, onChange, placeholder, toolbars }) => {
+const TextEditor: React.FC<Props> = ({ value, onChange, placeholder }) => {
 	return (
 		<>
 			<BraftEditor

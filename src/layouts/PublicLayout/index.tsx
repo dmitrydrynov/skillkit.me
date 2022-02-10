@@ -4,34 +4,17 @@ import UserMenu from '@components/menus/UserMenu';
 import SignInModal from '@components/modals/SignInModal';
 import SignUpModal from '@components/modals/SignUpModal';
 import { RootState } from '@store/configure-store';
-import { Button, Col, Layout, Menu, Row, Space } from 'antd';
+import { Button, Col, Layout, Row, Space } from 'antd';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import styles from './PublicLayout.module.less';
 
 const { Header, Footer, Content } = Layout;
 
-type HeaderMenu = {
-	link: string;
-	title: string;
-};
-
-const headerMenu: HeaderMenu[] = [
-	{
-		link: '/',
-		title: 'Home',
-	},
-	{
-		link: '/about',
-		title: 'About',
-	},
-];
-
 const PublicLayout: FC = ({ children }) => {
 	const router = useRouter();
-	const [currentHeaderMenuItem, setCurrentHeaderMenuItem] = useState('');
+	const [, setCurrentHeaderMenuItem] = useState('');
 	const { loggedIn, logginingIn } = useSelector((state: RootState) => state.auth);
 	const [visibleSignInModal, setVisibleSignInModal] = useState(false);
 	const [visibleSignUpModal, setVisibleSignUpModal] = useState(false);
@@ -39,10 +22,6 @@ const PublicLayout: FC = ({ children }) => {
 	useEffect(() => {
 		setCurrentHeaderMenuItem(router.route);
 	}, [router.route]);
-
-	const handleClick = (e: any) => {
-		setCurrentHeaderMenuItem(e.key);
-	};
 
 	const handleSignIn = async () => {
 		setVisibleSignInModal(true);
@@ -63,20 +42,6 @@ const PublicLayout: FC = ({ children }) => {
 							<div className={styles.logo}>
 								<Image src={skillKitLogo} alt="skillKit logo" />
 							</div>
-							{/* <Menu
-								onClick={handleClick}
-								selectedKeys={[currentHeaderMenuItem]}
-								mode="horizontal"
-								className={styles.publicLayout_header_menu}
-							>
-								{headerMenu.map((menuItem, indx) => (
-									<Menu.Item key={indx.toString()}>
-										<Link href={menuItem.link}>
-											<a>{menuItem.title}</a>
-										</Link>
-									</Menu.Item>
-								))}
-							</Menu> */}
 						</Col>
 						<Col>
 							{!loggedIn && !logginingIn ? (

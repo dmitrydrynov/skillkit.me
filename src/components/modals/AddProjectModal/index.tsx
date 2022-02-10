@@ -3,7 +3,6 @@ import { createProjectMutation } from '@services/graphql/queries/project';
 import { RootState } from '@store/configure-store';
 import { UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Modal, message, Row, Col, Avatar } from 'antd';
-import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { useMutation } from 'urql';
 import styles from './style.module.less';
@@ -26,9 +25,8 @@ type AddProjectRequest = {
 	settingDescription?: string;
 };
 
-const AddProjectModal: FC<AddProjectModalArgs> = ({ recordId, operation, visible, onClose, onFinish }) => {
+const AddProjectModal: FC<AddProjectModalArgs> = ({ visible, onClose }) => {
 	const [form] = Form.useForm();
-	const router = useRouter();
 	const authUser = useSelector((state: RootState) => state.user);
 	const [createProjectResponse, createProject] = useMutation(createProjectMutation);
 
@@ -40,7 +38,7 @@ const AddProjectModal: FC<AddProjectModalArgs> = ({ recordId, operation, visible
 		const values: AddProjectRequest = await form.validateFields();
 
 		try {
-			const { data, error } = await createProject({
+			const { error } = await createProject({
 				data: {
 					founder: { connect: { id: authUser.id } },
 					title: values.title,

@@ -5,7 +5,7 @@ import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { getUserSkillQuery } from '@services/graphql/queries/userSkill';
 import { getSkillLevel, SkillLevel, skillLevelsList } from 'src/definitions/skill';
-import { CheckOutlined, CloseOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Progress, Row, Select, Skeleton, Space, Table, Tooltip } from 'antd';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -16,7 +16,7 @@ import styles from './style.module.less';
 const SkillEditorPage: NextPageWithLayout = () => {
 	const router = useRouter();
 	const { skillId } = router.query;
-	const [{ data: userSkillData, fetching: userSkillFetching }, reexecuteUserSkill] = useQuery({
+	const [{ data: userSkillData, fetching: userSkillFetching }] = useQuery({
 		query: getUserSkillQuery,
 		variables: { id: skillId },
 		pause: !skillId,
@@ -24,9 +24,13 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	});
 	const [experience, setExperience] = useState(0);
 	const [level, setLevel] = useState<SkillLevel>(skillLevelsList[0]);
+	// eslint-disable-next-line unused-imports/no-unused-vars
 	const [tools, setTools] = useState([]);
+	// eslint-disable-next-line unused-imports/no-unused-vars
 	const [schools, setSchools] = useState([]);
+	// eslint-disable-next-line unused-imports/no-unused-vars
 	const [jobs, setJobs] = useState([]);
+	// eslint-disable-next-line unused-imports/no-unused-vars
 	const [works, setWorks] = useState([]);
 
 	useEffect(() => {

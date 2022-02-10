@@ -1,6 +1,6 @@
 import { getCookie } from '@helpers/cookie';
 import { multipartFetchExchange } from '@urql/exchange-multipart-fetch';
-import { cacheExchange, createClient, dedupExchange, Operation } from 'urql';
+import { cacheExchange, createClient, dedupExchange } from 'urql';
 
 export const graphqlClient = createClient({
 	url: process.env.NEXT_PUBLIC_BACKEND_URL ? process.env.NEXT_PUBLIC_BACKEND_URL : '',
