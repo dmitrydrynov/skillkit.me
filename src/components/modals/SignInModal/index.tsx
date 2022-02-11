@@ -128,7 +128,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 						{state.step === _FormStep._Password && 'Sign in'}
 					</Button>
 					<Divider>or</Divider>
-					<Button key="discord-login" type="text" href="http://localhost:8000/auth/discord">
+					<Button key="discord-login" type="text" href={process.env.NEXT_PUBLIC_DISCORD_AUTH_URL}>
 						Sign in with Discord
 					</Button>
 				</>,
