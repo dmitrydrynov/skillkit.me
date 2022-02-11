@@ -2,22 +2,18 @@ version: '3.6'
 
 services:
   frontend:
-    build:
-      context: ./
-      args:
-        - API_HOST=localhost
-        - API_PORT=3000
-    container_name: gamelab_frontend
+    build: ./
+    container_name: skillkit_frontend
     env_file:
       - .env
-    hostname: gamelab_frontend
-    networks: 
-      - gamelab_default
+    hostname: skillkit_frontend
+    networks:
+      - skillkit_default
     expose:
-      - 3000
+      - ${PORT:-3000}
     ports:
-      - '3000:3000'
+      - '${PORT:-3000}:${PORT:-3000}'
     restart: unless-stopped
 
 networks:
-  gamelab_default:
+  skillkit_default:
