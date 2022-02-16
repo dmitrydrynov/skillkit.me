@@ -25,13 +25,16 @@ const plugins = [
 /** Main Next.js configuration */
 const mainConfig = {
 	reactStrictMode: false,
+	images: {
+		domains: ['cdn.discordapp.com'],
+	},
 };
 
 /** Image hosts */
 if (imagesHost) {
-	mainConfig.images = {
-		domains: [imagesHost.hostname, 'cdn.discordapp.com'],
-	};
+	mainConfig.images.domains.push(imagesHost.hostname);
 }
+
+console.log('[INFO] Allowed image hosts (next.js): ', mainConfig.images.domains);
 
 module.exports = withPlugins(plugins, mainConfig);
