@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
     networks:
       - external_network
-    links:
+    external_links:
       - skillkit_backend_prod
 
 networks:
