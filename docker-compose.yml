@@ -13,9 +13,11 @@ services:
       - '${PORT:-3000}:${PORT:-3000}'
     restart: unless-stopped
     networks:
-      - skillkit_network
+      - external_network
     links:
       - skillkit_backend_prod
 
 networks:
-  skillkit_network:
+  external_network:
+    external:
+      name: skillkit_network
