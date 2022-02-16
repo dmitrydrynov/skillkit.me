@@ -7,13 +7,10 @@ services:
     env_file:
       - .env
     hostname: skillkit_frontend
-    networks:
-      - skillkit_default
     expose:
       - ${PORT:-3000}
     ports:
       - '${PORT:-3000}:${PORT:-3000}'
     restart: unless-stopped
-
-networks:
-  skillkit_default:
+    networks:
+      - skillkit_network
