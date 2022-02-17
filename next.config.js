@@ -25,9 +25,15 @@ const plugins = [
 /** Main Next.js configuration */
 const mainConfig = {
 	reactStrictMode: false,
-	swcMinify: false,
 	images: {
 		domains: ['cdn.discordapp.com'],
+	},
+	webpack: (config) => {
+		config.watchOptions = {
+			poll: 1000,
+			aggregateTimeout: 300,
+		};
+		return config;
 	},
 };
 

@@ -8,6 +8,7 @@ COPY package.json yarn.lock ./
 RUN rm -r node_modules/@next/swc-linux-x64-gnu &>- || echo 'Go next. The swc-linux-x64-gnu directory does not exist'
 # Update browserslist
 # RUN npx browserslist@latest --update-db
+# COPY . .
 RUN yarn install
 
 # Rebuild the source code only when needed

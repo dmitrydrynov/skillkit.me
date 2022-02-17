@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { ReactElement, useEffect, useMemo, useState } from 'react';
 import SettingsMenu from '@components/menus/SettingsMenu';
 import ProtectedLayout from '@layouts/ProtectedLayout';
@@ -9,7 +10,6 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Col, DatePicker, Form, Input, Row, Spin, Upload, message } from 'antd';
 import moment from 'moment';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useDispatch, useSelector } from 'react-redux';
 import countryList from 'react-select-country-list';
 import { useMutation, useQuery } from 'urql';
@@ -74,6 +74,21 @@ const ProfilePage: NextPageWithLayout = () => {
 
 		if (values.avatar) {
 			updateData.avatar = values.avatar.file.originFileObj;
+
+			// save avatar and getting the local path
+			// try {
+			// 	const avatarFormData = new FormData();
+			// 	avatarFormData.set('avatar', values.avatar);
+			// 	avatarFormData.set('dir', 'images/avatars');
+
+			// 	const uploadAvatarResponse = await fetch('/api/upload', {
+			// 		method: 'post',
+			// 		body: avatarFormData,
+			// 	});
+			// } catch (error) {
+			// 	message.error(error.message);
+			// 	setSubmitting(false);
+			// }
 		}
 
 		setSubmitting(true);
@@ -104,8 +119,6 @@ const ProfilePage: NextPageWithLayout = () => {
 	);
 
 	const handleAvatarChange = (info: any) => {
-		console.log('handleAvatarChange', info);
-
 		if (info.file.status === 'uploading') {
 			setAvatarLoading(true);
 
@@ -153,7 +166,7 @@ const ProfilePage: NextPageWithLayout = () => {
 									onChange={handleAvatarChange}
 								>
 									{avatarUrl ? (
-										<Image src={avatarUrl} alt="avatar" className={styles.avatar} width="200px" height="200px" />
+										<img src={avatarUrl} alt="avatar" className={styles.avatar} width="200px" height="200px" />
 									) : (
 										uploadButton
 									)}
