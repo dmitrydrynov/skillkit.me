@@ -14,8 +14,6 @@ services:
     restart: unless-stopped
     networks:
       - external_network
-    external_links:
-      - api.skillkit.me
 
 networks:
   external_network:
