@@ -15,7 +15,7 @@ services:
     networks:
       - external_network
     external_links:
-      - skillkit_backend_prod
+      - api.skillkit.me
 
 networks:
   external_network:
