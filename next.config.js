@@ -25,6 +25,7 @@ const plugins = [
 /** Main Next.js configuration */
 const mainConfig = {
 	reactStrictMode: false,
+	swcMinify: false,
 	images: {
 		domains: ['cdn.discordapp.com'],
 	},

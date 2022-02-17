@@ -1,6 +1,24 @@
 version: '3.6'
 
 services:
+  dev:
+    build:
+      context: .
+      target: deps
+    container_name: skillkit_frontend_dev
+    env_file:
+      - .env
+    expose:
+      - ${PORT:-3000}
+    ports:
+      - '${PORT:-3000}:${PORT:-3000}'
+    restart: unless-stopped
+    networks:
+      - external_network
+    volumes:
+      - .:/app
+    command: yarn dev
+
   frontend:
     build: ./
     container_name: skillkit_frontend
