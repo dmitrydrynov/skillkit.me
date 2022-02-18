@@ -8,11 +8,35 @@ export const config = {
 	},
 };
 
-const saveFile = async (dir: string, file: any) => {
-	const data = fs.readFileSync(file.path);
-	fs.writeFileSync(`./public/${dir}/${file.name}`, data);
-	await fs.unlinkSync(file.path);
-	return;
+const saveFile = async (dir: string, file: any, prefix: string = '') => {
+	let extension = file.originalFilename.split('.').pop();
+	extension = extension ? '.' + extension : '';
+	const filePath = `/${dir}/${prefix}${file.newFilename}${extension}`;
+
+	try {
+		const data = await fs.promises.readFile(file.filepath);
+
+		if (!fs.existsSync('./public/' + dir)) {
+			await fs.promises.mkdir('./public/' + dir, { recursive: true });
+		}
+
+		await fs.promises.writeFile('./public' + filePath, data);
+		await fs.promises.unlink(file.filepath);
+
+		return Promise.resolve(filePath);
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
+const removeFile = async (filePath: string) => {
+	try {
+		await fs.promises.unlink('./public' + filePath);
+
+		return Promise.resolve(true);
+	} catch (error) {
+		return Promise.resolve(false);
+	}
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -24,7 +48,17 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
 	const form = new formidable.IncomingForm();
 
 	form.parse(req, async function (err: any, fields: any, files: any) {
-		await saveFile(fields['dir'], files.file);
-		return res.status(201).send({ url: `./public/${fields['dir']}/${files.file.name}` });
+		try {
+			const savedFilePath = await saveFile(fields.dir, files.file, 'avatar-');
+
+			/** Remove if a new created */
+			if (savedFilePath && fields.replaceFile) {
+				await removeFile(fields.replaceFile);
+			}
+
+			return res.status(201).send({ path: savedFilePath });
+		} catch (error) {
+			return res.status(404).send({ error: error || 'Something wrong!' });
+		}
 	});
 };

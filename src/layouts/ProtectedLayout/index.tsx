@@ -1,14 +1,15 @@
-import React, { FC, ReactElement } from 'react';
+import React, { FC, ReactElement, useEffect } from 'react';
 import skillKitLogo from '@assets/images/skillkit-logo.svg';
 import UserMenu from '@components/menus/UserMenu';
 import withAuth from '@helpers/withAuth';
 import { ProfileOutlined } from '@ant-design/icons';
-import { Col, Layout, Menu, Row } from 'antd';
+import { Col, Grid, Layout, Menu, Row } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import styles from './ProtectedLayout.module.less';
 
 const { Header, Content, Sider } = Layout;
+const { useBreakpoint } = Grid;
 
 type ProtectedLayoutParams = {
 	title: string;
@@ -17,6 +18,11 @@ type ProtectedLayoutParams = {
 
 const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, siderMenu = null }) => {
 	const router = useRouter();
+	const screens = useBreakpoint();
+
+	useEffect(() => {
+		console.log(screens);
+	}, [screens]);
 
 	const handleMenuClick = ({ key }) => {
 		router.push(key);
@@ -32,7 +38,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, siderMenu = null
 
 	return (
 		<Layout className={styles.container}>
-			<Sider className={styles.sider} breakpoint="lg">
+			<Sider className={styles.sider} breakpoint="lg" collapsedWidth={screens.sm ? 80 : 0}>
 				<div className={styles.logo}>
 					<Image src={skillKitLogo} layout="intrinsic" alt="gdhub logo" />
 				</div>

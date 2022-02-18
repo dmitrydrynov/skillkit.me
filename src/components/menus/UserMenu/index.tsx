@@ -101,11 +101,7 @@ const UserMenu: FC = () => {
 								<p className={styles.email}>{authUser.email}</p>
 							</div>
 							{authUser.avatar ? (
-								<Avatar
-									size={40}
-									src={authUser.avatar.includes('https://') ? authUser.avatar : IMAGES_HOST + authUser.avatar}
-									className={`${styles.avatar} ant-dropdown-link`}
-								/>
+								<Avatar size={40} src={authUser.avatar} className={`${styles.avatar} ant-dropdown-link`} />
 							) : (
 								<Avatar size={40} icon={<UserOutlined />} className={`${styles.avatar} ant-dropdown-link`} />
 							)}

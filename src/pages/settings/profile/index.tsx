@@ -10,6 +10,7 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Col, DatePicker, Form, Input, Row, Spin, Upload, message } from 'antd';
 import moment from 'moment';
 import Head from 'next/head';
+import Image from 'next/image';
 import { useDispatch, useSelector } from 'react-redux';
 import countryList from 'react-select-country-list';
 import { useMutation, useQuery } from 'urql';
@@ -45,7 +46,7 @@ const ProfilePage: NextPageWithLayout = () => {
 			const countryData = country ? countries.find((c) => c.value.toLowerCase() === country.toLowerCase()) : null;
 
 			if (avatar) {
-				setAvatarUrl(avatar.includes('https://') ? avatar : IMAGES_HOST + avatar);
+				setAvatarUrl(avatar);
 			}
 
 			form.setFieldsValue({
@@ -73,22 +74,25 @@ const ProfilePage: NextPageWithLayout = () => {
 		};
 
 		if (values.avatar) {
-			updateData.avatar = values.avatar.file.originFileObj;
+			try {
+				const avatarFormData = new FormData();
+				avatarFormData.set('file', values.avatar.file.originFileObj);
+				avatarFormData.set('dir', `images/users/${userId}`);
+				avatarFormData.set('replaceFile', data.user.avatar);
 
-			// save avatar and getting the local path
-			// try {
-			// 	const avatarFormData = new FormData();
-			// 	avatarFormData.set('avatar', values.avatar);
-			// 	avatarFormData.set('dir', 'images/avatars');
+				const uploadReponse = await fetch('/api/upload', {
+					method: 'post',
+					body: avatarFormData,
+				});
+				const uploadedData = await uploadReponse.json();
 
-			// 	const uploadAvatarResponse = await fetch('/api/upload', {
-			// 		method: 'post',
-			// 		body: avatarFormData,
-			// 	});
-			// } catch (error) {
-			// 	message.error(error.message);
-			// 	setSubmitting(false);
-			// }
+				console.log('Avatar', uploadedData);
+
+				updateData.avatar = uploadedData.path;
+			} catch (error) {
+				message.error(error.message);
+				setSubmitting(false);
+			}
 		}
 
 		setSubmitting(true);
@@ -166,7 +170,7 @@ const ProfilePage: NextPageWithLayout = () => {
 									onChange={handleAvatarChange}
 								>
 									{avatarUrl ? (
-										<img src={avatarUrl} alt="avatar" className={styles.avatar} width="200px" height="200px" />
+										<Image src={avatarUrl} alt="avatar" className={styles.avatar} width="200px" height="200px" />
 									) : (
 										uploadButton
 									)}
