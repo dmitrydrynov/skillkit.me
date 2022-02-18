@@ -1,20 +1,22 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement, useState, useEffect, createRef } from 'react';
 import { InlineEdit } from '@components/InlineEdit';
 import SkillEditorMenu from '@components/menus/SkillEditorMenu';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
-import { getUserSkillQuery } from '@services/graphql/queries/userSkill';
+import { editUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
 import { getSkillLevel, SkillLevel, skillLevelsList } from 'src/definitions/skill';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Progress, Row, Select, Skeleton, Space, Table, Tooltip } from 'antd';
+import { Button, Col, Input, message, Progress, Row, Select, Skeleton, Space, Table, Tooltip } from 'antd';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useQuery } from 'urql';
+import { FieldElement } from 'react-hook-form';
+import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
 const SkillEditorPage: NextPageWithLayout = () => {
 	const router = useRouter();
+	const descriptionRef = createRef<FieldElement>();
 	const { skillId } = router.query;
 	const [{ data: userSkillData, fetching: userSkillFetching }] = useQuery({
 		query: getUserSkillQuery,
@@ -22,6 +24,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		pause: !skillId,
 		requestPolicy: 'network-only',
 	});
+	const [, updateUserSkillData] = useMutation(editUserSkillMutation);
 	const [experience, setExperience] = useState(0);
 	const [level, setLevel] = useState<SkillLevel>(skillLevelsList[0]);
 	// eslint-disable-next-line unused-imports/no-unused-vars
@@ -44,11 +47,11 @@ const SkillEditorPage: NextPageWithLayout = () => {
 
 	const prepareSkillName = () => {
 		if (!userSkillData) {
-			return;
+			return '';
 		}
 
 		const { name } = userSkillData?.userSkill.skill;
-		return name ? name.charAt(0).toUpperCase() + name.slice(1) : null;
+		return name ? name.charAt(0).toUpperCase() + name.slice(1) : '';
 	};
 
 	const emptyData = (dataName = 'data') => <span className={styles.descriptionEmpty}>(Empty {dataName})</span>;
@@ -56,6 +59,30 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const [width, setWidth] = useState(userSkillData?.userSkill.skill.name.length);
 	const handleChangeInlineInput = (evt) => {
 		setWidth(evt.target.value.length);
+	};
+
+	const handleUserSkillUpdate = async (values: any) => {
+		console.log(values);
+
+		const reponse = await updateUserSkillData({ recordId: skillId, data: values });
+
+		if (reponse.error) {
+			message.error(reponse.error);
+			return;
+		}
+
+		message.success('User skill updated!');
+	};
+
+	const readyDescription = (text: string) => {
+		return text.split('\n').map((item, key) => {
+			return (
+				<React.Fragment key={key}>
+					{item}
+					<br />
+				</React.Fragment>
+			);
+		});
 	};
 
 	return (
@@ -72,21 +99,25 @@ const SkillEditorPage: NextPageWithLayout = () => {
 								<Skeleton.Button style={{ width: '450px', height: '30px', marginBottom: '0.5em' }} active={true} />
 							) : (
 								<InlineEdit
+									name="skillname"
+									initialValue={prepareSkillName()}
+									onSave={handleUserSkillUpdate}
 									viewMode={<h2 className={styles.title}>{prepareSkillName()}</h2>}
 									editMode={
 										<Input
 											className={styles.titleInput}
 											style={{ width: width + 'ch' }}
 											onChange={handleChangeInlineInput}
-											defaultValue={prepareSkillName()}
 										/>
 									}
-									onSave={() => {}}
 								/>
 							)}
 						</Col>
 						<Col>
 							<InlineEdit
+								name="level"
+								initialValue={level.label.toUpperCase()}
+								onSave={handleUserSkillUpdate}
 								viewMode={
 									<Tooltip title={level.description}>
 										<div className={styles.levelName}>
@@ -103,9 +134,9 @@ const SkillEditorPage: NextPageWithLayout = () => {
 									</Tooltip>
 								}
 								editMode={
-									<Select placeholder="Select" style={{ width: '150px' }} defaultValue={level.label.toLowerCase()}>
+									<Select placeholder="Select" style={{ width: '150px' }}>
 										{skillLevelsList.map((item, indx) => (
-											<Select.Option key={indx.toString()} value={item.label.toLowerCase()}>
+											<Select.Option key={indx.toString()} value={item.label.toUpperCase()}>
 												<Tooltip title={item.description} placement="right">
 													<Image src={item.icon} alt="" /> {item.label}
 												</Tooltip>
@@ -113,25 +144,22 @@ const SkillEditorPage: NextPageWithLayout = () => {
 										))}
 									</Select>
 								}
-								onSave={() => {}}
 							/>
 							<p>
 								{experience > 0 ? `Work experience more than ${experience} year(s)` : "I haven't any experience yet"}
 							</p>
 						</Col>
 					</Row>
-					{/* <Row style={{ marginBottom: '10px' }} justify="end">
-						<Col>
-							{experience > 0 ? `Work experience more than ${experience} year(s)` : "I haven't any experience yet"}
-						</Col>
-					</Row> */}
 					<Row>
 						<Col span={24}>
 							<InlineEdit
+								name="description"
+								initialValue={userSkillData?.userSkill.description}
+								onSave={handleUserSkillUpdate}
 								viewMode={
 									<p className={styles.description}>
 										{userSkillData?.userSkill.description
-											? userSkillData?.userSkill.description
+											? readyDescription(userSkillData?.userSkill.description)
 											: emptyData('description')}
 									</p>
 								}
@@ -145,7 +173,6 @@ const SkillEditorPage: NextPageWithLayout = () => {
 										defaultValue={userSkillData?.userSkill.description}
 									/>
 								}
-								onSave={() => {}}
 							/>
 						</Col>
 					</Row>

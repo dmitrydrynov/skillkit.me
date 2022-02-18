@@ -55,29 +55,13 @@ mutation(
 export const editUserSkillMutation = `
 mutation(
   $recordId: ID!
-  $skillId: ID!
-  $level: String!
-  $description: String
-  $schools: UserSchoolRelateToManyForUpdateInput
-  $tools: UserToolRelateToManyForUpdateInput
-  $jobs: UserJobRelateToManyForUpdateInput
+  $data: UserSkillUpdateInput!
 ) {
   updateUserSkill(
     where: {
       id: $recordId
     }
-    data: {
-      skill: {
-        connect: {
-          id: $skillId
-        }
-      }
-      schools: $schools
-      jobs: $jobs
-      tools: $tools
-      level: $level
-      description: $description
-    }
+    data: $data
   ) { id }
 }
 `;
