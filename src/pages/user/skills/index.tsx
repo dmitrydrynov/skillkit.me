@@ -4,8 +4,15 @@ import { NextPageWithLayout } from '@pages/_app';
 import { deleteUserSkillMutation, userSkillsQuery } from '@services/graphql/queries/userSkill';
 import { RootState } from '@store/configure-store';
 import { SkillLevel, getSkillLevel } from 'src/definitions/skill';
-import { DeleteOutlined, EditTwoTone, NotificationTwoTone, PlusOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider, Dropdown, Menu, message, PageHeader, Table } from 'antd';
+import {
+	DeleteOutlined,
+	EditOutlined,
+	EditTwoTone,
+	NotificationOutlined,
+	NotificationTwoTone,
+	PlusOutlined,
+} from '@ant-design/icons';
+import { Button, ConfigProvider, Dropdown, Grid, Menu, message, PageHeader, Table } from 'antd';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
@@ -16,10 +23,12 @@ import { useSelector } from 'react-redux';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
+const { useBreakpoint } = Grid;
 const AddUserSkillModal = dynamic(() => import('@components/modals/AddUserSkillModal'), { ssr: false });
 
 const ProfilePage: NextPageWithLayout = () => {
 	const router = useRouter();
+	const screens = useBreakpoint();
 	const [visibleAddUserSkillModal, setVisibleAddUserSkillModal] = useState(false);
 	const userId = useSelector((state: RootState) => state.user.id);
 	const [userSkills, reexecuteUserSkills] = useQuery({
@@ -45,10 +54,28 @@ const ProfilePage: NextPageWithLayout = () => {
 		<Menu
 			onClick={({ key, domEvent }) => {
 				domEvent.stopPropagation();
-				return key === 'delete' && !!recordId && handleDeleteUserSkill(recordId);
+				if (key === 'delete' && recordId) {
+					handleDeleteUserSkill(recordId);
+				}
+				if (key === 'edit' && recordId) {
+					router.push(`/user/skill/${recordId}/editor`);
+				}
+				if (key === 'share' && recordId) {
+					console.log('share skill', recordId);
+				}
 			}}
 		>
-			<Menu.Item key="delete">
+			{screens.sm === false && (
+				<>
+					<Menu.Item key="edit">
+						<EditOutlined /> Edit
+					</Menu.Item>
+					<Menu.Item key="share">
+						<NotificationOutlined /> Share
+					</Menu.Item>
+				</>
+			)}
+			<Menu.Item key="delete" danger>
 				<DeleteOutlined /> Delete
 			</Menu.Item>
 		</Menu>
@@ -141,6 +168,7 @@ const ProfilePage: NextPageWithLayout = () => {
 						width="140px"
 						dataIndex="level"
 						key="level"
+						responsive={['md']}
 						render={(value) => (
 							<>
 								<Image src={getSkillLevelIcon(value)} alt="" /> {value[0].toUpperCase() + value.slice(1)}
@@ -153,11 +181,13 @@ const ProfilePage: NextPageWithLayout = () => {
 						key="updatedAt"
 						dataIndex="updatedAt"
 						render={(data: unknown) => moment(data).fromNow()}
+						responsive={['lg']}
 					/>
 					<Table.Column
 						width="250px"
 						key="preview"
 						align="right"
+						responsive={['sm']}
 						render={(value, record: UserSkill) => (
 							<>
 								<Button

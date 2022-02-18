@@ -69,7 +69,7 @@ const SecurityPage: NextPageWithLayout = () => {
 			</Head>
 			<Row>
 				<Col flex="1" className={styles.content}>
-					<h3>Security settings</h3>
+					<h2>Security settings</h2>
 					<Form
 						className={styles.form}
 						form={form}

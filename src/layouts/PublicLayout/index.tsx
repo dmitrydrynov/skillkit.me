@@ -37,7 +37,7 @@ const PublicLayout: FC = ({ children }) => {
 			{<SignUpModal visible={visibleSignUpModal} onClose={() => setVisibleSignUpModal(false)} />}
 			<Layout className={styles.layout}>
 				<Header className={styles.publicLayout_header}>
-					<Row align="middle">
+					<Row align="middle" className={styles.logoContainer}>
 						<Col flex="1">
 							<div className={styles.logo}>
 								<Image src={skillKitLogo} alt="skillKit logo" />

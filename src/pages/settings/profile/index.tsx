@@ -150,7 +150,7 @@ const ProfilePage: NextPageWithLayout = () => {
 			</Head>
 			<Row>
 				<Col flex="1" className={styles.content}>
-					<h3>Profile settings</h3>
+					<h2>Profile settings</h2>
 					<Spin spinning={fetching}>
 						<Form
 							className={styles.form}
@@ -177,7 +177,7 @@ const ProfilePage: NextPageWithLayout = () => {
 								</Upload>
 							</Form.Item>
 							<Row gutter={16}>
-								<Col span={12}>
+								<Col sm={12} xs={24}>
 									<Form.Item
 										name="firstName"
 										label="First name"
@@ -191,7 +191,7 @@ const ProfilePage: NextPageWithLayout = () => {
 										<Input placeholder="First name" />
 									</Form.Item>
 								</Col>
-								<Col span={12}>
+								<Col sm={12} xs={24}>
 									<Form.Item
 										name="lastName"
 										label="Last name"
