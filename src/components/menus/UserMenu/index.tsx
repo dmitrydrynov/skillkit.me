@@ -10,8 +10,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from 'urql';
 import styles from './UserMenu.module.less';
 
-const IMAGES_HOST = process.env.NEXT_PUBLIC_IMAGES_HOST;
-
 type MenuItem = {
 	link?: string;
 	title: string;

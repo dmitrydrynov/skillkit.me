@@ -16,8 +16,6 @@ import countryList from 'react-select-country-list';
 import { useMutation, useQuery } from 'urql';
 import styles from './ProfilePage.module.less';
 
-const IMAGES_HOST = process.env.NEXT_PUBLIC_IMAGES_HOST;
-
 // eslint-disable-next-line no-unused-vars
 function getBase64(img: Blob, callback: (fileReaderResult: string | ArrayBuffer) => void) {
 	const reader = new FileReader();

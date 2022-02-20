@@ -9,6 +9,7 @@ RUN rm -r node_modules/@next/swc-linux-x64-gnu &>- || echo 'Go next. The swc-lin
 # Update browserslist
 # RUN npx browserslist@latest --update-db
 # COPY . .
+RUN yarn add sharp
 RUN yarn install
 
 # Rebuild the source code only when needed
@@ -36,13 +37,9 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 
-RUN yarn add sharp
-
 USER nextjs
-
-EXPOSE ${PORT:-3000}
-
-ENV PORT ${PORT:-3000}
+RUN sudo chown 1000:1000 ./public
+RUN sudo chown nextjs:nodejs ./public
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry

@@ -7,8 +7,6 @@ import { useSelector } from 'react-redux';
 import { useMutation } from 'urql';
 import styles from './style.module.less';
 
-const IMAGES_HOST = process.env.NEXT_PUBLIC_IMAGES_HOST;
-
 type AddProjectModalArgs = {
 	recordId: string;
 	operation: string;
@@ -108,11 +106,7 @@ const AddProjectModal: FC<AddProjectModalArgs> = ({ visible, onClose }) => {
 						<div className={styles.founderName}>
 							by{' '}
 							{authUser.avatar ? (
-								<Avatar
-									size={24}
-									src={IMAGES_HOST + authUser.avatar}
-									className={`${styles.avatar} ant-dropdown-link`}
-								/>
+								<Avatar size={24} src={authUser.avatar} className={`${styles.avatar} ant-dropdown-link`} />
 							) : (
 								<Avatar size={40} icon={<UserOutlined />} className={`${styles.avatar} ant-dropdown-link`} />
 							)}
