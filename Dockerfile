@@ -38,8 +38,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 
 USER nextjs
-RUN sudo chown 1000:1000 ./public
-RUN sudo chown nextjs:nodejs ./public
+RUN chown 1000:1000 ./public
+RUN chown nextjs:nodejs ./public
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
