@@ -138,7 +138,17 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 				<Image src={SignModalIllustration} alt="image for sign up form" />
 			</div> */}
 			<h2 className={styles.title}>Sign in</h2>
-			<p>Enter your email address to sign in your account</p>
+			<div className={styles.subtitle}>
+				{state.step === _FormStep._Email && <>Enter your email address to sign in your account</>}
+				{state.step === _FormStep._Password && authorizedResponse.data?.signIn.next && (
+					<>
+						Enter your one-time password.
+						<br />
+						It was sent in your email <strong>{state.email}</strong>.
+					</>
+				)}
+				{state.step === _FormStep._Password && !authorizedResponse.data?.signIn.next && <>Enter your password</>}
+			</div>
 			<Form
 				className={styles.form}
 				form={form}

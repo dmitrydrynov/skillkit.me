@@ -12,6 +12,7 @@ mutation ($email: String!, $password: String) {
         lastName
         fullName
         email
+        useOTP
         role {
           name
         }
@@ -34,6 +35,7 @@ mutation ($firstName: String!, $lastName: String!, $email: String!, $password: S
         lastName
         fullName
         email
+        useOTP
         role {
           name
         }
@@ -65,6 +67,7 @@ query($code: String!, $state: String, $serviceName: String!) {
       fullName
       email
       avatar
+      useOTP
     }
   }
 }

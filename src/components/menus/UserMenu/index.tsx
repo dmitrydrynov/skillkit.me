@@ -1,5 +1,4 @@
 import { FC, ReactNode, useState } from 'react';
-import { endSessionMutation } from '@services/graphql/queries/auth';
 import { RootState } from '@store/configure-store';
 import { setLogout } from '@store/reducers/auth';
 import { UserOutlined } from '@ant-design/icons';
@@ -7,7 +6,6 @@ import { Avatar, Dropdown, Menu, Space, Skeleton } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMutation } from 'urql';
 import styles from './UserMenu.module.less';
 
 type MenuItem = {
@@ -21,7 +19,7 @@ const UserMenu: FC = () => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const [activeUserMenu, setActiveUserMenu] = useState(false);
-	const [, endSession] = useMutation(endSessionMutation);
+	// const [, endSession] = useMutation(endSessionMutation);
 	const { logginingIn } = useSelector((state: RootState) => state.auth);
 	const authUser = useSelector((state: RootState) => state.user);
 
@@ -37,7 +35,7 @@ const UserMenu: FC = () => {
 		{
 			title: 'Sign out',
 			action: async () => {
-				await endSession();
+				// await endSession();
 
 				dispatch(setLogout());
 

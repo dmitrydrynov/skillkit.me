@@ -5,14 +5,14 @@ import PublicLayout from '@layouts/PublicLayout';
 import '@styles/globals.less';
 import { graphqlClient } from '@services/graphql/client';
 import { authenticatedUserQuery, signInByCodeQuery } from '@services/graphql/queries/auth';
-import { store } from '@store/configure-store';
+import { RootState, store } from '@store/configure-store';
 import { setLogin, setLoginingIn } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
 import ProgressBar from '@badrap/bar-of-progress';
 import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import Router, { useRouter } from 'next/router';
-import { Provider as StoreProvider, useDispatch } from 'react-redux';
+import { Provider as StoreProvider, useDispatch, useSelector } from 'react-redux';
 import { Provider as UrqlProvider, useQuery } from 'urql';
 
 export type NextPageWithLayout = NextPage & {
@@ -34,6 +34,7 @@ const AuthProvider: FC = ({ children }): any => {
 	const dispatch = useDispatch();
 	const { query: queryParams, push: routerPush } = useRouter();
 	const [sessionToken, setSessionToken] = useState<string | null>(null);
+	const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
 	const [userDataByCode] = useQuery({
 		query: signInByCodeQuery,
 		variables: { code: queryParams.code, state: queryParams.state, serviceName: 'discord' },
@@ -41,7 +42,7 @@ const AuthProvider: FC = ({ children }): any => {
 	});
 	const [userData] = useQuery({
 		query: authenticatedUserQuery,
-		pause: !sessionToken,
+		pause: !sessionToken && !loggedIn,
 	});
 
 	useEffect(() => {
