@@ -37,7 +37,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, siderMenu = null
 	);
 
 	return (
-		<Layout className={styles.container}>
+		<Layout className={styles.container} style={{ minHeight: '100vh' }}>
 			<Sider className={styles.sider} breakpoint="lg" collapsedWidth={screens.sm ? 80 : 0}>
 				<div className={styles.logo}>
 					<Image src={skillKitLogo} layout="intrinsic" alt="gdhub logo" />

@@ -7,6 +7,17 @@
 @import '~flag-icon-css/css/flag-icon.css';
 @import '~braft-editor/dist/index.css';
 
+body {
+	background: rgb(255, 255, 255);
+	background: linear-gradient(
+		90deg,
+		#ffffff 0%,
+		#ffffff 50%,
+		@layout-body-background 50%,
+		@layout-body-background 100%
+	);
+}
+
 .ant-col {
 	min-height: initial;
 }
@@ -102,4 +113,10 @@
 	z-index: 2;
 	background: #c057ff;
 	border-radius: 0 1rem 1rem 0;
+}
+
+@media screen and (max-width: 600px) {
+	body {
+		background: @layout-body-background;
+	}
 }

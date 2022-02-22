@@ -1,9 +1,11 @@
-import { FC, useEffect } from 'react';
-import SignModalIllustration from '@assets/images/sign-modal-illustration.svg';
-import { sendUserMagicAuthLinkMutation } from '@services/graphql/queries/auth';
-import { createUserMutation } from '@services/graphql/queries/user';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { FC, useEffect, useState } from 'react';
+import { registerUserMutation } from '@services/graphql/queries/auth';
+import { setLogin } from '@store/reducers/auth';
+import { setUserData } from '@store/reducers/user';
 import { Button, Col, Form, Input, Modal, Row, message } from 'antd';
-import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
 import { useMutation } from 'urql';
 import styles from './SignUpModal.module.less';
 
@@ -13,73 +15,100 @@ type SignUpModalArgs = {
 };
 
 type SignUpRequest = {
-	firstName: string;
-	lastName: string;
-	email: string;
-	password: string;
-	confirmPassword: string;
+	firstName?: string;
+	lastName?: string;
+	email?: string;
+	password?: string;
 };
+
+enum _FormStep {
+	_Register = 'register',
+	_Password = 'password',
+}
 
 const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 	const [form] = Form.useForm();
-	const [createUserResponse, createUser] = useMutation(createUserMutation);
-	const [, sendUserMagicAuthLink] = useMutation(sendUserMagicAuthLinkMutation);
+	const dispatch = useDispatch();
+	const router = useRouter();
+	const [registerUserResponse, registerUser] = useMutation(registerUserMutation);
+	const [state, setState] = useState<SignUpRequest & { step: _FormStep }>({ step: _FormStep._Register });
 
 	useEffect(() => {
 		form.resetFields();
-	}, [form]);
+		setState({ step: _FormStep._Register });
+	}, []);
 
-	const handleOk = () => {
-		form
-			.validateFields()
-			.then(async ({ firstName, lastName, email, password }: SignUpRequest) => {
-				try {
-					const { data, error } = await createUser({
-						firstName,
-						lastName,
-						email,
-						password,
-					});
+	useEffect(() => {
+		const { data, error } = registerUserResponse;
 
-					if (error) {
-						message.error('The email already buzy or sign up failed. Try another email.');
-						createUserResponse.fetching = false;
-						return;
-					}
+		if (!data && !error) {
+			registerUserResponse.fetching = false;
+			return;
+		}
 
-					if (data.createUser?.code) {
-						message.error(data.signUp.message);
-						createUserResponse.fetching = false;
-						return;
-					}
+		if (error) {
+			if (error.graphQLErrors.length) {
+				message.error(error.graphQLErrors[0].message);
+			}
 
-					const sended = await sendUserMagicAuthLink({ email });
+			if (error.networkError) {
+				message.error(error.networkError.message);
+			}
 
-					if (sended.error) {
-						message.error(sended.error.message);
-						createUserResponse.fetching = false;
-						return;
-					}
+			return;
+		}
 
-					if (data.sendUserMagicAuthLink?.code) {
-						message.error(data.sendUserMagicAuthLink.message);
-						createUserResponse.fetching = false;
-						return;
-					}
+		if (data.registerUser.next === true) {
+			setState({ ...state, step: _FormStep._Password });
 
-					message.success('You are welcome! Confirm your email please.');
-					onClose();
-				} catch (e: any) {
-					message.error(e.message);
-				}
-			})
-			.catch((info) => {
-				console.log('Validate Failed:', info);
+			return;
+		}
+
+		if (data.registerUser.token.length) {
+			dispatch(setLogin({ token: data.registerUser.token }));
+			dispatch(setUserData({ ...data.registerUser.user }));
+
+			message.success('Your are welcome!');
+
+			router.push('/settings/profile');
+
+			onClose();
+		}
+	}, [registerUserResponse]);
+
+	const handleOk = async () => {
+		const { firstName, lastName, email, password }: SignUpRequest = await form.validateFields();
+
+		setState({
+			...state,
+			firstName: firstName ? firstName : state.firstName,
+			lastName: lastName ? lastName : state.lastName,
+			email: email ? email : state.email,
+			password: password ? password : state.password,
+		});
+
+		try {
+			await registerUser({
+				firstName: firstName ? firstName : state.firstName,
+				lastName: lastName ? lastName : state.lastName,
+				email: email ? email : state.email,
+				password: password ? password : state.password,
 			});
+		} catch (error) {
+			message.error(error.graphQLErrors[0].message);
+		}
 	};
 
 	const handleCancel = () => {
+		setState({ step: _FormStep._Register });
+		registerUserResponse.fetching = false;
 		onClose();
+	};
+
+	const handleKeyUpForm = (event) => {
+		if (event.key === 'Enter') {
+			handleOk();
+		}
 	};
 
 	return (
@@ -96,20 +125,21 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 				<Button
 					key="submit"
 					type="primary"
-					loading={createUserResponse.fetching}
+					loading={registerUserResponse.fetching}
 					onClick={handleOk}
 					className={styles.submitBtn}
 				>
-					Sign up
+					{state.step === _FormStep._Register && 'Next'}
+					{state.step === _FormStep._Password && 'Sign up'}
 				</Button>,
 			]}
 		>
+			<h2 className={styles.title}>Get Connect to the Skillkit</h2>
+			<p className={styles.subtitle}>Fill this form and let&apos;s go!</p>
 			<Row justify="center">
-				<div className={styles.imageContainer}>
+				{/* <div className={styles.imageContainer}>
 					<Image src={SignModalIllustration} alt="image for sign up form" />
-				</div>
-				<h2 className={styles.title}>Get Connect to the best Mentors</h2>
-				<p className={styles.subtitle}>Easy way to connect to mentor and get advise solution of design. </p>
+				</div> */}
 				<Form
 					className={styles.form}
 					form={form}
@@ -117,45 +147,32 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 					name="form_in_modal"
 					initialValues={{ modifier: 'public' }}
 					requiredMark={false}
+					onKeyUp={handleKeyUpForm}
 				>
-					<Row gutter={16}>
-						<Col span={12}>
-							<Form.Item name="firstName" rules={[{ required: true, message: 'Please input the first name!' }]}>
-								<Input placeholder="First name" />
+					{state.step === _FormStep._Register && (
+						<>
+							<Row gutter={16}>
+								<Col span={12}>
+									<Form.Item name="firstName" rules={[{ required: true, message: 'Please input the first name!' }]}>
+										<Input placeholder="First name" />
+									</Form.Item>
+								</Col>
+								<Col span={12}>
+									<Form.Item name="lastName" rules={[{ required: true, message: 'Please input the last name!' }]}>
+										<Input placeholder="Last name" />
+									</Form.Item>
+								</Col>
+							</Row>
+							<Form.Item name="email" rules={[{ type: 'email', required: true, message: 'Please input the email!' }]}>
+								<Input placeholder="Email" />
 							</Form.Item>
-						</Col>
-						<Col span={12}>
-							<Form.Item name="lastName" rules={[{ required: true, message: 'Please input the last name!' }]}>
-								<Input placeholder="Last name" />
-							</Form.Item>
-						</Col>
-					</Row>
-
-					<Form.Item name="email" rules={[{ type: 'email', required: true, message: 'Please input the email!' }]}>
-						<Input placeholder="Email" />
-					</Form.Item>
-
-					<Form.Item name="password" rules={[{ required: true, message: 'Please input the password!' }]}>
-						<Input.Password placeholder="Password" />
-					</Form.Item>
-
-					<Form.Item
-						name="confirmPassword"
-						rules={[
-							{ required: true, message: 'Please repeat the password!' },
-							({ getFieldValue }) => ({
-								validator(_, value) {
-									if (!value || getFieldValue('password') === value) {
-										return Promise.resolve();
-									}
-
-									return Promise.reject(new Error('The two passwords not match!'));
-								},
-							}),
-						]}
-					>
-						<Input.Password placeholder="Repeat the password" />
-					</Form.Item>
+						</>
+					)}
+					{state.step === _FormStep._Password && (
+						<Form.Item name="password" rules={[{ required: true, message: 'Please input the password!' }]}>
+							<Input.Password autoFocus={true} placeholder="Password" />
+						</Form.Item>
+					)}
 				</Form>
 			</Row>
 		</Modal>
@@ -163,3 +180,6 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 };
 
 export default SignUpModal;
+function dispatch(arg0: any) {
+	throw new Error('Function not implemented.');
+}

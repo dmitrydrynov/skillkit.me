@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import introImage from '@assets/images/home/intro.png';
-import SignInModal from '@components/modals/SignInModal';
+import SignUpModal from '@components/modals/SignUpModal';
 import { redeemUserMagicAuthTokenMutation } from '@services/graphql/queries/auth';
 import { RootState } from '@store/configure-store';
 import { setLogin } from '@store/reducers/auth';
@@ -20,7 +20,7 @@ const Home: NextPage = () => {
 	const dispatch = useDispatch();
 	const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
 	const [, redeemUserMagicAuthToken] = useMutation(redeemUserMagicAuthTokenMutation);
-	const [visibleSignInModal, setVisibleSignInModal] = useState(false);
+	const [visibleSignUpModal, setVisibleSignUpModal] = useState(false);
 
 	useEffect(() => {
 		const { magicAuth, email }: any = router.query;
@@ -55,10 +55,11 @@ const Home: NextPage = () => {
 			</Head>
 			<Row align="middle">
 				<Col xs={24} md={11} className={styles.container}>
-					<h1>Make the perfect skill kit and share only the essentials</h1>
+					<h1>You are more than your profession</h1>
 					<p>
-						The more flexible alternative to the classic resume. Build your professional skillset and share it with
-						customers and employers.
+						The more flexible alternative to the classic resume.
+						<br />
+						Build your unique skills and share them with customers and employers.
 					</p>
 					{!loggedIn && (
 						<Button
@@ -66,7 +67,7 @@ const Home: NextPage = () => {
 							size="large"
 							type="primary"
 							className={styles.primaryButton}
-							onClick={() => setVisibleSignInModal(true)}
+							onClick={() => setVisibleSignUpModal(true)}
 						>
 							Start Now
 						</Button>
@@ -76,7 +77,7 @@ const Home: NextPage = () => {
 					<Image src={introImage} alt="" />
 				</Col>
 			</Row>
-			{!loggedIn && <SignInModal visible={visibleSignInModal} onClose={() => setVisibleSignInModal(false)} />}
+			{!loggedIn && <SignUpModal visible={visibleSignUpModal} onClose={() => setVisibleSignUpModal(false)} />}
 		</>
 	);
 };

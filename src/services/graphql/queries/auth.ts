@@ -12,6 +12,31 @@ mutation ($email: String!, $password: String) {
         lastName
         fullName
         email
+        role {
+          name
+        }
+      }
+    }
+  }
+}`;
+
+export const registerUserMutation = `
+mutation ($firstName: String!, $lastName: String!, $email: String!, $password: String) {
+  registerUser(firstName:$firstName, lastName:$lastName, email: $email, password: $password) {
+    ... on AuthNextResponse {
+      next
+    }
+    ... on AuthTokenResponse {
+      token
+      user {
+        id
+        firstName
+        lastName
+        fullName
+        email
+        role {
+          name
+        }
       }
     }
   }
@@ -48,17 +73,6 @@ query($code: String!, $state: String, $serviceName: String!) {
 export const endSessionMutation = `
   mutation {
     endSession
-  }
-`;
-
-export const sendUserMagicAuthLinkMutation = `
-  mutation($email: String!) {
-    sendUserMagicAuthLink(
-        email: $email
-      ) {
-      code
-      message
-    }
   }
 `;
 

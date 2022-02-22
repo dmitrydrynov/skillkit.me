@@ -34,6 +34,8 @@ services:
     restart: unless-stopped
     networks:
       - external_network
+    volumes:
+      - ${PUBLIC_DIR}:/app/public
 
 networks:
   external_network:
