@@ -21,9 +21,9 @@ services:
       - /app/.next
     command: yarn dev
 
-  frontend:
+  prod:
     build: ./
-    container_name: skillkit_frontend
+    container_name: skillkit_frontend_prod
     env_file:
       - .env
     hostname: skillkit_frontend
@@ -35,9 +35,12 @@ services:
     networks:
       - external_network
     volumes:
-      - ${PUBLIC_DIR}:/app/public
+      - uploads:/app/public
 
 networks:
   external_network:
     external:
       name: skillkit_network
+
+volumes:
+  uploads:

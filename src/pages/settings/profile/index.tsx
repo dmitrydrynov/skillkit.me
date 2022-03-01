@@ -72,26 +72,30 @@ const ProfilePage: NextPageWithLayout = () => {
 		};
 
 		if (values.avatar) {
-			try {
-				const avatarFormData = new FormData();
-				avatarFormData.set('file', values.avatar.file.originFileObj);
-				avatarFormData.set('dir', `images/users/${userId}`);
-				avatarFormData.set('replaceFile', data.user.avatar);
-
-				const uploadReponse = await fetch('/api/upload', {
-					method: 'post',
-					body: avatarFormData,
-				});
-				const uploadedData = await uploadReponse.json();
-
-				console.log('Avatar', uploadedData);
-
-				updateData.avatar = uploadedData.path;
-			} catch (error) {
-				message.error(error.message);
-				setSubmitting(false);
-			}
+			updateData.avatar = values.avatar.file.originFileObj;
 		}
+
+		// if (values.avatar) {
+		// 	try {
+		// 		const avatarFormData = new FormData();
+		// 		avatarFormData.set('file', values.avatar.file.originFileObj);
+		// 		avatarFormData.set('dir', `images/users/${userId}`);
+		// 		avatarFormData.set('replaceFile', data.user.avatar);
+
+		// 		const uploadReponse = await fetch('/api/upload', {
+		// 			method: 'post',
+		// 			body: avatarFormData,
+		// 		});
+		// 		const uploadedData = await uploadReponse.json();
+
+		// 		console.log('Avatar', uploadedData);
+
+		// 		updateData.avatar = uploadedData.path;
+		// 	} catch (error) {
+		// 		message.error(error.message);
+		// 		setSubmitting(false);
+		// 	}
+		// }
 
 		setSubmitting(true);
 

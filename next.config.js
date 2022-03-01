@@ -24,8 +24,12 @@ const plugins = [
 /** Main Next.js configuration */
 const mainConfig = {
 	reactStrictMode: false,
+	swcMinify: true,
 	images: {
 		domains: ['cdn.discordapp.com'],
+	},
+	experimental: {
+		outputStandalone: true,
 	},
 	webpack: (config) => {
 		config.watchOptions = {
@@ -35,5 +39,11 @@ const mainConfig = {
 		return config;
 	},
 };
+
+/** Image hosts */
+if (process.env.NEXT_PUBLIC_IMAGES_URL) {
+	const imagesHost = new URL(process.env.NEXT_PUBLIC_IMAGES_URL);
+	mainConfig.images.domains.push(imagesHost.hostname);
+}
 
 module.exports = withPlugins(plugins, mainConfig);
