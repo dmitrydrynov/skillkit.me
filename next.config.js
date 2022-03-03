@@ -41,9 +41,9 @@ const mainConfig = {
 };
 
 /** Image hosts */
-if (process.env.NEXT_PUBLIC_IMAGES_URL) {
-	const imagesHost = new URL(process.env.NEXT_PUBLIC_IMAGES_URL);
-	mainConfig.images.domains.push(imagesHost.hostname);
+if (process.env.NEXT_PUBLIC_STORAGE_HOST) {
+	mainConfig.images.domains.push(process.env.NEXT_PUBLIC_STORAGE_HOST);
+	console.log('Allowed images hostnames', mainConfig.images.domains);
 }
 
 module.exports = withPlugins(plugins, mainConfig);
