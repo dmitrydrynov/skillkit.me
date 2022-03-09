@@ -1,6 +1,10 @@
-export const updateUserToolsMutation = `
-mutation ($data: [UserToolUpdateArgs!]!) {
-  updateUserTools(data: $data) {
+export const createUserToolMutation = `
+mutation(
+  $data: UserToolInput!
+) {
+  createUserTool(
+    data: $data
+  ) {
     id
   }
 }
