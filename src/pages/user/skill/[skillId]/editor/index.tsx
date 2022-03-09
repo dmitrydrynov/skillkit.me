@@ -1,22 +1,37 @@
 import React, { ReactElement, useState, useEffect, createRef } from 'react';
 import { InlineEdit } from '@components/InlineEdit';
 import SkillEditorMenu from '@components/menus/SkillEditorMenu';
+import UserToolBlock from '@components/modals/AddUserSkillModal/UserToolBlock';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
+import { createSkillMutation, searchSkillsQuery } from '@services/graphql/queries/skill';
 import { editUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
 import { getSkillLevel, SkillLevel, skillLevelsList } from 'src/definitions/skill';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Col, Input, message, Progress, Row, Select, Skeleton, Space, Table, Tooltip } from 'antd';
+import {
+	AutoComplete,
+	Button,
+	Col,
+	Input,
+	message,
+	Progress,
+	Row,
+	Select,
+	Skeleton,
+	Space,
+	Table,
+	Tooltip,
+} from 'antd';
+import { RefSelectProps } from 'antd/lib/select';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { FieldElement } from 'react-hook-form';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
 const SkillEditorPage: NextPageWithLayout = () => {
 	const router = useRouter();
-	const descriptionRef = createRef<FieldElement>();
+	const skillRef = createRef<RefSelectProps>();
 	const { skillId } = router.query;
 	const [{ data: userSkillData, fetching: userSkillFetching }] = useQuery({
 		query: getUserSkillQuery,
@@ -27,14 +42,20 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const [, updateUserSkillData] = useMutation(editUserSkillMutation);
 	const [experience, setExperience] = useState(0);
 	const [level, setLevel] = useState<SkillLevel>(skillLevelsList[0]);
-	// eslint-disable-next-line unused-imports/no-unused-vars
 	const [tools, setTools] = useState([]);
-	// eslint-disable-next-line unused-imports/no-unused-vars
 	const [schools, setSchools] = useState([]);
-	// eslint-disable-next-line unused-imports/no-unused-vars
 	const [jobs, setJobs] = useState([]);
-	// eslint-disable-next-line unused-imports/no-unused-vars
 	const [works, setWorks] = useState([]);
+	const [selectedSkillId, setSelectedSkillId] = useState<number | null>(null);
+	let [skillSearchQuery, setsSkillSearchQuery] = useState('');
+	let [{ data: searchSkillData }, searchSkills] = useQuery({
+		query: searchSkillsQuery,
+		variables: { search: skillSearchQuery },
+		pause: true,
+		requestPolicy: 'network-only',
+	});
+	const [, addSkill] = useMutation(createSkillMutation);
+	const [visibleToolModal, setVisibleToolModal] = useState(false);
 
 	useEffect(() => {
 		if (!userSkillData) {
@@ -43,7 +64,15 @@ const SkillEditorPage: NextPageWithLayout = () => {
 
 		setExperience(5);
 		setLevel(getSkillLevel(userSkillData.userSkill.level));
+		handleChangeInlineInput(userSkillData.userSkill.title);
 	}, [userSkillData]);
+
+	useEffect(() => {
+		(async () => {
+			await searchSkills();
+		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [skillSearchQuery]);
 
 	const prepareSkillName = () => {
 		if (!userSkillData) {
@@ -57,17 +86,25 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const emptyData = (dataName = 'data') => <span className={styles.descriptionEmpty}>(Empty {dataName})</span>;
 
 	const [width, setWidth] = useState(userSkillData?.userSkill.skill.name.length);
-	const handleChangeInlineInput = (evt) => {
-		setWidth(evt.target.value.length);
+
+	const handleChangeInlineInput = (value) => {
+		const minWidth = 20;
+		setWidth(value?.length > minWidth ? value?.length + 1 : minWidth);
 	};
 
 	const handleUserSkillUpdate = async (values: any) => {
-		console.log(values);
+		let formatedValues = values;
 
-		const reponse = await updateUserSkillData({ recordId: skillId, data: values });
+		Object.entries(values).map(([key]) => {
+			if (key === 'skillId') {
+				formatedValues[key] = +selectedSkillId;
+			}
+		});
+
+		const reponse = await updateUserSkillData({ recordId: skillId, data: formatedValues });
 
 		if (reponse.error) {
-			message.error(reponse.error);
+			message.error(reponse.error.message);
 			return;
 		}
 
@@ -85,6 +122,28 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		});
 	};
 
+	const handleAddNewSkill = async () => {
+		try {
+			const { data, error } = await addSkill({
+				name: skillSearchQuery,
+			});
+
+			if (error) {
+				message.error(error);
+				return;
+			}
+
+			searchSkillData?.skills.push(data.createSkill);
+			setSelectedSkillId(data.createSkill.id);
+		} catch (error: any) {
+			message.error(error.message);
+		}
+	};
+
+	const handleAddTool = () => {
+		setVisibleToolModal(true);
+	};
+
 	return (
 		<>
 			<Head>
@@ -92,6 +151,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 			</Head>
 			<Space direction="vertical" size={40} className={styles.container}>
 				<div className={styles.header}>
+					<UserToolBlock visible={visibleToolModal} onSave={() => {}} onCancel={() => setVisibleToolModal(false)} />
 					<Row align="middle">
 						<Col flex={1}>
 							<div className={styles.titleAbove}>I can</div>
@@ -99,16 +159,50 @@ const SkillEditorPage: NextPageWithLayout = () => {
 								<Skeleton.Button style={{ width: '450px', height: '30px', marginBottom: '0.5em' }} active={true} />
 							) : (
 								<InlineEdit
-									name="skillname"
+									name="skillId"
 									initialValue={prepareSkillName()}
 									onSave={handleUserSkillUpdate}
 									viewMode={<h2 className={styles.title}>{prepareSkillName()}</h2>}
 									editMode={
-										<Input
+										<AutoComplete
+											ref={skillRef}
+											showSearch
+											allowClear
 											className={styles.titleInput}
 											style={{ width: width + 'ch' }}
+											defaultActiveFirstOption={false}
+											showArrow={false}
+											filterOption={false}
+											placeholder="To do something ..."
+											notFoundContent={null}
 											onChange={handleChangeInlineInput}
-										/>
+											onSelect={(value, option) => setSelectedSkillId(option.key as number)}
+											onSearch={(value: string) => setsSkillSearchQuery(value)}
+										>
+											{searchSkillData?.skills.map((d: any) => (
+												<AutoComplete.Option key={d.id} value={d.name}>
+													{d.name}
+												</AutoComplete.Option>
+											))}
+											{skillSearchQuery.length &&
+												searchSkillData?.skills.filter((d: { name: string }) => {
+													return skillSearchQuery.toLowerCase().trim() === d.name.toLowerCase();
+												}).length === 0 && (
+													<Select.Option
+														disabled
+														key={'emptyOption'}
+														value={''}
+														style={{
+															paddingBottom: 0,
+															paddingTop: 0,
+														}}
+													>
+														<Button type="link" style={{ padding: 0 }} onClick={handleAddNewSkill}>
+															<PlusOutlined /> Add new: &ldquo;{skillSearchQuery}&ldquo;
+														</Button>
+													</Select.Option>
+												)}
+										</AutoComplete>
 									}
 								/>
 							)}
@@ -180,7 +274,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 				<div className={styles.toolsSection}>
 					<div className={styles.headerContainer}>
 						<h3>Tools</h3>
-						<Button type="ghost" shape="circle" size="small" icon={<PlusOutlined />} />
+						<Button type="ghost" shape="circle" size="small" icon={<PlusOutlined />} onClick={handleAddTool} />
 					</div>
 					{tools.length ? <Table></Table> : emptyData('tools')}
 				</div>
