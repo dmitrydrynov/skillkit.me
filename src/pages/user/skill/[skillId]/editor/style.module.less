@@ -7,12 +7,8 @@
 	line-height: normal;
 }
 
-.titleAbove {
-	// margin-bottom: 16px;
-}
-
 .descriptionEmpty {
-	color: #999;
+	color: @gray-6;
 	font-style: italic;
 }
 
@@ -73,4 +69,65 @@
 	.container {
 		padding: 16px;
 	}
+}
+
+.list {
+	border: 1px solid @gray-4;
+	border-radius: @border-radius-base;
+	padding: 8px;
+}
+
+.listItem {
+	border: unset !important;
+	border-radius: @border-radius-base;
+
+	&:hover {
+		background-color: @gray-2;
+	}
+}
+
+.userSchoolListItem {
+	border-radius: @border-radius-base;
+	padding: 8px 16px;
+
+	&:hover {
+		background-color: @gray-2;
+	}
+}
+
+.listItemMeta {
+	:global {
+		.ant-list-item-meta-content {
+			display: flex;
+		}
+
+		.ant-list-item-meta-title {
+			width: 40%;
+		}
+
+		.ant-list-item-meta-description {
+			width: 60%;
+
+			.ant-typography {
+				margin-bottom: 0;
+			}
+		}
+
+		.ant-space {
+			max-width: 85%;
+
+			.ant-space-item {
+				width: 100%;
+			}
+		}
+	}
+}
+
+.userSchoolRange {
+	color: @gray-6;
+	font-size: @font-size-sm;
+}
+
+.userSchoolTitle {
+	font-size: @font-size-lg;
 }

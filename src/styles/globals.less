@@ -64,7 +64,7 @@ body {
 }
 
 .ant-btn {
-	&:not(.ant-btn-text, .ant-btn-circle) {
+	&:not(.ant-btn-text, .ant-btn-circle, .ant-btn-sm) {
 		padding-left: 24px;
 		padding-right: 24px;
 		border-radius: calc(@border-radius-base * 2);
@@ -124,4 +124,23 @@ body {
 .ant-modal-title {
 	font-size: 24px;
 	line-height: 24px;
+}
+
+.ant-popover-message > .anticon {
+	top: 8px;
+}
+
+.ant-list-item-meta-title {
+	font-size: 16px;
+}
+
+.ant-btn-group {
+	.ant-btn {
+		border-radius: unset;
+	}
+}
+
+.ant-dropdown-menu-item {
+	border-radius: 8px;
+	margin: 2px 4px;
 }

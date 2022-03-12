@@ -5,7 +5,6 @@ node_modules
 npm-debug.log
 README.md
 .next
-public/images
 .github
 .git
 .vscode

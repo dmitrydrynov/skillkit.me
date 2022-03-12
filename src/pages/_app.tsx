@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, ReactElement, ReactNode, useEffect, useState } from 'react';
+import LoadingScreen from '@components/loadingScreen';
 import { getCookie, setCookie } from '@helpers/cookie';
 import PublicLayout from '@layouts/PublicLayout';
 import '@styles/globals.less';
@@ -87,6 +88,11 @@ const AuthProvider: FC = ({ children }): any => {
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const getLayout = Component.getLayout || ((page) => <PublicLayout>{page}</PublicLayout>);
+	const [loading, setLoading] = useState(true);
+
+	React.useEffect(() => {
+		setLoading(false);
+	}, []);
 
 	Router.events.on('routeChangeStart', progress.start);
 	Router.events.on('routeChangeComplete', progress.finish);
@@ -94,11 +100,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	return (
 		<>
-			<StoreProvider store={store}>
-				<UrqlProvider value={graphqlClient}>
-					<AuthProvider>{getLayout(<Component {...pageProps} />)}</AuthProvider>
-				</UrqlProvider>
-			</StoreProvider>
+			{!loading ? (
+				<StoreProvider store={store}>
+					<UrqlProvider value={graphqlClient}>
+						<AuthProvider>{getLayout(<Component {...pageProps} />)}</AuthProvider>
+					</UrqlProvider>
+				</StoreProvider>
+			) : (
+				<LoadingScreen />
+			)}
 		</>
 	);
 }

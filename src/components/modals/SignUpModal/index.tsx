@@ -3,8 +3,9 @@ import { FC, useEffect, useState } from 'react';
 import { registerUserMutation } from '@services/graphql/queries/auth';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
-import { Button, Col, Form, Input, Modal, Row, message } from 'antd';
+import { Button, Col, Form, Input, Modal, Row, message, Divider } from 'antd';
 import { useRouter } from 'next/router';
+import { SiDiscord } from 'react-icons/si';
 import { useDispatch } from 'react-redux';
 import { useMutation } from 'urql';
 import styles from './SignUpModal.module.less';
@@ -122,24 +123,32 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 			maskClosable={false}
 			className={styles.modal}
 			footer={[
-				<Button
-					key="submit"
-					type="primary"
-					loading={registerUserResponse.fetching}
-					onClick={handleOk}
-					className={styles.submitBtn}
-				>
-					{state.step === _FormStep._Register && 'Next'}
-					{state.step === _FormStep._Password && 'Sign up'}
-				</Button>,
+				<>
+					<Button
+						key="submit"
+						type="primary"
+						loading={registerUserResponse.fetching}
+						onClick={handleOk}
+						className={styles.submitBtn}
+					>
+						{state.step === _FormStep._Register && 'Next'}
+						{state.step === _FormStep._Password && 'Sign up'}
+					</Button>
+					<Divider>or</Divider>
+					<Button
+						key="discord-login"
+						type="text"
+						href={process.env.NEXT_PUBLIC_DISCORD_AUTH_URL}
+						className={styles.oauthButton}
+					>
+						<SiDiscord /> Sign up with Discord
+					</Button>
+				</>,
 			]}
 		>
 			<h2 className={styles.title}>Get Connect to the Skillkit</h2>
 			<p className={styles.subtitle}>Fill this form and let&apos;s go!</p>
 			<Row justify="center">
-				{/* <div className={styles.imageContainer}>
-					<Image src={SignModalIllustration} alt="image for sign up form" />
-				</div> */}
 				<Form
 					className={styles.form}
 					form={form}

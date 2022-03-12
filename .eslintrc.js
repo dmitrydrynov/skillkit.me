@@ -4,6 +4,7 @@ module.exports = {
 	ignorePatterns: ['node_modules/*'],
 	rules: {
 		'prettier/prettier': 'error',
+		'react-hooks/exhaustive-deps': 'off',
 		'@typescript-eslint/no-unused-vars': 'off',
 		'unused-imports/no-unused-imports-ts': 'error',
 		'unused-imports/no-unused-imports-ts': [

@@ -5,6 +5,7 @@ import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
 import { Button, Form, Input, Modal, message, Divider } from 'antd';
 import { useRouter } from 'next/router';
+import { SiDiscord } from 'react-icons/si';
 import { useDispatch } from 'react-redux';
 import { useMutation } from 'urql';
 import styles from './SignInModal.module.less';
@@ -128,8 +129,13 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 						{state.step === _FormStep._Password && 'Sign in'}
 					</Button>
 					<Divider>or</Divider>
-					<Button key="discord-login" type="text" href={process.env.NEXT_PUBLIC_DISCORD_AUTH_URL}>
-						Sign in with Discord
+					<Button
+						key="discord-login"
+						type="text"
+						href={process.env.NEXT_PUBLIC_DISCORD_AUTH_URL}
+						className={styles.oauthButton}
+					>
+						<SiDiscord /> Sign in with Discord
 					</Button>
 				</>,
 			]}
