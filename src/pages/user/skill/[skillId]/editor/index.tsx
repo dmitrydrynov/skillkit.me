@@ -163,6 +163,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		}
 		setVisibleToolModal(false);
 		setEditableUserTool(null);
+		refreshUserTools();
 	};
 
 	const handleDeleteUserTool = async (item) => {
@@ -191,6 +192,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		}
 		setVisibleSchoolModal(false);
 		setEditableUserSchool(null);
+		refreshUserSchools();
 	};
 
 	const handleDeleteUserSchool = async (item) => {
