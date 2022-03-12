@@ -80,18 +80,46 @@
 .listItem {
 	border: unset !important;
 	border-radius: @border-radius-base;
+	transition: background-color 0.2s;
 
 	&:hover {
 		background-color: @gray-2;
+
+		:global {
+			.editItemButtons {
+				opacity: 1;
+			}
+		}
+	}
+
+	:global {
+		.editItemButtons {
+			opacity: 0;
+			transition: opacity 0.2s;
+		}
 	}
 }
 
 .userSchoolListItem {
 	border-radius: @border-radius-base;
 	padding: 8px 16px;
+	transition: background-color 0.2s;
 
 	&:hover {
 		background-color: @gray-2;
+
+		:global {
+			.editItemButtons {
+				opacity: 1;
+			}
+		}
+	}
+
+	:global {
+		.editItemButtons {
+			opacity: 0;
+			transition: opacity 0.2s;
+		}
 	}
 }
 

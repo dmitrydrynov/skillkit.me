@@ -388,6 +388,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 													</Typography.Paragraph>
 												)}
 												<Dropdown.Button
+													className="editItemButtons"
 													size="small"
 													overlay={
 														<Menu>
@@ -450,9 +451,10 @@ const SkillEditorPage: NextPageWithLayout = () => {
 													(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
 											</div>
 											<div className={styles.userSchoolTitle}>{item.title}</div>
-											{!!item.description && <p className={styles.userSchoolDesc}>{item.description}</p>}
+											{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
 										</div>
 										<Dropdown.Button
+											className="editItemButtons"
 											size="small"
 											overlay={
 												<Menu>
