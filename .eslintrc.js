@@ -1,11 +1,13 @@
 module.exports = {
-	plugins: ['unused-imports', 'prettier'],
+	plugins: ['@typescript-eslint', 'unused-imports', 'prettier'],
 	extends: ['next/core-web-vitals', 'plugin:prettier/recommended'],
 	ignorePatterns: ['node_modules/*'],
 	rules: {
 		'prettier/prettier': 'error',
+		'@next/next/no-img-element': 'off',
 		'react-hooks/exhaustive-deps': 'off',
 		'@typescript-eslint/no-unused-vars': 'off',
+		'max-len': 'off',
 		'unused-imports/no-unused-imports-ts': 'error',
 		'unused-imports/no-unused-imports-ts': [
 			'warn',

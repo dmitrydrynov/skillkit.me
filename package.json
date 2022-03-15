@@ -15,6 +15,7 @@
     "@ant-design/icons": "^4.7.0",
     "@badrap/bar-of-progress": "^0.1.2",
     "@heroicons/react": "^1.0.4",
+    "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@urql/exchange-auth": "^0.1.7",
     "@urql/exchange-multipart-fetch": "^0.1.14",
     "antd": "^4.19.1",
