@@ -1,8 +1,8 @@
 import { FC, ReactNode, useState } from 'react';
 import { RootState } from '@store/configure-store';
 import { setLogout } from '@store/reducers/auth';
-import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, Menu, Space, Skeleton } from 'antd';
+import Avvvatars from 'avvvatars-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -99,7 +99,7 @@ const UserMenu: FC = () => {
 							{authUser.avatar ? (
 								<Avatar size={40} src={authUser.avatar} className={`${styles.avatar} ant-dropdown-link`} />
 							) : (
-								<Avatar size={40} icon={<UserOutlined />} className={`${styles.avatar} ant-dropdown-link`} />
+								<Avvvatars value={authUser.email} style="shape" size={40} border borderSize={2} />
 							)}
 						</Space>
 					)}

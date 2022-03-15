@@ -18,6 +18,8 @@
     "@urql/exchange-auth": "^0.1.7",
     "@urql/exchange-multipart-fetch": "^0.1.14",
     "antd": "^4.19.1",
+    "antd-img-crop": "^4.1.0",
+    "avvvatars-react": "^0.3.0",
     "braft-editor": "^2.3.9",
     "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
