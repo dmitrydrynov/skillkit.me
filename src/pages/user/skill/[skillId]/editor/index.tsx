@@ -1,27 +1,22 @@
 import React, { ReactElement, useState, useEffect, createRef } from 'react';
 import { InlineEdit } from '@components/InlineEdit';
 import SkillEditorMenu from '@components/menus/SkillEditorMenu';
-import UserExampleModal from '@components/modals/UserExampleModal';
+import UserFileModal from '@components/modals/UserFileModal';
 import UserJobModal from '@components/modals/UserJobModal';
 import UserSchoolModal from '@components/modals/UserSchoolModal';
 import UserToolModal from '@components/modals/UserToolModal';
+import { getImageSizeFromName } from '@helpers/file';
 import { capitalizedText, readyText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { createSkillMutation, searchSkillsQuery } from '@services/graphql/queries/skill';
+import { userFilesQuery } from '@services/graphql/queries/userFile';
 import { deleteUserJobMutation, userJobsQuery } from '@services/graphql/queries/userJob';
 import { deleteUserSchoolMutation, userSchoolsQuery } from '@services/graphql/queries/userSchool';
 import { editUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
 import { deleteUserToolMutation, userToolsQuery } from '@services/graphql/queries/userTool';
 import { getSkillLevel, SkillLevel, skillLevelsList } from 'src/definitions/skill';
-import {
-	DeleteOutlined,
-	EditOutlined,
-	FileImageOutlined,
-	LinkOutlined,
-	PlusOutlined,
-	WarningTwoTone,
-} from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
 import {
 	AutoComplete,
 	Button,
@@ -47,6 +42,7 @@ import moment from 'moment';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import Gallery from 'react-grid-gallery';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
@@ -97,23 +93,17 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		variables: { userSkillId: skillId },
 		requestPolicy: 'network-only',
 	});
+	const [{ data: userFilesData, fetching: userFilesFetching }, refreshUserFiles] = useQuery({
+		query: userFilesQuery,
+		// variables: { userSkillId: skillId },
+		requestPolicy: 'network-only',
+	});
 	// GraphQL mutations
 	const [, updateUserSkillData] = useMutation(editUserSkillMutation);
 	const [, addSkill] = useMutation(createSkillMutation);
 	const [, deleteUserTool] = useMutation(deleteUserToolMutation);
 	const [, deleteUserSchool] = useMutation(deleteUserSchoolMutation);
 	const [, deleteUserJob] = useMutation(deleteUserJobMutation);
-
-	const examplesMenu = (
-		<Menu>
-			<Menu.Item key="0" onClick={() => {}} icon={<LinkOutlined />}>
-				Add link
-			</Menu.Item>
-			<Menu.Item key="1" onClick={() => {}} icon={<FileImageOutlined />}>
-				Upload image
-			</Menu.Item>
-		</Menu>
-	);
 
 	useEffect(() => {
 		if (userSkillError) {
@@ -268,7 +258,9 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	};
 
 	/** User job handles */
-	const handleSaveUserExample = () => {};
+	const handleSaveUserExample = () => {
+		setVisibleExampleModal(false);
+	};
 
 	return (
 		<>
@@ -307,7 +299,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 							setVisibleJobModal(false);
 						}}
 					/>
-					<UserExampleModal
+					<UserFileModal
 						userSkillId={skillId as string}
 						visible={visibleExampleModal}
 						recordId={editableUserExample}
@@ -648,7 +640,20 @@ const SkillEditorPage: NextPageWithLayout = () => {
 						/>
 						{/* </Dropdown> */}
 					</div>
-					{emptyData('No works')}
+					{userFilesData ? (
+						<Gallery
+							enableImageSelection={false}
+							images={userFilesData.userFiles.map((record) => ({
+								src: record.url,
+								thumbnail: record.url,
+								thumbnailWidth: getImageSizeFromName(record.url)?.width / 10,
+								thumbnailHeight: getImageSizeFromName(record.url)?.height / 10,
+								caption: record.title,
+							}))}
+						/>
+					) : (
+						emptyData('No any examples')
+					)}
 				</div>
 			</Space>
 		</>

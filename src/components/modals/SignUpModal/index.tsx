@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useEffect, useState } from 'react';
+import React from 'react';
 import { registerUserMutation } from '@services/graphql/queries/auth';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
@@ -123,7 +124,7 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 			maskClosable={false}
 			className={styles.modal}
 			footer={[
-				<>
+				<React.Fragment key="footer-signup">
 					<Button
 						key="submit"
 						type="primary"
@@ -143,7 +144,7 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 					>
 						<SiDiscord /> Sign up with Discord
 					</Button>
-				</>,
+				</React.Fragment>,
 			]}
 		>
 			<h2 className={styles.title}>Get Connect to the Skillkit</h2>

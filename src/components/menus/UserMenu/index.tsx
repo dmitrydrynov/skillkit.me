@@ -1,4 +1,5 @@
 import { FC, ReactNode, useState } from 'react';
+import React from 'react';
 import { RootState } from '@store/configure-store';
 import { setLogout } from '@store/reducers/auth';
 import { Avatar, Dropdown, Menu, Space, Skeleton } from 'antd';
@@ -46,9 +47,9 @@ const UserMenu: FC = () => {
 	];
 
 	const userMenu = (
-		<Menu>
+		<Menu ref={null}>
 			{userMenuItems.map((menuItem, idx) => (
-				<>
+				<React.Fragment key={idx}>
 					{!!menuItem.before && menuItem.before}
 					<Menu.Item key={idx.toString()}>
 						{!!menuItem.link && (
@@ -63,7 +64,7 @@ const UserMenu: FC = () => {
 							</span>
 						)}
 					</Menu.Item>
-				</>
+				</React.Fragment>
 			))}
 		</Menu>
 	);
@@ -81,25 +82,25 @@ const UserMenu: FC = () => {
 					{logginingIn ? (
 						<Space align="center">
 							<div className={styles.info}>
-								<p className={styles.name}>
+								<div className={styles.name}>
 									<Skeleton.Button style={{ width: 100, height: '18px' }} shape="round" active={true} />
-								</p>
-								<p className={styles.email}>
+								</div>
+								<div className={styles.email}>
 									<Skeleton.Button style={{ width: 130, height: '14px' }} shape="round" active={true} />
-								</p>
+								</div>
 							</div>
 							<Skeleton.Avatar size={40} active={true} />
 						</Space>
 					) : (
 						<Space align="center">
 							<div className={styles.info}>
-								<p className={styles.name}>{authUser.fullName}</p>
-								<p className={styles.email}>{authUser.email}</p>
+								<div className={styles.name}>{authUser.fullName}</div>
+								<div className={styles.email}>{authUser.email}</div>
 							</div>
 							{authUser.avatar ? (
 								<Avatar size={40} src={authUser.avatar} className={`${styles.avatar} ant-dropdown-link`} />
 							) : (
-								<Avvvatars value={authUser.email} style="shape" size={40} border borderSize={2} />
+								<Avvvatars value={authUser.email} style="shape" size={40} border />
 							)}
 						</Space>
 					)}

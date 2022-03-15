@@ -71,7 +71,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 
 		message.success('Your are welcome!');
 
-		router.push('/settings/profile');
+		router.push('/user/skills');
 		onClose();
 	}, [authorizedResponse]);
 
@@ -117,7 +117,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 			maskClosable={false}
 			className={styles.modal}
 			footer={[
-				<>
+				<React.Fragment key="footer-signin">
 					<Button
 						key="submit"
 						type="primary"
@@ -137,20 +137,20 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 					>
 						<SiDiscord /> Sign in with Discord
 					</Button>
-				</>,
+				</React.Fragment>,
 			]}
 		>
 			<h2 className={styles.title}>Sign in</h2>
 			<div className={styles.subtitle}>
 				{state.step === _FormStep._Email && <>Enter your email address to sign in your account</>}
-				{state.step === _FormStep._Password && authorizedResponse.data?.signIn.next && (
+				{state.step === _FormStep._Password && authorizedResponse.data?.signIn.otp && (
 					<>
 						Enter your one-time password.
 						<br />
 						It was sent in your email <strong>{state.email}</strong>.
 					</>
 				)}
-				{state.step === _FormStep._Password && !authorizedResponse.data?.signIn.next && <>Enter your password</>}
+				{state.step === _FormStep._Password && !authorizedResponse.data?.signIn.otp && <>Enter your password</>}
 			</div>
 			<Form
 				className={styles.form}

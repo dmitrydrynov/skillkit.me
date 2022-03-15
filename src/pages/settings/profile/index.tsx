@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { ReactElement, useEffect, useMemo, useState } from 'react';
 import SettingsMenu from '@components/menus/SettingsMenu';
-import { getBase64 } from '@helpers/file';
+import { getBase64WithPromise, normUploadFile } from '@helpers/file';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { updateUserMutation, userDataQuery } from '@services/graphql/queries/user';
@@ -11,7 +11,6 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Col, DatePicker, Form, Input, Row, Spin, Upload, message } from 'antd';
 import moment from 'moment';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useDispatch, useSelector } from 'react-redux';
 import countryList from 'react-select-country-list';
 import { useMutation, useQuery } from 'urql';
@@ -30,15 +29,28 @@ const ProfilePage: NextPageWithLayout = () => {
 	});
 	const [submitting, setSubmitting] = useState(false);
 	const [avatarLoading, setAvatarLoading] = useState(false);
-	const [avatarUrl, setAvatarUrl] = useState(null);
+	const [showUploadBtn, setShowUploadBtn] = useState(true);
 
 	useEffect(() => {
 		if (data?.user) {
-			const { firstName, lastName, email, country, birthdayDate, avatar, about } = data.user;
+			const { firstName, lastName, fullname, email, country, birthdayDate, avatar, about } = data.user;
 			const countryData = country ? countries.find((c) => c.value.toLowerCase() === country.toLowerCase()) : null;
 
 			if (avatar) {
-				setAvatarUrl(avatar);
+				const fileData = avatar
+					? {
+							uid: '-1',
+							name: 'avatar-file',
+							status: 'loaded',
+							url: avatar,
+							original: null,
+					  }
+					: null;
+
+				form.setFieldsValue({
+					avatar: fileData ? [fileData] : [],
+				});
+				setShowUploadBtn(false);
 			}
 
 			form.setFieldsValue({
@@ -55,7 +67,7 @@ const ProfilePage: NextPageWithLayout = () => {
 	const countryFlag = (countryCode: string) => <span className={`flag-icon flag-icon-${countryCode.toLowerCase()}`} />;
 
 	const handleFinish = async () => {
-		const values = form.getFieldsValue();
+		const { avatar, ...values } = form.getFieldsValue();
 		const countryData = countries.find((c) => c.label.toLowerCase() === values.country.toLowerCase());
 
 		const updateData = {
@@ -65,8 +77,14 @@ const ProfilePage: NextPageWithLayout = () => {
 			country: countryData?.value.toLowerCase() || null,
 		};
 
-		if (values.avatar) {
-			updateData.avatar = values.avatar.file.originFileObj;
+		if (Array.isArray(avatar) && avatar.length) {
+			if (avatar[0].original) {
+				updateData.avatar = avatar[0].original.originFileObj;
+			} else if (avatar[0].status === 'done') {
+				updateData.avatar = avatar[0].originFileObj;
+			}
+		} else {
+			updateData.avatar = null;
 		}
 
 		setSubmitting(true);
@@ -83,7 +101,6 @@ const ProfilePage: NextPageWithLayout = () => {
 
 			dispatch(setUserData(data.updateUser));
 			setSubmitting(false);
-			form.resetFields(['avatar']);
 		} catch (error: any) {
 			message.error(error.message);
 			setSubmitting(false);
@@ -97,22 +114,27 @@ const ProfilePage: NextPageWithLayout = () => {
 		</div>
 	);
 
-	const handleAvatarChange = (info: any) => {
-		if (info.file.status === 'uploading') {
+	const handleAvatarChange = async ({ file }: any) => {
+		if (file && file.status === 'uploading') {
 			setAvatarLoading(true);
+			setShowUploadBtn(false);
+			const src = await getBase64WithPromise(file.originFileObj);
 
-			getBase64(info.file.originFileObj, (imageUrl: string) => {
-				setAvatarUrl(imageUrl);
-				setAvatarLoading(false);
+			form.setFieldsValue({
+				avatar: [
+					{
+						uid: file.uid,
+						name: file.name,
+						status: 'done',
+						url: src,
+						original: file,
+					},
+				],
 			});
-
-			return;
 		}
 
-		if (info.file.status === 'done') {
-			getBase64(info.file.originFileObj, () => {
-				setAvatarLoading(false);
-			});
+		if (file.status === 'done') {
+			setAvatarLoading(false);
 		}
 	};
 
@@ -137,18 +159,16 @@ const ProfilePage: NextPageWithLayout = () => {
 							autoCorrect="off"
 							spellCheck="false"
 						>
-							<Form.Item name="avatar" label="Photo">
+							<Form.Item name="avatar" label="Photo" valuePropName="fileList" getValueFromEvent={normUploadFile}>
 								<Upload
 									listType="picture-card"
 									className="avatar-uploader"
-									showUploadList={false}
 									onChange={handleAvatarChange}
+									showUploadList={{ showPreviewIcon: false }}
+									onRemove={() => setShowUploadBtn(true)}
+									maxCount={1}
 								>
-									{avatarUrl ? (
-										<Image src={avatarUrl} alt="avatar" className={styles.avatar} width="200px" height="200px" />
-									) : (
-										uploadButton
-									)}
+									{showUploadBtn && uploadButton}
 								</Upload>
 							</Form.Item>
 							<Row gutter={16}>

@@ -21,7 +21,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, siderMenu = null
 	const screens = useBreakpoint();
 
 	useEffect(() => {
-		console.log(screens);
+		if (Object.entries(screens).length) console.log('Sreen sizes', screens);
 	}, [screens]);
 
 	const handleMenuClick = ({ key }) => {

@@ -3,6 +3,7 @@ mutation ($email: String!, $password: String) {
   signIn(email: $email, password: $password) {
     ... on AuthNextResponse {
       next
+      otp
     }
     ... on AuthTokenResponse {
       token
