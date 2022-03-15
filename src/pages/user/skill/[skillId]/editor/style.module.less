@@ -53,22 +53,6 @@
 	font-weight: 500;
 	color: rgba(0, 0, 0, 0.85);
 	width: auto;
-	// border-radius: initial;
-	// border-bottom: 3px solid #e7e7e7;
-
-	// padding-left: 0;
-
-	// &:hover,
-	// &:focus {
-	// 	box-shadow: unset !important;
-	// 	border-bottom: 3px solid #e7e7e7;
-	// }
-}
-
-@media screen and (max-width: 600px) {
-	.container {
-		padding: 16px;
-	}
 }
 
 .list {
@@ -80,29 +64,6 @@
 .listItem {
 	border: unset !important;
 	border-radius: @border-radius-base;
-	transition: background-color 0.2s;
-
-	&:hover {
-		background-color: @gray-2;
-
-		:global {
-			.editItemButtons {
-				opacity: 1;
-			}
-		}
-	}
-
-	:global {
-		.editItemButtons {
-			opacity: 0;
-			transition: opacity 0.2s;
-		}
-	}
-}
-
-.userSchoolListItem {
-	border-radius: @border-radius-base;
-	padding: 8px 16px;
 	transition: background-color 0.2s;
 
 	&:hover {
@@ -151,11 +112,43 @@
 	}
 }
 
-.userSchoolRange {
+.userSchoolRange,
+.userJobRange {
 	color: @gray-6;
 	font-size: @font-size-sm;
 }
 
-.userSchoolTitle {
+.userSchoolTitle,
+.userJobTitle {
 	font-size: @font-size-lg;
+}
+
+.userSchoolListItem,
+.userJobListItem {
+	border-radius: @border-radius-base;
+	padding: 8px 16px;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: @gray-2;
+
+		:global {
+			.editItemButtons {
+				opacity: 1;
+			}
+		}
+	}
+
+	:global {
+		.editItemButtons {
+			opacity: 0;
+			transition: opacity 0.2s;
+		}
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.container {
+		padding: 16px;
+	}
 }

@@ -1,17 +1,27 @@
 import React, { ReactElement, useState, useEffect, createRef } from 'react';
 import { InlineEdit } from '@components/InlineEdit';
 import SkillEditorMenu from '@components/menus/SkillEditorMenu';
+import UserExampleModal from '@components/modals/UserExampleModal';
+import UserJobModal from '@components/modals/UserJobModal';
 import UserSchoolModal from '@components/modals/UserSchoolModal';
 import UserToolModal from '@components/modals/UserToolModal';
 import { capitalizedText, readyText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { createSkillMutation, searchSkillsQuery } from '@services/graphql/queries/skill';
+import { deleteUserJobMutation, userJobsQuery } from '@services/graphql/queries/userJob';
 import { deleteUserSchoolMutation, userSchoolsQuery } from '@services/graphql/queries/userSchool';
 import { editUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
 import { deleteUserToolMutation, userToolsQuery } from '@services/graphql/queries/userTool';
 import { getSkillLevel, SkillLevel, skillLevelsList } from 'src/definitions/skill';
-import { DeleteOutlined, EditOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
+import {
+	DeleteOutlined,
+	EditOutlined,
+	FileImageOutlined,
+	LinkOutlined,
+	PlusOutlined,
+	WarningTwoTone,
+} from '@ant-design/icons';
 import {
 	AutoComplete,
 	Button,
@@ -27,7 +37,7 @@ import {
 	Select,
 	Skeleton,
 	Space,
-	Table,
+	Spin,
 	Timeline,
 	Tooltip,
 	Typography,
@@ -47,16 +57,16 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	// State data
 	const [experience, setExperience] = useState(0);
 	const [level, setLevel] = useState<SkillLevel>(skillLevelsList[0]);
-	const [tools, setTools] = useState([]);
-	const [schools, setSchools] = useState([]);
-	const [jobs, setJobs] = useState([]);
-	const [works, setWorks] = useState([]);
 	const [width, setWidth] = useState(25);
 	const [selectedSkillId, setSelectedSkillId] = useState<number | null>(null);
 	const [visibleToolModal, setVisibleToolModal] = useState(false);
 	const [editableUserTool, setEditableUserTool] = useState<number>(null);
 	const [visibleSchoolModal, setVisibleSchoolModal] = useState(false);
 	const [editableUserSchool, setEditableUserSchool] = useState<number>(null);
+	const [visibleJobModal, setVisibleJobModal] = useState(false);
+	const [editableUserJob, setEditableUserJob] = useState<number>(null);
+	const [visibleExampleModal, setVisibleExampleModal] = useState(false);
+	const [editableUserExample, setEditableUserExample] = useState<number>(null);
 	let [skillSearchQuery, setsSkillSearchQuery] = useState('');
 
 	// GraphQL queries
@@ -82,11 +92,28 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		variables: { userSkillId: skillId },
 		requestPolicy: 'network-only',
 	});
+	const [{ data: userJobsData, fetching: userJobFetching }, refreshUserJobs] = useQuery({
+		query: userJobsQuery,
+		variables: { userSkillId: skillId },
+		requestPolicy: 'network-only',
+	});
 	// GraphQL mutations
 	const [, updateUserSkillData] = useMutation(editUserSkillMutation);
 	const [, addSkill] = useMutation(createSkillMutation);
 	const [, deleteUserTool] = useMutation(deleteUserToolMutation);
 	const [, deleteUserSchool] = useMutation(deleteUserSchoolMutation);
+	const [, deleteUserJob] = useMutation(deleteUserJobMutation);
+
+	const examplesMenu = (
+		<Menu>
+			<Menu.Item key="0" onClick={() => {}} icon={<LinkOutlined />}>
+				Add link
+			</Menu.Item>
+			<Menu.Item key="1" onClick={() => {}} icon={<FileImageOutlined />}>
+				Upload image
+			</Menu.Item>
+		</Menu>
+	);
 
 	useEffect(() => {
 		if (userSkillError) {
@@ -211,6 +238,38 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		}
 	};
 
+	/** User job handles */
+	const handleSaveUserJob = (action: string) => {
+		if (action == 'create') {
+			message.success('New user job added');
+		}
+		if (action == 'update') {
+			message.success('The user job updated');
+		}
+		setVisibleJobModal(false);
+		setEditableUserJob(null);
+		refreshUserJobs();
+	};
+
+	const handleDeleteUserJob = async (item) => {
+		try {
+			const deletedItems = await deleteUserJob({ where: { id: item.id } });
+			if (deletedItems) {
+				message.success(
+					<>
+						The user job <strong>{item.title}</strong> deleted
+					</>,
+				);
+				refreshUserJobs();
+			}
+		} catch (error: any) {
+			message.error(error.message);
+		}
+	};
+
+	/** User job handles */
+	const handleSaveUserExample = () => {};
+
 	return (
 		<>
 			<Head>
@@ -236,6 +295,26 @@ const SkillEditorPage: NextPageWithLayout = () => {
 						onCancel={() => {
 							setEditableUserSchool(null);
 							setVisibleSchoolModal(false);
+						}}
+					/>
+					<UserJobModal
+						userSkillId={skillId as string}
+						visible={visibleJobModal}
+						recordId={editableUserJob}
+						onSave={handleSaveUserJob}
+						onCancel={() => {
+							setEditableUserJob(null);
+							setVisibleJobModal(false);
+						}}
+					/>
+					<UserExampleModal
+						userSkillId={skillId as string}
+						visible={visibleExampleModal}
+						recordId={editableUserExample}
+						onSave={handleSaveUserExample}
+						onCancel={() => {
+							setEditableUserExample(null);
+							setVisibleExampleModal(false);
 						}}
 					/>
 					<Row align="middle">
@@ -325,9 +404,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 									</Select>
 								}
 							/>
-							<p>
-								{experience > 0 ? `Work experience more than ${experience} year(s)` : "I haven't any experience yet"}
-							</p>
+							<p>{experience > 0 ? `Work experience more than ${experience} year(s)` : "I haven't any experience yet"}</p>
 						</Col>
 					</Row>
 					<Row>
@@ -442,66 +519,136 @@ const SkillEditorPage: NextPageWithLayout = () => {
 						</Space>
 					</div>
 					{userSchoolsData?.userSchools.length ? (
-						<Timeline mode="left">
-							{userSchoolsData?.userSchools.map((item: any, indx: number) => (
-								<Timeline.Item key={indx}>
-									<Space size="large" className={styles.userSchoolListItem}>
-										<div className={styles.userSchoolInfo}>
-											<div className={styles.userSchoolRange}>
-												{moment(item.startedAt).format('MMM, YYYY') +
-													' — ' +
-													(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
+						<Spin spinning={userSchoolFetching}>
+							<Timeline mode="left">
+								{userSchoolsData?.userSchools.map((item: any, indx: number) => (
+									<Timeline.Item key={indx}>
+										<Space size="large" className={styles.userSchoolListItem}>
+											<div className={styles.userSchoolInfo}>
+												<div className={styles.userSchoolRange}>
+													{moment(item.startedAt).format('MMM, YYYY') +
+														' — ' +
+														(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
+												</div>
+												<div className={styles.userSchoolTitle}>{item.title}</div>
+												{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
 											</div>
-											<div className={styles.userSchoolTitle}>{item.title}</div>
-											{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
-										</div>
-										<Dropdown.Button
-											className="editItemButtons"
-											size="small"
-											overlay={
-												<Menu>
-													<Popconfirm
-														key="delete-user-school"
-														title="Are you sure to delete this school?"
-														onConfirm={() => handleDeleteUserSchool(item)}
-														okText="Yes"
-														cancelText="No"
-														icon={<WarningTwoTone />}
-													>
-														<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
-															Delete
-														</Menu.Item>
-													</Popconfirm>
-												</Menu>
-											}
-											onClick={() => {
-												setEditableUserSchool(item.id);
-												setVisibleSchoolModal(true);
-											}}
-										>
-											<EditOutlined />
-										</Dropdown.Button>
-									</Space>
-								</Timeline.Item>
-							))}
-						</Timeline>
+											<Dropdown.Button
+												className="editItemButtons"
+												size="small"
+												overlay={
+													<Menu>
+														<Popconfirm
+															key="delete-user-school"
+															title="Are you sure to delete this school?"
+															onConfirm={() => handleDeleteUserSchool(item)}
+															okText="Yes"
+															cancelText="No"
+															icon={<WarningTwoTone />}
+														>
+															<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
+																Delete
+															</Menu.Item>
+														</Popconfirm>
+													</Menu>
+												}
+												onClick={() => {
+													setEditableUserSchool(item.id);
+													setVisibleSchoolModal(true);
+												}}
+											>
+												<EditOutlined />
+											</Dropdown.Button>
+										</Space>
+									</Timeline.Item>
+								))}
+							</Timeline>
+						</Spin>
 					) : (
-						emptyData('No schools')
+						emptyData('No data about schools')
 					)}
 				</div>
 				<div className={styles.jobsSection}>
 					<div className={styles.headerContainer}>
-						<h2>Work experience</h2>
-						<Button type="ghost" shape="circle" size="small" icon={<PlusOutlined />} />
+						<h2>This skill was been used in the following jobs</h2>
+						<Button
+							type="ghost"
+							shape="circle"
+							size="small"
+							icon={<PlusOutlined />}
+							onClick={() => {
+								setVisibleJobModal(true);
+								setEditableUserJob(null);
+							}}
+						/>
 					</div>
-					{jobs.length ? <Table></Table> : emptyData('No jobs')}
+					{userJobsData?.userJobs.length ? (
+						<Spin spinning={userJobFetching}>
+							<Timeline mode="left">
+								{userJobsData?.userJobs.map((item: any, indx: number) => (
+									<Timeline.Item key={indx}>
+										<Space size="large" className={styles.userJobListItem}>
+											<div className={styles.userJobInfo}>
+												<div className={styles.userJobRange}>
+													{moment(item.startedAt).format('MMM, YYYY') +
+														' — ' +
+														(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
+												</div>
+												<div className={styles.userJobTitle}>{item.title}</div>
+												{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
+											</div>
+											<Dropdown.Button
+												className="editItemButtons"
+												size="small"
+												overlay={
+													<Menu>
+														<Popconfirm
+															key="delete-user-job"
+															title="Are you sure to delete this job?"
+															onConfirm={() => handleDeleteUserJob(item)}
+															okText="Yes"
+															cancelText="No"
+															icon={<WarningTwoTone />}
+														>
+															<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
+																Delete
+															</Menu.Item>
+														</Popconfirm>
+													</Menu>
+												}
+												onClick={() => {
+													setEditableUserJob(item.id);
+													setVisibleJobModal(true);
+												}}
+											>
+												<EditOutlined />
+											</Dropdown.Button>
+										</Space>
+									</Timeline.Item>
+								))}
+							</Timeline>
+						</Spin>
+					) : (
+						emptyData('No data about jobs')
+					)}
 				</div>
 				<div className={styles.worksSection}>
 					<div className={styles.headerContainer}>
 						<h2>Work examples</h2>
-						<Button type="ghost" shape="circle" size="small" icon={<PlusOutlined />} />
+						{/* <Dropdown overlay={examplesMenu} trigger={['click']} placement="topCenter" arrow={{ pointAtCenter: true }}> */}
+						<Button
+							type="ghost"
+							shape="circle"
+							size="small"
+							icon={<PlusOutlined />}
+							onClick={() => {
+								setVisibleExampleModal(true);
+								setEditableUserExample(null);
+							}}
+						/>
+						{/* </Dropdown> */}
 					</div>
-					{works.length ? <Table></Table> : emptyData('No works')}
+					{emptyData('No works')}
 				</div>
 			</Space>
 		</>

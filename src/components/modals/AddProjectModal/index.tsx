@@ -122,11 +122,7 @@ const AddProjectModal: FC<AddProjectModalArgs> = ({ visible, onClose }) => {
 						</Form.Item>
 					</Col>
 					<Col span={11} push={1}>
-						<Form.Item
-							label="Platforms"
-							name="platforms"
-							rules={[{ required: true, message: 'Please input the field!' }]}
-						>
+						<Form.Item label="Platforms" name="platforms" rules={[{ required: true, message: 'Please input the field!' }]}>
 							<Input placeholder="Mobile game" />
 						</Form.Item>
 					</Col>

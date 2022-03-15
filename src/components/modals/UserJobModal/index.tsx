@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
 import { getErrorMessage } from '@helpers/errors';
-import {
-	createUserSchoolMutation,
-	getUserSchoolQuery,
-	updateUserSchoolMutation,
-} from '@services/graphql/queries/userSchool';
+import { createUserJobMutation, getUserJobQuery, updateUserJobMutation } from '@services/graphql/queries/userJob';
 import { Col, DatePicker, Form, Input, message, Modal, Row, Spin } from 'antd';
 import moment from 'moment';
 import { useMutation, useQuery } from 'urql';
@@ -20,17 +16,18 @@ type _ModalParams = {
 
 type _FormData = {
 	title: string;
+	position: string;
 	description: string;
 	startedAt: Date;
 	finishedAt: Date;
 };
 
-const UserSchoolModal = ({ onSave, onCancel, userSkillId, recordId = null, visible = false }: _ModalParams) => {
+const UserJobModal = ({ onSave, onCancel, userSkillId, recordId = null, visible = false }: _ModalParams) => {
 	const [form] = Form.useForm();
-	const [, createUserSchool] = useMutation(createUserSchoolMutation);
-	const [, updateUserSchool] = useMutation(updateUserSchoolMutation);
+	const [, createUserJob] = useMutation(createUserJobMutation);
+	const [, updateUserJob] = useMutation(updateUserJobMutation);
 	const [{ data, fetching }] = useQuery({
-		query: getUserSchoolQuery,
+		query: getUserJobQuery,
 		variables: { id: recordId },
 		requestPolicy: 'network-only',
 		pause: !recordId,
@@ -45,22 +42,24 @@ const UserSchoolModal = ({ onSave, onCancel, userSkillId, recordId = null, visib
 	useEffect(() => {
 		if (data) {
 			form.setFieldsValue({
-				title: data.userSchool.title,
-				description: data.userSchool.description,
-				startedAt: data.userSchool.startedAt ? moment(data.userSchool.startedAt) : null,
-				finishedAt: data.userSchool.finishedAt ? moment(data.userSchool.finishedAt) : null,
+				title: data.userJob.title,
+				position: data.userJob.position,
+				description: data.userJob.description,
+				startedAt: data.userJob.startedAt ? moment(data.userJob.startedAt) : null,
+				finishedAt: data.userJob.finishedAt ? moment(data.userJob.finishedAt) : null,
 			});
 		}
 	}, [data]);
 
 	const handleCreate = async () => {
-		const { title, description, startedAt, finishedAt }: _FormData = await form.validateFields();
+		const { title, position, description, startedAt, finishedAt }: _FormData = await form.validateFields();
 
 		try {
-			const { data, error } = await createUserSchool({
+			const { data, error } = await createUserJob({
 				data: {
 					userSkillId,
 					title,
+					position,
 					description: description ? description : null,
 					startedAt,
 					finishedAt,
@@ -80,13 +79,14 @@ const UserSchoolModal = ({ onSave, onCancel, userSkillId, recordId = null, visib
 	};
 
 	const handleUpdate = async () => {
-		const { title, description, startedAt, finishedAt }: _FormData = await form.validateFields();
+		const { title, position, description, startedAt, finishedAt }: _FormData = await form.validateFields();
 
 		try {
-			const { data, error } = await updateUserSchool({
+			const { data, error } = await updateUserJob({
 				recordId,
 				data: {
 					title,
+					position,
 					description: description ? description : null,
 					startedAt,
 					finishedAt,
@@ -107,7 +107,7 @@ const UserSchoolModal = ({ onSave, onCancel, userSkillId, recordId = null, visib
 
 	return (
 		<Modal
-			title={recordId && data ? `Details for ${data.userSchool.title}` : 'Add school'}
+			title={recordId && data ? `Details for ${data.userJob.title}` : 'Add job'}
 			visible={visible}
 			onOk={() => (recordId ? handleUpdate() : handleCreate())}
 			onCancel={onCancel}
@@ -118,10 +118,14 @@ const UserSchoolModal = ({ onSave, onCancel, userSkillId, recordId = null, visib
 			destroyOnClose={true}
 		>
 			<Spin spinning={fetching && !data}>
-				<Form className={styles.form} form={form} layout="vertical" name="add_school_form" requiredMark={true}>
+				<Form className={styles.form} form={form} layout="vertical" name="add_job_form" requiredMark={true}>
 					<Form.Item name="id" hidden={true} />
 
 					<Form.Item name="title" label="Title" rules={[{ required: true, message: 'Please input the field!' }]}>
+						<Input />
+					</Form.Item>
+
+					<Form.Item name="position" label="Position" rules={[{ required: true, message: 'Please input the field!' }]}>
 						<Input />
 					</Form.Item>
 
@@ -153,4 +157,4 @@ const UserSchoolModal = ({ onSave, onCancel, userSkillId, recordId = null, visib
 	);
 };
 
-export default UserSchoolModal;
+export default UserJobModal;

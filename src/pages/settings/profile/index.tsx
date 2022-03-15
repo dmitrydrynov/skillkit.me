@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { ReactElement, useEffect, useMemo, useState } from 'react';
 import SettingsMenu from '@components/menus/SettingsMenu';
+import { getBase64 } from '@helpers/file';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { updateUserMutation, userDataQuery } from '@services/graphql/queries/user';
@@ -15,13 +16,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import countryList from 'react-select-country-list';
 import { useMutation, useQuery } from 'urql';
 import styles from './ProfilePage.module.less';
-
-// eslint-disable-next-line no-unused-vars
-function getBase64(img: Blob, callback: (fileReaderResult: string | ArrayBuffer) => void) {
-	const reader = new FileReader();
-	reader.addEventListener('load', () => callback(reader.result));
-	reader.readAsDataURL(img);
-}
 
 const ProfilePage: NextPageWithLayout = () => {
 	const [form] = Form.useForm();
@@ -196,17 +190,11 @@ const ProfilePage: NextPageWithLayout = () => {
 								<Input placeholder="Email" />
 							</Form.Item>
 
-							<Form.Item
-								name="country"
-								label="Country"
-								rules={[{ required: true, message: 'Please input the field!' }]}
-							>
+							<Form.Item name="country" label="Country" rules={[{ required: true, message: 'Please input the field!' }]}>
 								<AutoComplete
 									allowClear
 									placeholder="Country"
-									filterOption={(inputValue, option) =>
-										option!.title.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1
-									}
+									filterOption={(inputValue, option) => option!.title.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1}
 								>
 									{countries.map(({ value, label }: any) => (
 										<AutoComplete.Option key={value} value={label} title={label}>
