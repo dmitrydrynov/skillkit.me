@@ -1,16 +1,17 @@
 import React, { ReactElement, useState, useEffect, createRef } from 'react';
+import FileGallery from '@components/FileGallery';
 import { InlineEdit } from '@components/InlineEdit';
 import SkillEditorMenu from '@components/menus/SkillEditorMenu';
-import UserFileModal from '@components/modals/UserFileModal';
+import AddUserFileModal from '@components/modals/AddUserFileModal';
+import EditUserFileModal from '@components/modals/EditUserFileModal';
 import UserJobModal from '@components/modals/UserJobModal';
 import UserSchoolModal from '@components/modals/UserSchoolModal';
 import UserToolModal from '@components/modals/UserToolModal';
-import { getImageSizeFromName } from '@helpers/file';
 import { capitalizedText, readyText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { createSkillMutation, searchSkillsQuery } from '@services/graphql/queries/skill';
-import { userFilesQuery } from '@services/graphql/queries/userFile';
+import { deleteUserFileMutation, userFilesQuery } from '@services/graphql/queries/userFile';
 import { deleteUserJobMutation, userJobsQuery } from '@services/graphql/queries/userJob';
 import { deleteUserSchoolMutation, userSchoolsQuery } from '@services/graphql/queries/userSchool';
 import { editUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
@@ -42,7 +43,6 @@ import moment from 'moment';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import Gallery from 'react-grid-gallery';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
@@ -61,8 +61,10 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const [editableUserSchool, setEditableUserSchool] = useState<number>(null);
 	const [visibleJobModal, setVisibleJobModal] = useState(false);
 	const [editableUserJob, setEditableUserJob] = useState<number>(null);
-	const [visibleExampleModal, setVisibleExampleModal] = useState(false);
-	const [editableUserExample, setEditableUserExample] = useState<number>(null);
+	const [visibleAddUserFile, setVisibleAddUserFileModal] = useState(false);
+	const [editableAddUserFile, setEditableAddUserFile] = useState<number>(null);
+	const [visibleEditUserFileModal, setVisibleEditUserFileModal] = useState(false);
+	const [editableEditUserFile, setEditableEditUserFile] = useState<any>(null);
 	let [skillSearchQuery, setsSkillSearchQuery] = useState('');
 
 	// GraphQL queries
@@ -95,7 +97,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	});
 	const [{ data: userFilesData, fetching: userFilesFetching }, refreshUserFiles] = useQuery({
 		query: userFilesQuery,
-		// variables: { userSkillId: skillId },
+		variables: { attachType: 'UserSkill', attachId: skillId },
 		requestPolicy: 'network-only',
 	});
 	// GraphQL mutations
@@ -104,6 +106,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const [, deleteUserTool] = useMutation(deleteUserToolMutation);
 	const [, deleteUserSchool] = useMutation(deleteUserSchoolMutation);
 	const [, deleteUserJob] = useMutation(deleteUserJobMutation);
+	const [, deleteUserFile] = useMutation(deleteUserFileMutation);
 
 	useEffect(() => {
 		if (userSkillError) {
@@ -257,9 +260,33 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		}
 	};
 
-	/** User job handles */
-	const handleSaveUserExample = () => {
-		setVisibleExampleModal(false);
+	/** User user file handles */
+	const handleAddUserFile = () => {
+		message.success('User file added!');
+		setVisibleAddUserFileModal(false);
+		refreshUserFiles();
+	};
+
+	const handleSaveUserFile = () => {
+		message.success('User file updated!');
+		setVisibleEditUserFileModal(false);
+		refreshUserFiles();
+	};
+
+	const handleDeleteUserFile = async (item) => {
+		try {
+			const deletedItems = await deleteUserFile({ where: { id: item.id } });
+			if (deletedItems) {
+				message.success(
+					<>
+						The user file <strong>{item.title}</strong> deleted
+					</>,
+				);
+				refreshUserFiles();
+			}
+		} catch (error: any) {
+			message.error(error.message);
+		}
 	};
 
 	return (
@@ -299,14 +326,23 @@ const SkillEditorPage: NextPageWithLayout = () => {
 							setVisibleJobModal(false);
 						}}
 					/>
-					<UserFileModal
+					<AddUserFileModal
 						userSkillId={skillId as string}
-						visible={visibleExampleModal}
-						recordId={editableUserExample}
-						onSave={handleSaveUserExample}
+						visible={visibleAddUserFile}
+						recordId={editableAddUserFile}
+						onSave={handleAddUserFile}
 						onCancel={() => {
-							setEditableUserExample(null);
-							setVisibleExampleModal(false);
+							setEditableAddUserFile(null);
+							setVisibleAddUserFileModal(false);
+						}}
+					/>
+					<EditUserFileModal
+						visible={visibleEditUserFileModal}
+						record={editableEditUserFile}
+						onSave={handleSaveUserFile}
+						onCancel={() => {
+							setEditableEditUserFile(null);
+							setVisibleEditUserFileModal(false);
 						}}
 					/>
 					<Row align="middle">
@@ -634,22 +670,20 @@ const SkillEditorPage: NextPageWithLayout = () => {
 							size="small"
 							icon={<PlusOutlined />}
 							onClick={() => {
-								setVisibleExampleModal(true);
-								setEditableUserExample(null);
+								setVisibleAddUserFileModal(true);
+								setEditableAddUserFile(null);
 							}}
 						/>
 						{/* </Dropdown> */}
 					</div>
-					{userFilesData ? (
-						<Gallery
-							enableImageSelection={false}
-							images={userFilesData.userFiles.map((record) => ({
-								src: record.url,
-								thumbnail: record.url,
-								thumbnailWidth: getImageSizeFromName(record.url)?.width / 10,
-								thumbnailHeight: getImageSizeFromName(record.url)?.height / 10,
-								caption: record.title,
-							}))}
+					{userFilesData?.userFiles.length > 0 ? (
+						<FileGallery
+							fileList={userFilesData.userFiles}
+							onDelete={handleDeleteUserFile}
+							onEdit={(record) => {
+								setVisibleEditUserFileModal(true);
+								setEditableEditUserFile(record);
+							}}
 						/>
 					) : (
 						emptyData('No any examples')

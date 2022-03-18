@@ -33,7 +33,7 @@ const ProfilePage: NextPageWithLayout = () => {
 
 	useEffect(() => {
 		if (data?.user) {
-			const { firstName, lastName, fullname, email, country, birthdayDate, avatar, about } = data.user;
+			const { firstName, lastName, email, country, birthdayDate, avatar, about } = data.user;
 			const countryData = country ? countries.find((c) => c.value.toLowerCase() === country.toLowerCase()) : null;
 
 			if (avatar) {

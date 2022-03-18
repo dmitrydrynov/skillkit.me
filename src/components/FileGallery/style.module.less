@@ -1,0 +1,67 @@
+@line-color-1: #313131;
+@line-color-2: #4d4d4d;
+
+@item: {
+	outline: 1px solid #999;
+	overflow: hidden;
+	display: flex;
+	border-radius: @border-radius-base;
+	padding: 8px;
+
+	&:hover {
+		:global {
+			.close {
+				opacity: 1;
+			}
+
+			.bottom {
+				opacity: 1;
+				bottom: 0;
+			}
+		}
+	}
+
+	:global {
+		.close {
+			position: absolute;
+			right: 8px;
+			top: 8px;
+			opacity: 0;
+			background-color: #313131;
+			color: white;
+			border-color: #313131;
+			transform: scale(0.8);
+		}
+
+		.bottom {
+			position: absolute;
+			bottom: -40px;
+			left: 0;
+			background-color: #33333399;
+			border-radius: @border-radius-base;
+			color: #fff;
+			padding: 8px;
+			width: calc(100% - 8px * 2);
+			margin: 8px 8px;
+			opacity: 0;
+			transition: bottom ease-in-out 0.2s, opacity ease-in-out 0.2s;
+		}
+	}
+};
+
+.item-file {
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+	@item();
+}
+
+.item-link {
+	background-color: #fff;
+	@item();
+}
+
+.fileGallery {
+	background-color: @gray-3;
+	border-radius: @border-radius-base;
+}

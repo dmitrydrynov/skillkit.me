@@ -1,10 +1,11 @@
 export const userFilesQuery = `
-query {
-  userFiles {
+query($attachType: String!, $attachId: ID!) {
+  userFiles(attachType: $attachType, attachId: $attachId) {
     id
     title
     description
     url
+    type
   }
 }
 `;
@@ -20,6 +21,7 @@ query($id: ID!) {
     title
     description
     url
+    type
   }
 }
 `;

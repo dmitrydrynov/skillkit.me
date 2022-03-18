@@ -21,13 +21,13 @@ export const normUploadFile = (e: any) => {
 	return e && e.fileList;
 };
 
-export const getImageSizeFromName = (urlStr: string) => {
+export const getImageSizeFromName = (urlStr: string, zoom: number = 1) => {
 	const url = new URL(urlStr);
 	const filename = path.basename(url.pathname);
 	const size: string[] = filename.match(/-([0-9]*)x([0-9]*)/);
 
 	return {
-		width: size ? +size[1] : 128,
-		height: size ? +size[2] : 128,
+		width: size ? +size[1] * zoom : 128,
+		height: size ? +size[2] * zoom : 128,
 	};
 };

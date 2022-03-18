@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { getErrorMessage } from '@helpers/errors';
 import { getBase64WithPromise, normUploadFile } from '@helpers/file';
-import { updateUserFileMutation } from '@services/graphql/queries/userFile';
 import { createUserFileMutation } from '@services/graphql/queries/userFile';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Modal, Spin, Tabs, Form, Input, Upload, Button, message } from 'antd';
@@ -28,7 +27,7 @@ enum _ActionEnum {
 	'UploadImage',
 }
 
-const UserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visible = false }: _ModalParams) => {
+const AddUserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visible = false }: _ModalParams) => {
 	const [form] = Form.useForm();
 	const [selectedAction, setSelectedAction] = useState(_ActionEnum.AddLink);
 	const [fileLoading, setFileLoading] = useState(false);
@@ -41,31 +40,6 @@ const UserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 	});
 	const [showUploadBtn, setShowUploadBtn] = useState(true);
 	const [, createUserFile] = useMutation(createUserFileMutation);
-	const [, updateUserFile] = useMutation(updateUserFileMutation);
-	// const [{ data, fetching }] = useQuery({
-	// 	query: getUserFileQuery,
-	// 	variables: { id: recordId },
-	// 	requestPolicy: 'network-only',
-	// 	pause: !recordId,
-	// });
-
-	// useEffect(() => {
-	// 	if (visible === false) {
-	// 		form.resetFields();
-	// 	}
-	// }, [visible]);
-
-	// useEffect(() => {
-	// 	if (data) {
-	// 		form.setFieldsValue({
-	// 			title: data.userFile.title,
-	// 			position: data.userFile.position,
-	// 			description: data.userFile.description,
-	// 			startedAt: data.userFile.startedAt ? moment(data.userFile.startedAt) : null,
-	// 			finishedAt: data.userFile.finishedAt ? moment(data.userFile.finishedAt) : null,
-	// 		});
-	// 	}
-	// }, [data]);
 
 	const handleCreate = async () => {
 		const { title, description, uploadFile, link }: _FormData = await form.validateFields();
@@ -109,30 +83,6 @@ const UserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 		}
 	};
 
-	const handleUpdate = async () => {
-		// const { url }: _FormData = await form.validateFields();
-		// try {
-		// 	const { data, error } = await updateUserFile({
-		// 		recordId,
-		// 		data: {
-		// 			title,
-		// 			position,
-		// 			description: description ? description : null,
-		// 			startedAt,
-		// 			finishedAt,
-		// 		},
-		// 	});
-		// 	if (error) {
-		// 		message.error(getErrorMessage(error));
-		// 		return;
-		// 	}
-		// 	onSave('update', data);
-		// 	form.resetFields();
-		// } catch (error: any) {
-		// 	message.error(error.message);
-		// }
-	};
-
 	const handleFileChange = async ({ file }: any) => {
 		if (file && file.status === 'uploading') {
 			setFileLoading(true);
@@ -143,18 +93,6 @@ const UserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 				name: file.name,
 				url: src,
 			});
-
-			// form.setFieldsValue({
-			// 	file: [
-			// 		{
-			// 			uid: file.uid,
-			// 			name: file.name,
-			// 			status: 'done',
-			// 			url: src,
-			// 			original: file,
-			// 		},
-			// 	],
-			// });
 		}
 		if (file.status === 'done') {
 			setFileLoading(false);
@@ -179,7 +117,7 @@ const UserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 		<Modal
 			title={recordId ? `Edit the example` : 'Add an example'}
 			visible={visible}
-			onOk={() => (recordId ? handleUpdate() : handleCreate())}
+			onOk={() => handleCreate()}
 			onCancel={() => {
 				onCancel();
 				resetModalData();
@@ -253,7 +191,6 @@ const UserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 										valuePropName="fileList"
 										getValueFromEvent={normUploadFile}
 									>
-										{/* <ImgCrop rotate> */}
 										<Upload
 											listType="picture"
 											className={styles.uploader}
@@ -267,7 +204,6 @@ const UserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 												<Button type="ghost">{fileLoading ? <LoadingOutlined /> : <PlusOutlined />} Select file</Button>
 											)}
 										</Upload>
-										{/* </ImgCrop> */}
 									</Form.Item>
 
 									<Modal
@@ -303,4 +239,4 @@ const UserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 	);
 };
 
-export default UserFileModal;
+export default AddUserFileModal;
