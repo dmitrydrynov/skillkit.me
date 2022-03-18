@@ -16,7 +16,7 @@ import { deleteUserJobMutation, userJobsQuery } from '@services/graphql/queries/
 import { deleteUserSchoolMutation, userSchoolsQuery } from '@services/graphql/queries/userSchool';
 import { editUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
 import { deleteUserToolMutation, userToolsQuery } from '@services/graphql/queries/userTool';
-import { getSkillLevel, SkillLevel, skillLevelsList } from 'src/definitions/skill';
+import { getSkillLevel, getSkillLevels, SkillLevel, skillLevelsList } from 'src/definitions/skill';
 import { DeleteOutlined, EditOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
 import {
 	AutoComplete,
@@ -118,7 +118,6 @@ const SkillEditorPage: NextPageWithLayout = () => {
 			return;
 		}
 
-		setExperience(5);
 		setLevel(getSkillLevel(userSkillData.userSkill.level));
 		handleChangeInlineInput(userSkillData.userSkill.title);
 	}, [userSkillData, userSkillError]);
@@ -128,6 +127,18 @@ const SkillEditorPage: NextPageWithLayout = () => {
 			await searchSkills();
 		})();
 	}, [skillSearchQuery]);
+
+	useEffect(() => {
+		let newExperience = 0;
+
+		if (userJobsData?.userJobs) {
+			userJobsData.userJobs.map((userJob) => {
+				newExperience += userJob.experience.years * 12 + userJob.experience.months;
+			});
+
+			setExperience(newExperience);
+		}
+	}, [userJobsData]);
 
 	const emptyData = (dataName = 'data') => <span className={styles.descriptionEmpty}>({dataName})</span>;
 
@@ -422,7 +433,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 								}
 								editMode={
 									<Select placeholder="Select" style={{ width: '150px' }}>
-										{skillLevelsList.map((item, indx) => (
+										{getSkillLevels(experience).map((item, indx) => (
 											<Select.Option key={indx.toString()} value={item.label.toUpperCase()}>
 												<Tooltip title={item.description} placement="right">
 													<Image src={item.icon} alt="" /> {item.label}
@@ -432,7 +443,9 @@ const SkillEditorPage: NextPageWithLayout = () => {
 									</Select>
 								}
 							/>
-							<p>{experience > 0 ? `Work experience more than ${experience} year(s)` : "I haven't any experience yet"}</p>
+							{experience >= 12 && <p>Work experience more than {Math.floor(experience / 12)} year(s)</p>}
+							{experience == 0 && <p>I haven&apos;t any experience yet</p>}
+							{experience > 0 && experience < 12 && <p>Work experience a little less than a year</p>}
 						</Col>
 					</Row>
 					<Row>
@@ -622,7 +635,9 @@ const SkillEditorPage: NextPageWithLayout = () => {
 														' — ' +
 														(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
 												</div>
-												<div className={styles.userJobTitle}>{item.title}</div>
+												<div className={styles.userJobTitle}>
+													{item.title} — {item.position}
+												</div>
 												{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
 											</div>
 											<Dropdown.Button

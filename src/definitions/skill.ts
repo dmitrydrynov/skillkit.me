@@ -59,6 +59,40 @@ export const skillLevelsList = [
 	},
 ];
 
+export const getSkillLevels = (experience?: number) => {
+	if (experience == null || experience == undefined) {
+		return skillLevelsList;
+	}
+
+	return skillLevelsList.filter((i) => {
+		if (
+			experience == 0 &&
+			[SkillLevelEnum.EXPERIENCED, SkillLevelEnum.EXPERT, SkillLevelEnum.SKILLFUL, SkillLevelEnum.BEGINNER].includes(
+				i.label,
+			)
+		) {
+			return false;
+		}
+
+		if (
+			experience < 3 &&
+			[SkillLevelEnum.EXPERIENCED, SkillLevelEnum.EXPERT, SkillLevelEnum.SKILLFUL].includes(i.label)
+		) {
+			return false;
+		}
+
+		if (experience < 12 && [SkillLevelEnum.EXPERIENCED, SkillLevelEnum.EXPERT].includes(i.label)) {
+			return false;
+		}
+
+		if (experience >= 12 && experience < 24 && [SkillLevelEnum.EXPERT].includes(i.label)) {
+			return false;
+		}
+
+		return true;
+	});
+};
+
 export const getSkillLevel = (levelName: string): SkillLevel => {
 	return skillLevelsList.filter((item) => item.label.toLowerCase() === levelName.toLowerCase())[0];
 };

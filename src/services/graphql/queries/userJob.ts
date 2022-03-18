@@ -7,6 +7,10 @@ query($userSkillId: ID!) {
     description
     startedAt
     finishedAt
+    experience {
+      years
+      months
+    }
   }
 }
 `;

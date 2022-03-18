@@ -4,7 +4,7 @@
 import React, { FC, createRef, useEffect, useState } from 'react';
 import { createSkillMutation, searchSkillsQuery } from '@services/graphql/queries/skill';
 import { createUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
-import { skillLevelsList } from 'src/definitions/skill';
+import { getSkillLevels } from 'src/definitions/skill';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Modal, Row, Select, Tooltip, message, Spin, AutoComplete } from 'antd';
 import { RefSelectProps } from 'antd/lib/select';
@@ -18,13 +18,13 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 	const [form] = Form.useForm();
 	/** Local state */
 	const [selectedSkillId, setSelectedSkillId] = useState<number>();
-	let [skillSearchQuery, setsSkillSearchQuery] = useState('');
+	let [skillSearchQuery, setSkillSearchQuery] = useState(null);
 
 	/** Queries */
 	let [{ data: searchSkillData }, searchSkills] = useQuery({
 		query: searchSkillsQuery,
 		variables: { search: skillSearchQuery },
-		pause: true,
+		pause: skillSearchQuery === null,
 		requestPolicy: 'network-only',
 	});
 	let [{ data: getUserSkillData }] = useQuery({
@@ -45,6 +45,8 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 	}, [visible]);
 
 	useEffect(() => {
+		if (!skillSearchQuery) return;
+
 		(async () => {
 			await searchSkills();
 		})();
@@ -89,6 +91,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 			}
 
 			message.success('New user skill added!');
+			setSkillSearchQuery(null);
 			onFinish();
 		});
 	};
@@ -173,16 +176,16 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 									placeholder="To do something ..."
 									notFoundContent={null}
 									onSelect={(value, option) => setSelectedSkillId(option.key as number)}
-									onSearch={(value: string) => setsSkillSearchQuery(value)}
+									onSearch={(value: string) => setSkillSearchQuery(value)}
 								>
 									{searchSkillData?.skills.map((d: any) => (
 										<AutoComplete.Option key={d.id} value={d.name}>
 											{d.name}
 										</AutoComplete.Option>
 									))}
-									{skillSearchQuery.length &&
+									{skillSearchQuery?.length &&
 										searchSkillData?.skills.filter((d: { name: string }) => {
-											return skillSearchQuery.toLowerCase().trim() === d.name.toLowerCase();
+											return skillSearchQuery?.toLowerCase().trim() === d.name.toLowerCase();
 										}).length === 0 && (
 											<Select.Option
 												disabled
@@ -204,7 +207,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ operation = 'create', visible, re
 						<Col span={8} offset={2}>
 							<Form.Item name="level" label="Level" rules={[{ required: true, message: 'Please input the email!' }]}>
 								<Select placeholder="Select">
-									{skillLevelsList.map((item, indx) => (
+									{getSkillLevels(3).map((item, indx) => (
 										<Select.Option key={indx.toString()} value={item.label.toLowerCase()}>
 											<Tooltip title={item.description} placement="right">
 												<Image src={item.icon} alt="" /> {item.label}

@@ -31,7 +31,7 @@ const ProfilePage: NextPageWithLayout = () => {
 	const screens = useBreakpoint();
 	const [visibleAddUserSkillModal, setVisibleAddUserSkillModal] = useState(false);
 	const userId = useSelector((state: RootState) => state.user.id);
-	const [userSkills, reexecuteUserSkills] = useQuery({
+	const [userSkills, refreshUserSkills] = useQuery({
 		query: userSkillsQuery,
 		pause: !userId,
 		requestPolicy: 'network-only',
@@ -47,7 +47,7 @@ const ProfilePage: NextPageWithLayout = () => {
 	const handleAddUserSkill = async () => {
 		setVisibleAddUserSkillModal(false);
 		setUserSkillId(null);
-		await reexecuteUserSkills();
+		await refreshUserSkills();
 	};
 
 	const userSkillItemMenu = (recordId?: string) => (
@@ -102,7 +102,7 @@ const ProfilePage: NextPageWithLayout = () => {
 						The user skill <strong>{userSkillData.skill.name}</strong> deleted successfully
 					</>,
 				);
-				await reexecuteUserSkills();
+				await refreshUserSkills();
 
 				return Promise.resolve(true);
 			}
