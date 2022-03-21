@@ -47,10 +47,10 @@ const PublicLayout: FC = ({ children }) => {
 						<Col>
 							{!loggedIn && !logginingIn ? (
 								<Space>
-									<Button type="default" shape="round" onClick={handleSignIn}>
+									<Button type="default" shape="round" onClick={handleSignIn} className={styles.signInBtn}>
 										Sign in
 									</Button>
-									<Button type="primary" shape="round" onClick={handleSignUp}>
+									<Button type="primary" shape="round" onClick={handleSignUp} className={styles.signUpBtn}>
 										Sign up
 									</Button>
 								</Space>
@@ -60,7 +60,7 @@ const PublicLayout: FC = ({ children }) => {
 						</Col>
 					</Row>
 				</Header>
-				<Content style={{ margin: '50px' }}>{children}</Content>
+				<Content className={styles.content}>{children}</Content>
 				<BetaModeModal />
 				{/* <Footer>Copyright © 2021 AnyCompany, Inc. All rights reserved.</Footer> */}
 			</Layout>

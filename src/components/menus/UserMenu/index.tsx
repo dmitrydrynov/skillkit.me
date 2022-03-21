@@ -2,12 +2,14 @@ import { FC, ReactNode, useState } from 'react';
 import React from 'react';
 import { RootState } from '@store/configure-store';
 import { setLogout } from '@store/reducers/auth';
-import { Avatar, Dropdown, Menu, Space, Skeleton } from 'antd';
+import { Avatar, Dropdown, Menu, Space, Skeleton, Grid } from 'antd';
 import Avvvatars from 'avvvatars-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './UserMenu.module.less';
+
+const { useBreakpoint } = Grid;
 
 type MenuItem = {
 	link?: string;
@@ -17,6 +19,7 @@ type MenuItem = {
 };
 
 const UserMenu: FC = () => {
+	const screens = useBreakpoint();
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const [activeUserMenu, setActiveUserMenu] = useState(false);
@@ -77,6 +80,8 @@ const UserMenu: FC = () => {
 				onVisibleChange={(visible: boolean) => {
 					setActiveUserMenu(visible);
 				}}
+				placement="bottomRight"
+				arrow={false}
 			>
 				<Menu.Item key="userMenuItem">
 					{logginingIn ? (
@@ -93,10 +98,12 @@ const UserMenu: FC = () => {
 						</Space>
 					) : (
 						<Space align="center">
-							<div className={styles.info}>
-								<div className={styles.name}>{authUser.fullName}</div>
-								<div className={styles.email}>{authUser.email}</div>
-							</div>
+							{screens.sm && (
+								<div className={styles.info}>
+									<div className={styles.name}>{authUser.fullName}</div>
+									<div className={styles.email}>{authUser.email}</div>
+								</div>
+							)}
 							{authUser.avatar ? (
 								<Avatar size={40} src={authUser.avatar} className={`${styles.avatar} ant-dropdown-link`} />
 							) : (

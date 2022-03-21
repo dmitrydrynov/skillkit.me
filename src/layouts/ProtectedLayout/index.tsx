@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useEffect } from 'react';
+import React, { createRef, FC, ReactElement, useEffect, useState } from 'react';
 import skillKitLogo from '@assets/images/skillkit-logo.svg';
 import UserMenu from '@components/menus/UserMenu';
 import withAuth from '@helpers/withAuth';
@@ -14,11 +14,14 @@ const { useBreakpoint } = Grid;
 type ProtectedLayoutParams = {
 	title: string;
 	siderMenu: ReactElement | null;
+	onLocation?: () => void;
 };
 
 const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, siderMenu = null }) => {
 	const router = useRouter();
 	const screens = useBreakpoint();
+	const [siderCollapsed, setSiderCollapsed] = useState(true);
+	const siderRef = createRef<HTMLDivElement>();
 
 	useEffect(() => {
 		if (Object.entries(screens).length) console.log('Sreen sizes', screens);
@@ -26,6 +29,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, siderMenu = null
 
 	const handleMenuClick = ({ key }) => {
 		router.push(key);
+		setSiderCollapsed(true);
 	};
 
 	const defaultSiderMenu = (
@@ -38,7 +42,25 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, siderMenu = null
 
 	return (
 		<Layout className={styles.container} style={{ minHeight: '100vh' }}>
-			<Sider className={styles.sider} breakpoint="lg" collapsedWidth={screens.sm ? 80 : 0}>
+			<div
+				className={styles.siderWrapper}
+				onClick={() => {
+					setSiderCollapsed(true);
+				}}
+				style={siderCollapsed ? { opacity: 0, display: 'none' } : { opacity: 1, display: 'block' }}
+			></div>
+			<Sider
+				ref={siderRef}
+				className={styles.sider}
+				breakpoint="lg"
+				collapsedWidth={screens.sm ? 80 : 0}
+				collapsed={!screens.lg && siderCollapsed}
+				onCollapse={(collapsed, type) => {
+					if (type === 'clickTrigger') {
+						setSiderCollapsed(collapsed);
+					}
+				}}
+			>
 				<div className={styles.logo}>
 					<Image src={skillKitLogo} layout="intrinsic" alt="gdhub logo" />
 				</div>

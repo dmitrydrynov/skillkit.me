@@ -5,6 +5,10 @@
 	background-color: white !important;
 }
 
+.content {
+	margin: 48px;
+}
+
 .publicLayout {
 	padding: 40px 80px;
 
@@ -44,3 +48,10 @@
 .logoContainer {
 	flex: 1;
 }
+
+@import './styles/xs.less'; // screen < 576px
+@import './styles/sm.less'; // screen ≥ 576px
+@import './styles/md.less'; // screen ≥ 768px
+@import './styles/lg.less'; // screen ≥ 992px
+@import './styles/xl.less'; // screen ≥ 1200px
+@import './styles/xxl.less'; // screen ≥ 1600px

@@ -17,7 +17,6 @@ const BetaModeModal = () => {
 				closable: false,
 				okText: 'Ok, I understand',
 				className: styles.modal,
-				width: '60%',
 			});
 		}
 	}, []);

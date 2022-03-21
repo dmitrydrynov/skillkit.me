@@ -1,7 +1,3 @@
-// @tailwind base;
-// @tailwind components;
-// @tailwind utilities;
-
 @import '../assets/fonts/als-story/stylesheet.css';
 @import '~antd/dist/antd.less';
 @import '~flag-icon-css/css/flag-icon.css';
@@ -10,15 +6,19 @@
 @import '~react-grid-layout/css/styles.css';
 @import '~react-resizable/css/styles.css';
 
+@import './resize/md.less';
+
 body {
 	background: rgb(255, 255, 255);
 	background: linear-gradient(90deg, #ffffff 0%, #ffffff 50%, @layout-body-background 50%, @layout-body-background 100%);
 }
 
+/** Col **/
 .ant-col {
 	min-height: initial;
 }
 
+/** Input **/
 .ant-input:focus,
 .ant-input-focused,
 .ant-picker-focused,
@@ -27,12 +27,14 @@ body {
 	box-shadow: 0 0 0 @input-shadow-size rgba(@primary-color, 10%) !important;
 }
 
+/** Picker cell **/
 .ant-picker-cell .ant-picker-cell-inner {
 	min-width: 28px;
 	height: 28px;
 	line-height: 28px;
 }
 
+/** Form **/
 .ant-form-item-explain {
 	margin-bottom: 8px;
 	font-size: @font-size-base;
@@ -50,17 +52,19 @@ body {
 	}
 }
 
+/** Select **/
 .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
 	color: @gray-13;
 	font-weight: 600;
 	background-color: @gray-4;
 }
 
-a.ant-btn {
-	padding-top: @padding-sm !important;
-}
-
+/** Button **/
 .ant-btn {
+	&a {
+		padding-top: @padding-sm !important;
+	}
+
 	&:not(.ant-btn-text, .ant-btn-circle, .ant-btn-sm) {
 		padding-left: 24px;
 		padding-right: 24px;
@@ -70,37 +74,43 @@ a.ant-btn {
 	> span {
 		font-weight: 700;
 	}
-}
 
-.ant-btn-lg {
-	padding-left: 60px !important;
-	padding-right: 60px !important;
-}
+	&-lg {
+		padding-left: 60px !important;
+		padding-right: 60px !important;
+	}
 
-.ant-btn-sm {
-	> span {
-		font-size: 15px;
+	&-sm {
+		> span {
+			font-size: 15px;
+		}
+	}
+
+	&-link {
+		> span {
+			color: @link-hover-color;
+			transition: text-decoration 0.2s;
+		}
+
+		&:hover > span {
+			color: @link-hover-color;
+			text-decoration: underline;
+		}
+
+		&:focus > span {
+			color: @link-hover-color;
+			text-decoration: underline;
+		}
 	}
 }
 
-.ant-btn-link > span {
-	color: @link-hover-color;
-	transition: text-decoration 0.2s;
-}
-.ant-btn-link:hover > span {
-	color: @link-hover-color;
-	text-decoration: underline;
-}
-.ant-btn-link:focus > span {
-	color: @link-hover-color;
-	text-decoration: underline;
-}
-
+/** Message **/
 .ant-message-notice-content {
 	padding: 16px 32px;
 	border-radius: calc(@border-radius-base * 2);
 }
 
+/** Layout **/
 .ant-layout-sider-zero-width-trigger {
 	top: 14px;
 	z-index: 2;
@@ -108,32 +118,42 @@ a.ant-btn {
 	border-radius: 0 1rem 1rem 0;
 }
 
-@media screen and (max-width: 600px) {
-	body {
-		background: @layout-body-background;
-	}
-}
-
+/** Modal **/
 .ant-modal-title {
 	font-size: 24px;
 	line-height: 24px;
 }
 
+.ant-modal-confirm .ant-modal-confirm-btns {
+	text-align: center;
+	float: unset;
+}
+
+/** Popover **/
 .ant-popover-message > .anticon {
 	top: 8px;
 }
 
+/** List **/
 .ant-list-item-meta-title {
 	font-size: 16px;
 }
 
+/** Button group **/
 .ant-btn-group {
 	.ant-btn {
 		border-radius: unset;
 	}
 }
 
+/** Dropdown **/
 .ant-dropdown-menu-item {
 	border-radius: 8px;
 	margin: 2px 4px;
+}
+
+@media screen and (max-width: 600px) {
+	body {
+		background: @layout-body-background;
+	}
 }
