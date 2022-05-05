@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { FC, ReactElement, ReactNode, useEffect, useState } from 'react';
+import React, { FC, ReactNode, useEffect, useState } from 'react';
 import LoadingScreen from '@components/loadingScreen';
 import { getCookie, setCookie } from '@helpers/cookie';
 import PublicLayout from '@layouts/PublicLayout';
@@ -17,7 +17,8 @@ import { Provider as StoreProvider, useDispatch, useSelector } from 'react-redux
 import { Provider as UrqlProvider, useQuery } from 'urql';
 
 export type NextPageWithLayout = NextPage & {
-	getLayout?: (page: ReactElement) => ReactNode;
+	getLayout?: (page: ReactNode) => ReactNode;
+	beforeContent?: ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & {

@@ -37,7 +37,7 @@ const ProfilePage: NextPageWithLayout = () => {
 		requestPolicy: 'network-only',
 	});
 	const [, deleteUserSkill] = useMutation(deleteUserSkillMutation);
-	const [userSkillId, setUserSkillId] = useState<{ id: string | null; operation: 'create' | 'update' } | null>(null);
+	const [userSkillId, setUserSkillId] = useState<{ id: string | null } | null>(null);
 
 	const getSkillLevelIcon = (levelName: string): string => {
 		const skillLevel: SkillLevel = getSkillLevel(levelName);
@@ -123,7 +123,6 @@ const ProfilePage: NextPageWithLayout = () => {
 				<title>My Skills - SkillKit</title>
 			</Head>
 			<AddUserSkillModal
-				operation={userSkillId?.operation}
 				recordId={userSkillId?.id}
 				visible={visibleAddUserSkillModal}
 				onClose={() => setVisibleAddUserSkillModal(false)}
@@ -139,7 +138,7 @@ const ProfilePage: NextPageWithLayout = () => {
 						key="add-language-button"
 						icon={<PlusOutlined />}
 						onClick={() => {
-							setUserSkillId({ id: null, operation: 'create' });
+							setUserSkillId({ id: null });
 							setVisibleAddUserSkillModal(true);
 						}}
 					>
@@ -174,6 +173,38 @@ const ProfilePage: NextPageWithLayout = () => {
 								<Image src={getSkillLevelIcon(value)} alt="" /> {value[0].toUpperCase() + value.slice(1)}
 							</>
 						)}
+					/>
+					<Table.Column
+						title="Experience"
+						width="150px"
+						key="experience"
+						dataIndex="experience"
+						render={(data: unknown, record: any) => {
+							let response = "Don't have";
+
+							if (record.experience.years === 0 && record.experience.months > 0) {
+								response = `Less than a year`;
+							}
+
+							if (record.experience.years == 1 && record.experience.months === 0) {
+								response = `1 year`;
+							}
+
+							if (record.experience.years === 1 && record.experience.months !== 0) {
+								response = `More than 1 year`;
+							}
+
+							if (record.experience.years > 1 && record.experience.months === 0) {
+								response = `${record.experience.years} years`;
+							}
+
+							if (record.experience.years > 1 && record.experience.months !== 0) {
+								response = `More than ${record.experience.years} years`;
+							}
+
+							return response;
+						}}
+						responsive={['lg']}
 					/>
 					<Table.Column
 						title="Last updated"

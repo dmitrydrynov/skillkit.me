@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect, createRef } from 'react';
+import React, { useState, useEffect, createRef, ReactElement } from 'react';
 import FileGallery from '@components/FileGallery';
 import { InlineEdit } from '@components/InlineEdit';
 import SkillEditorMenu from '@components/menus/SkillEditorMenu';
@@ -7,6 +7,7 @@ import EditUserFileModal from '@components/modals/EditUserFileModal';
 import UserJobModal from '@components/modals/UserJobModal';
 import UserSchoolModal from '@components/modals/UserSchoolModal';
 import UserToolModal from '@components/modals/UserToolModal';
+import SkillEditorBeforeContent from '@components/SkillEditorBeforeContent';
 import { capitalizedText, readyText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
@@ -140,7 +141,11 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		}
 	}, [userJobsData]);
 
-	const emptyData = (dataName = 'data') => <span className={styles.descriptionEmpty}>({dataName})</span>;
+	const emptyData = (dataName = 'data') => (
+		<span className={styles.descriptionEmpty}>
+			({dataName}. An empty section will not be displayed in the public version)
+		</span>
+	);
 
 	const handleChangeInlineInput = (value) => {
 		const minWidth = 20;
@@ -307,55 +312,6 @@ const SkillEditorPage: NextPageWithLayout = () => {
 			</Head>
 			<Space direction="vertical" size={40} className={styles.container}>
 				<div className={styles.header}>
-					<UserToolModal
-						userSkillId={skillId as string}
-						visible={visibleToolModal}
-						recordId={editableUserTool}
-						onSave={handleSaveUserTool}
-						onCancel={() => {
-							setEditableUserTool(null);
-							setVisibleToolModal(false);
-						}}
-					/>
-					<UserSchoolModal
-						userSkillId={skillId as string}
-						visible={visibleSchoolModal}
-						recordId={editableUserSchool}
-						onSave={handleSaveUserSchool}
-						onCancel={() => {
-							setEditableUserSchool(null);
-							setVisibleSchoolModal(false);
-						}}
-					/>
-					<UserJobModal
-						userSkillId={skillId as string}
-						visible={visibleJobModal}
-						recordId={editableUserJob}
-						onSave={handleSaveUserJob}
-						onCancel={() => {
-							setEditableUserJob(null);
-							setVisibleJobModal(false);
-						}}
-					/>
-					<AddUserFileModal
-						userSkillId={skillId as string}
-						visible={visibleAddUserFile}
-						recordId={editableAddUserFile}
-						onSave={handleAddUserFile}
-						onCancel={() => {
-							setEditableAddUserFile(null);
-							setVisibleAddUserFileModal(false);
-						}}
-					/>
-					<EditUserFileModal
-						visible={visibleEditUserFileModal}
-						record={editableEditUserFile}
-						onSave={handleSaveUserFile}
-						onCancel={() => {
-							setEditableEditUserFile(null);
-							setVisibleEditUserFileModal(false);
-						}}
-					/>
 					<Row align="middle">
 						<Col flex={1}>
 							<div>I can</div>
@@ -546,7 +502,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 				<div className={styles.schoolsSection}>
 					<div className={styles.headerContainer}>
 						<Space style={{ display: 'flex' }}>
-							<h2>History of skill learning</h2>
+							<h2>I learned this skill in</h2>
 							<Button
 								type="ghost"
 								shape="circle"
@@ -611,7 +567,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 				</div>
 				<div className={styles.jobsSection}>
 					<div className={styles.headerContainer}>
-						<h2>This skill was been used in the following jobs</h2>
+						<h2>I used this skill in the following jobs</h2>
 						<Button
 							type="ghost"
 							shape="circle"
@@ -705,12 +661,61 @@ const SkillEditorPage: NextPageWithLayout = () => {
 					)}
 				</div>
 			</Space>
+			<UserToolModal
+				userSkillId={skillId as string}
+				visible={visibleToolModal}
+				recordId={editableUserTool}
+				onSave={handleSaveUserTool}
+				onCancel={() => {
+					setEditableUserTool(null);
+					setVisibleToolModal(false);
+				}}
+			/>
+			<UserSchoolModal
+				userSkillId={skillId as string}
+				visible={visibleSchoolModal}
+				recordId={editableUserSchool}
+				onSave={handleSaveUserSchool}
+				onCancel={() => {
+					setEditableUserSchool(null);
+					setVisibleSchoolModal(false);
+				}}
+			/>
+			<UserJobModal
+				userSkillId={skillId as string}
+				visible={visibleJobModal}
+				recordId={editableUserJob}
+				onSave={handleSaveUserJob}
+				onCancel={() => {
+					setEditableUserJob(null);
+					setVisibleJobModal(false);
+				}}
+			/>
+			<AddUserFileModal
+				userSkillId={skillId as string}
+				visible={visibleAddUserFile}
+				recordId={editableAddUserFile}
+				onSave={handleAddUserFile}
+				onCancel={() => {
+					setEditableAddUserFile(null);
+					setVisibleAddUserFileModal(false);
+				}}
+			/>
+			<EditUserFileModal
+				visible={visibleEditUserFileModal}
+				record={editableEditUserFile}
+				onSave={handleSaveUserFile}
+				onCancel={() => {
+					setEditableEditUserFile(null);
+					setVisibleEditUserFileModal(false);
+				}}
+			/>
 		</>
 	);
 };
 
 SkillEditorPage.getLayout = (page: ReactElement) => (
-	<ProtectedLayout title="Skill Editor" siderMenu={<SkillEditorMenu />}>
+	<ProtectedLayout title="Skill Editor" siderMenu={<SkillEditorMenu />} beforeContent={<SkillEditorBeforeContent />}>
 		{page}
 	</ProtectedLayout>
 );

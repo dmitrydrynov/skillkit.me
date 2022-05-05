@@ -13,6 +13,23 @@ query($id: ID!) {
     	id
       name
   	}
+    updatedAt
+  }
+}
+`;
+
+export const getUserSkillOptionsQuery = `
+query($id: ID!) {
+  userSkill(
+    where: {
+      id: $id
+    }
+  ) {
+    id
+    isDraft
+    viewMode
+    updatedAt
+    shareLink
   }
 }
 `;
@@ -31,6 +48,10 @@ query {
     }
     level
     isDraft
+    experience {
+      years
+      months
+    }
     publishedAt
     createdAt
     updatedAt
@@ -40,11 +61,13 @@ query {
 
 export const createUserSkillMutation = `
 mutation(
-  $skillId: ID!
+  $skillId: ID
+  $skillName: String
   $level: UserSkillLevelEnum!
 ) {
   createUserSkill(
     skillId: $skillId
+    skillName: $skillName
     level: $level
   ) {
     id

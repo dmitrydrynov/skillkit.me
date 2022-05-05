@@ -59,6 +59,25 @@ body {
 	background-color: @gray-4;
 }
 
+.ant-select-item {
+	margin: 2px 4px;
+	border-radius: 8px;
+}
+
+.ant-select-borderless {
+	&.ant-select-focused {
+		.ant-select-selector {
+			box-shadow: none !important;
+		}
+	}
+}
+
+.ant-select-selection-item,
+.ant-select-item-option-content {
+	display: flex;
+	align-items: center;
+}
+
 /** Button **/
 .ant-btn {
 	&a {

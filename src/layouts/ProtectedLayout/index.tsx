@@ -1,4 +1,4 @@
-import React, { createRef, FC, ReactElement, useEffect, useState } from 'react';
+import React, { createRef, FC, ReactElement, ReactNode, useEffect, useState } from 'react';
 import skillKitLogo from '@assets/images/skillkit-logo.svg';
 import UserMenu from '@components/menus/UserMenu';
 import withAuth from '@helpers/withAuth';
@@ -13,11 +13,12 @@ const { useBreakpoint } = Grid;
 
 type ProtectedLayoutParams = {
 	title: string;
-	siderMenu: ReactElement | null;
+	siderMenu?: ReactElement;
 	onLocation?: () => void;
+	beforeContent?: ReactNode;
 };
 
-const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, siderMenu = null }) => {
+const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, siderMenu = null, beforeContent }) => {
 	const router = useRouter();
 	const screens = useBreakpoint();
 	const [siderCollapsed, setSiderCollapsed] = useState(true);
@@ -75,6 +76,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, siderMenu = null
 						</Col>
 					</Row>
 				</Header>
+				{beforeContent ? beforeContent : null}
 				<Content className={styles.content}>{children}</Content>
 			</Layout>
 		</Layout>
