@@ -1,0 +1,60 @@
+.layout {
+	min-height: '100vh';
+	max-width: 1440px;
+	margin: 0px auto;
+}
+
+.content {
+	padding: 40px 50px;
+	margin: 14px 30px 40px;
+	background: white;
+	box-shadow: rgb(0 0 0 / 10%) -4px 9px 25px -6px;
+	border-radius: 8px;
+}
+
+.publicLayout {
+	padding: 40px 80px;
+
+	&_header {
+		background-color: white !important;
+		height: 85px !important;
+		display: flex;
+		// justify-content: space-between;
+		// align-items: center;
+
+		&_menu {
+			background-color: transparent !important;
+			border-bottom: 0 !important;
+
+			:global {
+				.ant-menu-item {
+					.ant-menu-title-content {
+						padding: 8px 16px;
+						border-radius: @border-radius-base;
+						transition: background 0.3s;
+						height: @height-base;
+					}
+				}
+			}
+		}
+	}
+}
+
+.logo {
+	float: left;
+	width: 120px;
+	height: 40px;
+	// margin: 16px 24px 16px 0;
+	// background: rgba(0, 0, 0, 0.2);
+}
+
+.logoContainer {
+	flex: 1;
+}
+
+@import './styles/xs.less'; // screen < 576px
+@import './styles/sm.less'; // screen ≥ 576px
+@import './styles/md.less'; // screen ≥ 768px
+@import './styles/lg.less'; // screen ≥ 992px
+@import './styles/xl.less'; // screen ≥ 1200px
+@import './styles/xxl.less'; // screen ≥ 1600px

@@ -14,6 +14,7 @@ query($id: ID!) {
       name
   	}
     updatedAt
+    shareLink
   }
 }
 `;
@@ -55,6 +56,7 @@ query {
     publishedAt
     createdAt
     updatedAt
+    shareLink
   }
 }
 `;
@@ -108,5 +110,33 @@ mutation(
       isVisible: $isVisible
     }
   ) { id isVisible }
+}
+`;
+
+export const publishUserSkillMutation = `
+mutation($recordId: ID!, $host: String!) {
+  publishUserSkill(id: $recordId, host: $host) { id shareLink }
+}
+`;
+
+export const getUserSkillByHashQuery = `
+query($hash: String!) {
+  userSkillByHash(hash: $hash) {
+    id
+    description
+    skill {
+      id
+      name
+    }
+    level
+    experience {
+      years
+      months
+    }
+    publishedAt
+    createdAt
+    updatedAt
+    shareLink
+  }
 }
 `;

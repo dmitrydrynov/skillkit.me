@@ -13,6 +13,12 @@ export enum SkillLevelEnum {
 	EXPERT = 'Expert',
 }
 
+export enum UserSkillViewModeEnum {
+	ONLY_ME = 'only_me',
+	BY_LINK = 'by_link',
+	EVERYONE = 'everyone',
+}
+
 export type SkillLevel = {
 	label: SkillLevelEnum;
 	icon: string;
