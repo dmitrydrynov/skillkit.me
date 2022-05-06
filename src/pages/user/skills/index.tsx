@@ -1,4 +1,5 @@
 import React, { ReactElement, useState } from 'react';
+import { capitalizedText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { deleteUserSkillMutation, userSkillsQuery } from '@services/graphql/queries/userSkill';
@@ -12,11 +13,22 @@ import {
 	NotificationTwoTone,
 	PlusOutlined,
 } from '@ant-design/icons';
-import { Button, ConfigProvider, Dropdown, Grid, Menu, message, PageHeader, Table } from 'antd';
+import {
+	Button,
+	ConfigProvider,
+	Dropdown,
+	Grid,
+	Menu,
+	message,
+	PageHeader,
+	Progress,
+	Space,
+	Table,
+	Typography,
+} from 'antd';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { HiDotsVertical } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
@@ -153,26 +165,36 @@ const ProfilePage: NextPageWithLayout = () => {
 					dataSource={userSkills.data?.userSkills}
 					loading={userSkills.fetching}
 					pagination={false}
-					size="large"
+					size="middle"
 				>
 					<Table.Column
 						title="I can"
 						dataIndex={['skill', 'name']}
 						key="skillName"
 						ellipsis={true}
-						render={(value) => <h4>{value}</h4>}
-					/>
-					<Table.Column
-						title="Level"
-						width="140px"
-						dataIndex="level"
-						key="level"
-						responsive={['md']}
-						render={(value) => (
-							<>
-								<Image src={getSkillLevelIcon(value)} alt="" /> {value[0].toUpperCase() + value.slice(1)}
-							</>
-						)}
+						render={(value: string, data: any) => {
+							const level = getSkillLevel(data.level);
+
+							return (
+								<Space>
+									<Progress
+										type="circle"
+										percent={level.index * 20}
+										width={24}
+										showInfo={false}
+										strokeColor={level.color}
+										strokeWidth={12}
+									/>
+									<div style={{ lineHeight: 'initial' }}>
+										<Typography.Text strong>{capitalizedText(value)}</Typography.Text>
+										<br />
+										<Typography.Text type="secondary" style={{ fontSize: 12 }}>
+											{capitalizedText(level.label)}
+										</Typography.Text>
+									</div>
+								</Space>
+							);
+						}}
 					/>
 					<Table.Column
 						title="Experience"

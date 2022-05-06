@@ -176,3 +176,18 @@ body {
 		background: @layout-body-background;
 	}
 }
+
+// TABLE
+.ant-table-tbody > tr.ant-table-row:hover > td:first-child,
+.ant-table-tbody > tr > td.ant-table-cell-row-hover:first-child {
+	border-radius: @border-radius-1 0 0 @border-radius-1;
+}
+
+.ant-table-tbody > tr.ant-table-row:hover > td:last-child,
+.ant-table-tbody > tr > td.ant-table-cell-row-hover:last-child {
+	border-radius: 0 @border-radius-1 @border-radius-1 0;
+}
+
+.ant-table.ant-table-middle .ant-table-tbody > tr > td {
+	padding: 8px 16px;
+}

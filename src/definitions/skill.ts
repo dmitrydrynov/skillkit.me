@@ -59,38 +59,36 @@ export const skillLevelsList = [
 	},
 ];
 
-export const getSkillLevels = (experience?: number) => {
+export const checkSkillLevel = (level: SkillLevel, experience?: number) => {
 	if (experience == null || experience == undefined) {
 		return skillLevelsList;
 	}
 
-	return skillLevelsList.filter((i) => {
-		if (
-			experience == 0 &&
-			[SkillLevelEnum.EXPERIENCED, SkillLevelEnum.EXPERT, SkillLevelEnum.SKILLFUL, SkillLevelEnum.BEGINNER].includes(
-				i.label,
-			)
-		) {
-			return false;
-		}
+	if (
+		experience == 0 &&
+		[SkillLevelEnum.EXPERIENCED, SkillLevelEnum.EXPERT, SkillLevelEnum.SKILLFUL, SkillLevelEnum.BEGINNER].includes(
+			level.label,
+		)
+	) {
+		return false;
+	}
 
-		if (
-			experience < 3 &&
-			[SkillLevelEnum.EXPERIENCED, SkillLevelEnum.EXPERT, SkillLevelEnum.SKILLFUL].includes(i.label)
-		) {
-			return false;
-		}
+	if (
+		experience < 3 &&
+		[SkillLevelEnum.EXPERIENCED, SkillLevelEnum.EXPERT, SkillLevelEnum.SKILLFUL].includes(level.label)
+	) {
+		return false;
+	}
 
-		if (experience < 12 && [SkillLevelEnum.EXPERIENCED, SkillLevelEnum.EXPERT].includes(i.label)) {
-			return false;
-		}
+	if (experience < 12 && [SkillLevelEnum.EXPERIENCED, SkillLevelEnum.EXPERT].includes(level.label)) {
+		return false;
+	}
 
-		if (experience >= 12 && experience < 24 && [SkillLevelEnum.EXPERT].includes(i.label)) {
-			return false;
-		}
+	// if (experience >= 12 && [SkillLevelEnum.EXPERT].includes(level.label)) {
+	// 	return false;
+	// }
 
-		return true;
-	});
+	return true;
 };
 
 export const getSkillLevel = (levelName: string): SkillLevel => {

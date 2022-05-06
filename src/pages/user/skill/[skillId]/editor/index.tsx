@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createRef, ReactElement } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 import FileGallery from '@components/FileGallery';
 import { InlineEdit } from '@components/InlineEdit';
 import SkillEditorMenu from '@components/menus/SkillEditorMenu';
@@ -11,15 +11,16 @@ import SkillEditorBeforeContent from '@components/SkillEditorBeforeContent';
 import { capitalizedText, readyText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
-import { createSkillMutation, searchSkillsQuery } from '@services/graphql/queries/skill';
+import { searchSkillsQuery } from '@services/graphql/queries/skill';
 import { deleteUserFileMutation, userFilesQuery } from '@services/graphql/queries/userFile';
 import { deleteUserJobMutation, userJobsQuery } from '@services/graphql/queries/userJob';
 import { deleteUserSchoolMutation, userSchoolsQuery } from '@services/graphql/queries/userSchool';
 import { editUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
 import { deleteUserToolMutation, userToolsQuery } from '@services/graphql/queries/userTool';
-import { getSkillLevel, getSkillLevels, SkillLevel, skillLevelsList } from 'src/definitions/skill';
+import { checkSkillLevel, getSkillLevel, SkillLevel, skillLevelsList } from 'src/definitions/skill';
 import { DeleteOutlined, EditOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
 import {
+	Alert,
 	AutoComplete,
 	Button,
 	Col,
@@ -39,7 +40,6 @@ import {
 	Tooltip,
 	Typography,
 } from 'antd';
-import { RefSelectProps } from 'antd/lib/select';
 import moment from 'moment';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -49,7 +49,6 @@ import styles from './style.module.less';
 
 const SkillEditorPage: NextPageWithLayout = () => {
 	const router = useRouter();
-	const skillRef = createRef<RefSelectProps>();
 	const { skillId } = router.query;
 	// State data
 	const [experience, setExperience] = useState(0);
@@ -66,7 +65,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const [editableAddUserFile, setEditableAddUserFile] = useState<number>(null);
 	const [visibleEditUserFileModal, setVisibleEditUserFileModal] = useState(false);
 	const [editableEditUserFile, setEditableEditUserFile] = useState<any>(null);
-	let [skillSearchQuery, setsSkillSearchQuery] = useState('');
+	let [skillSearchQuery, setsSkillSearchQuery] = useState(null);
 
 	// GraphQL queries
 	const [{ data: userSkillData, fetching: userSkillFetching, error: userSkillError }] = useQuery({
@@ -78,32 +77,35 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	let [{ data: searchSkillData }, searchSkills] = useQuery({
 		query: searchSkillsQuery,
 		variables: { search: skillSearchQuery },
-		pause: true,
+		pause: skillSearchQuery === null,
 		requestPolicy: 'network-only',
 	});
 	const [{ data: userToolsData, fetching: userToolFetching }, refreshUserTools] = useQuery({
 		query: userToolsQuery,
 		variables: { userSkillId: skillId },
 		requestPolicy: 'network-only',
+		pause: !skillId,
 	});
 	const [{ data: userSchoolsData, fetching: userSchoolFetching }, refreshUserSchools] = useQuery({
 		query: userSchoolsQuery,
 		variables: { userSkillId: skillId },
 		requestPolicy: 'network-only',
+		pause: !skillId,
 	});
 	const [{ data: userJobsData, fetching: userJobFetching }, refreshUserJobs] = useQuery({
 		query: userJobsQuery,
 		variables: { userSkillId: skillId },
 		requestPolicy: 'network-only',
+		pause: !skillId,
 	});
 	const [{ data: userFilesData, fetching: userFilesFetching }, refreshUserFiles] = useQuery({
 		query: userFilesQuery,
 		variables: { attachType: 'UserSkill', attachId: skillId },
 		requestPolicy: 'network-only',
+		pause: !skillId,
 	});
 	// GraphQL mutations
 	const [, updateUserSkillData] = useMutation(editUserSkillMutation);
-	const [, addSkill] = useMutation(createSkillMutation);
 	const [, deleteUserTool] = useMutation(deleteUserToolMutation);
 	const [, deleteUserSchool] = useMutation(deleteUserSchoolMutation);
 	const [, deleteUserJob] = useMutation(deleteUserJobMutation);
@@ -124,9 +126,11 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	}, [userSkillData, userSkillError]);
 
 	useEffect(() => {
-		(async () => {
-			await searchSkills();
-		})();
+		console.log(skillSearchQuery);
+		if (!skillSearchQuery) return;
+
+		searchSkills();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [skillSearchQuery]);
 
 	useEffect(() => {
@@ -150,34 +154,31 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const handleChangeInlineInput = (value) => {
 		const minWidth = 20;
 		setWidth(value?.length > minWidth ? value?.length + 1 : minWidth);
-	};
-
-	const handleAddNewSkill = async () => {
-		try {
-			const { data, error } = await addSkill({
-				name: skillSearchQuery,
-			});
-
-			if (error) {
-				message.error(error);
-				return;
-			}
-
-			searchSkillData?.skills.push(data.createSkill);
-			setSelectedSkillId(data.createSkill.id);
-		} catch (error: any) {
-			message.error(error.message);
-		}
+		setSelectedSkillId(null);
 	};
 
 	const handleSaveUserSkill = async (values: any) => {
 		let formatedValues = values;
+		let _needReturn = false;
 
 		Object.entries(values).map(([key]) => {
 			if (key === 'skillId') {
-				formatedValues[key] = +selectedSkillId;
+				if (!selectedSkillId && !skillSearchQuery) {
+					_needReturn = true;
+					return;
+				}
+
+				formatedValues[key] = selectedSkillId ? +selectedSkillId : null;
+
+				if (!selectedSkillId) {
+					formatedValues['skillName'] = skillSearchQuery.trim().toLowerCase();
+				}
+
+				setsSkillSearchQuery(null);
 			}
 		});
+
+		if (_needReturn) return;
 
 		const reponse = await updateUserSkillData({ recordId: skillId, data: formatedValues });
 
@@ -325,7 +326,6 @@ const SkillEditorPage: NextPageWithLayout = () => {
 									viewMode={<h2 className={styles.title}>{capitalizedText(userSkillData?.userSkill.skill.name)}</h2>}
 									editMode={
 										<AutoComplete
-											ref={skillRef}
 											showSearch
 											allowClear
 											className={styles.titleInput}
@@ -344,52 +344,32 @@ const SkillEditorPage: NextPageWithLayout = () => {
 													{d.name}
 												</AutoComplete.Option>
 											))}
-											{skillSearchQuery.length &&
-												searchSkillData?.skills.filter((d: { name: string }) => {
-													return skillSearchQuery.toLowerCase().trim() === d.name.toLowerCase();
-												}).length === 0 && (
-													<Select.Option
-														disabled
-														key={'emptyOption'}
-														value={''}
-														style={{
-															paddingBottom: 0,
-															paddingTop: 0,
-														}}
-													>
-														<Button type="link" style={{ padding: 0 }} onClick={handleAddNewSkill}>
-															<PlusOutlined /> Add new: &ldquo;{skillSearchQuery}&ldquo;
-														</Button>
-													</Select.Option>
-												)}
 										</AutoComplete>
 									}
 								/>
 							)}
 						</Col>
-						<Col>
+						<Col span={6}>
+							<div className={styles.levelName}>
+								<strong>{level.label}</strong> level
+							</div>
 							<InlineEdit
 								name="level"
 								initialValue={level.label.toUpperCase()}
 								onSave={handleSaveUserSkill}
 								viewMode={
-									<Tooltip title={level.description}>
-										<div className={styles.levelName}>
-											<strong>{level.label}</strong> level
-										</div>
-										<Progress
-											className={styles.progressBar}
-											percent={level.index * 20}
-											steps={5}
-											status="active"
-											strokeColor={level.color}
-											showInfo={false}
-										/>
-									</Tooltip>
+									<Progress
+										className={styles.progressBar}
+										percent={level.index * 20}
+										steps={5}
+										status="active"
+										strokeColor={level.color}
+										showInfo={false}
+									/>
 								}
 								editMode={
 									<Select placeholder="Select" style={{ width: '150px' }}>
-										{getSkillLevels(experience).map((item, indx) => (
+										{skillLevelsList.map((item, indx) => (
 											<Select.Option key={indx.toString()} value={item.label.toUpperCase()}>
 												<Tooltip title={item.description} placement="right">
 													<Image src={item.icon} alt="" /> {item.label}
@@ -402,6 +382,9 @@ const SkillEditorPage: NextPageWithLayout = () => {
 							{experience >= 12 && <p>Work experience more than {Math.floor(experience / 12)} year(s)</p>}
 							{experience == 0 && <p>I haven&apos;t any experience yet</p>}
 							{experience > 0 && experience < 12 && <p>Work experience a little less than a year</p>}
+							{!checkSkillLevel(level, experience) && (
+								<Alert message="Your experience does not match the selected level" type="warning" showIcon banner />
+							)}
 						</Col>
 					</Row>
 					<Row>

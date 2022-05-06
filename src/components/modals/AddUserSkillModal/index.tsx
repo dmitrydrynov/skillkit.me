@@ -71,7 +71,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose, onFin
 
 			const resultOperation = await addUserSkill({
 				skillId: selectedSkillId,
-				skillName: skillName.trim(),
+				skillName: skillName.trim().toLowerCase(),
 				level: level.toUpperCase(),
 			});
 
@@ -101,26 +101,6 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose, onFin
 	const handleCancel = () => {
 		form.resetFields();
 		onClose();
-	};
-
-	const handleAddNewSkill = async () => {
-		try {
-			const { data, error } = await addSkill({
-				name: skillSearchQuery,
-			});
-
-			if (error) {
-				message.error(error);
-				return;
-			}
-
-			searchSkillData?.skills.push(data.createSkill);
-			setSelectedSkillId(data.createSkill.id);
-			form.setFieldsValue({ skillName: data.createSkill.name });
-			form.getFieldInstance('skillId')?.blur();
-		} catch (error: any) {
-			message.error(error.message);
-		}
 	};
 
 	return (
