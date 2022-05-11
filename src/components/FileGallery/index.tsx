@@ -9,7 +9,21 @@ import styles from './style.module.less';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const FileGallery = ({ fileList, onDelete, onEdit }) => {
+type FileGalleryArgs = {
+	fileList: any[];
+	onDelete?: (record: any) => void;
+	onEdit?: (record: any) => void;
+	onItemClick?: (itemIndex: number) => void;
+	onlyView?: boolean;
+};
+
+const FileGallery = ({
+	fileList,
+	onDelete = (record: any) => {},
+	onEdit = (record: any) => {},
+	onItemClick = (itemIndex: number) => {},
+	onlyView = false,
+}: FileGalleryArgs) => {
 	const breakpoints = { lg: 1200, md: 992, sm: 768, xs: 576, xxs: 312 };
 	const responsiveCols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
 	const [currentBreakpoint, setCurrentBreakpoint] = useState('md');
@@ -181,19 +195,23 @@ const FileGallery = ({ fileList, onDelete, onEdit }) => {
 								className={styles['item-' + record.type.toLowerCase()]}
 								key={'n' + idx}
 								style={{ backgroundImage: record.type === 'LINK' ? null : `url(${record.url})` }}
+								onClick={record.type === 'LINK' ? () => window.open(record.url, '_blank') : () => onItemClick(idx)}
 							>
-								<Popconfirm
-									key="delete-user-file"
-									title="Are you sure to delete this item?"
-									onConfirm={() => onDelete(record)}
-									okText="Yes"
-									cancelText="No"
-									icon={<WarningTwoTone />}
-								>
-									<Button shape="circle" size="small" className="close">
-										<DeleteOutlined />
-									</Button>
-								</Popconfirm>
+								{!onlyView && (
+									<Popconfirm
+										key="delete-user-file"
+										title="Are you sure to delete this item?"
+										onConfirm={() => onDelete(record)}
+										okText="Yes"
+										cancelText="No"
+										icon={<WarningTwoTone />}
+									>
+										<Button shape="circle" size="small" className="close">
+											<DeleteOutlined />
+										</Button>
+									</Popconfirm>
+								)}
+
 								{record.type === 'LINK' && (
 									<Row style={{ width: '100%', textAlign: 'center' }} align="middle" justify="center">
 										<Col>
@@ -203,18 +221,20 @@ const FileGallery = ({ fileList, onDelete, onEdit }) => {
 										</Col>
 									</Row>
 								)}
-								<Row className="bottom" align="middle" wrap={false}>
-									<Col flex={1}>
-										<Typography.Text strong ellipsis={{ tooltip: true }} style={{ color: '#fff' }}>
-											{record.title}
-										</Typography.Text>
-									</Col>
-									<Col flex={0}>
-										<Button size="small" style={{ marginLeft: '4px' }} onClick={() => onEdit(record)}>
-											Edit
-										</Button>
-									</Col>
-								</Row>
+								{!onlyView && (
+									<Row className="bottom" align="middle" wrap={false}>
+										<Col flex={1}>
+											<Typography.Text strong ellipsis={{ tooltip: true }} style={{ color: '#fff' }}>
+												{record.title}
+											</Typography.Text>
+										</Col>
+										<Col flex={0}>
+											<Button size="small" style={{ marginLeft: '4px' }} onClick={() => onEdit(record)}>
+												Edit
+											</Button>
+										</Col>
+									</Row>
+								)}
 							</div>
 						)
 					);

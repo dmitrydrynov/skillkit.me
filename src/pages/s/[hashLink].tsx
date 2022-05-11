@@ -3,13 +3,17 @@ import FileGallery from '@components/FileGallery';
 import { capitalizedText, readyText } from '@helpers/text';
 import ShareLayout from '@layouts/ShareLayout';
 import { NextPageWithLayout } from '@pages/_app';
+import { userFilesQuery } from '@services/graphql/queries/userFile';
 import { getUserSkillByHashQuery } from '@services/graphql/queries/userSkill';
 import { UserSkillViewModeEnum, getSkillLevel, SkillLevel } from 'src/definitions/skill';
 import { Col, message, Progress, Row, Space } from 'antd';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useQuery } from 'urql';
 import styles from './style.module.less';
+
+const ReactViewer = dynamic(() => import('react-viewer'), { ssr: false });
 
 const UserSkillSharePage: NextPageWithLayout = () => {
 	const router = useRouter();
@@ -17,12 +21,18 @@ const UserSkillSharePage: NextPageWithLayout = () => {
 
 	const [userSkillData, setUserSkillData] = useState(null);
 	const [level, setLevel] = useState<SkillLevel>();
-	const [userFilesData] = useState([]);
+	const [viewerVisible, setViewerVisible] = useState(false);
+	const [selectedImage, setSelectedImage] = useState(null);
 
 	const [{ data, fetching, error }] = useQuery({
 		query: getUserSkillByHashQuery,
 		variables: { hash: hashLink },
 		pause: !hashLink,
+	});
+	const [{ data: userFilesData, fetching: userFilesFetching }] = useQuery({
+		query: userFilesQuery,
+		variables: { attachType: 'UserSkill', attachId: userSkillData?.id },
+		pause: !userSkillData,
 	});
 
 	useEffect(() => {
@@ -70,18 +80,36 @@ const UserSkillSharePage: NextPageWithLayout = () => {
 						/>
 					</Col>
 				</Row>
-				{userFilesData.length > 0 && (
+				{userFilesData?.userFiles.length > 0 && (
 					<Row style={{ marginTop: '40px' }}>
 						<Col flex={1}>
 							<div className={styles.worksSection}>
 								<div className={styles.headerContainer}>
 									<h2>Work examples</h2>
 								</div>
-								<FileGallery fileList={[]} onDelete={() => {}} onEdit={() => {}} />
+								<FileGallery
+									fileList={userFilesData?.userFiles}
+									onlyView
+									onItemClick={(itemIndex) => {
+										setSelectedImage(itemIndex);
+										setViewerVisible(true);
+									}}
+								/>
 							</div>
 						</Col>
 					</Row>
 				)}
+				<ReactViewer
+					visible={viewerVisible}
+					onClose={() => setViewerVisible(false)}
+					activeIndex={selectedImage}
+					images={userFilesData?.userFiles.map((i: any) => {
+						return {
+							src: i.url,
+							alt: i.title,
+						};
+					})}
+				/>
 			</div>
 		</>
 	);
