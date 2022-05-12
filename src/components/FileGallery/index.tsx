@@ -21,7 +21,7 @@ const FileGallery = ({
 	fileList,
 	onDelete = (record: any) => {},
 	onEdit = (record: any) => {},
-	onItemClick = (itemIndex: number) => {},
+	onItemClick = (recordId: number) => {},
 	onlyView = false,
 }: FileGalleryArgs) => {
 	const breakpoints = { lg: 1200, md: 992, sm: 768, xs: 576, xxs: 312 };
@@ -176,6 +176,19 @@ const FileGallery = ({
 		setLayout({ [currentBreakpoint]: newLayout });
 	}, [currentBreakpoint, fileList]);
 
+	// Click on View only mode
+	const handleItemClick = (record: any, idx: number) => {
+		if (!onlyView) {
+			return;
+		}
+
+		if (record.type === 'LINK') {
+			window.open(record.url, '_blank');
+		} else {
+			onItemClick(record.id);
+		}
+	};
+
 	return (
 		<ResponsiveGridLayout
 			className={styles.fileGallery}
@@ -195,7 +208,7 @@ const FileGallery = ({
 								className={styles['item-' + record.type.toLowerCase()]}
 								key={'n' + idx}
 								style={{ backgroundImage: record.type === 'LINK' ? null : `url(${record.url})` }}
-								onClick={record.type === 'LINK' ? () => window.open(record.url, '_blank') : () => onItemClick(idx)}
+								onClick={() => handleItemClick(record, idx)}
 							>
 								{!onlyView && (
 									<Popconfirm
