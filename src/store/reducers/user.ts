@@ -10,6 +10,8 @@ export type UserState = {
 	avatar?: string;
 	role: UserRole;
 	useOTP: boolean;
+	age?: number;
+	country: string;
 };
 
 const initialState: UserState = {
@@ -20,6 +22,8 @@ const initialState: UserState = {
 	email: '',
 	role: UserRole.UNKNOWN,
 	useOTP: false,
+	age: null,
+	country: '',
 };
 
 const userReducer = (state = initialState, action: AnyAction): UserState => {

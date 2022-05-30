@@ -58,11 +58,13 @@ query ($id: Float!) {
   }) {
     firstName
     lastName
+    fullName
     email
     country
     birthdayDate
     avatar
     about
+    age
   }
 }
 `;
@@ -95,6 +97,7 @@ mutation(
     email
     country
     birthdayDate
+    age 
     avatar
     about
   }

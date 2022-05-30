@@ -1,46 +1,46 @@
 version: '3.6'
 
 services:
-  dev:
-    build:
-      context: .
-      target: deps
-    container_name: skillkit_frontend_dev
-    env_file:
-      - .env
-    expose:
-      - ${PORT:-3000}
-    ports:
-      - '${PORT:-3000}:${PORT:-3000}'
-    restart: unless-stopped
-    networks:
-      - external_network
-    volumes:
-      - ./:/app
-      - /app/node_modules
-      - /app/.next
-    command: yarn dev
+ dev:
+  build:
+   context: .
+   target: deps
+  container_name: skillkit_frontend_dev
+  env_file:
+   - .env
+  expose:
+   - ${PORT:-3000}
+  ports:
+   - '${PORT:-3000}:${PORT:-3000}'
+  restart: unless-stopped
+  networks:
+   - external_network
+  volumes:
+   - ./:/app
+   - /app/node_modules
+   - /app/.next
+  command: yarn dev
 
-  prod:
-    build: ./
-    container_name: skillkit_frontend_prod
-    env_file:
-      - .env
-    hostname: skillkit_frontend
-    expose:
-      - ${PORT:-3000}
-    ports:
-      - '${PORT:-3000}:${PORT:-3000}'
-    restart: unless-stopped
-    networks:
-      - external_network
-    volumes:
-      - uploads:/app/public
+ prod:
+  build: ./
+  container_name: skillkit_frontend_prod
+  env_file:
+   - .env
+  hostname: skillkit_frontend
+  expose:
+   - ${PORT:-3000}
+  ports:
+   - '${PORT:-3000}:${PORT:-3000}'
+  restart: unless-stopped
+  networks:
+   - external_network
+  volumes:
+   - uploads:/app/public
 
 networks:
-  external_network:
-    external:
-      name: skillkit_network
+ external_network:
+  external:
+   name: skillkit_network
 
 volumes:
-  uploads:
+ uploads:
