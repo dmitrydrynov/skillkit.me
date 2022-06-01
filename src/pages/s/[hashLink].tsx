@@ -30,6 +30,7 @@ const UserSkillSharePage: NextPageWithLayout = () => {
 
 	const userId = useSelector((state: RootState) => state.user.id);
 	const [country, setCountry] = useState(null);
+	const [about, setAbout] = useState(null);
 	const [userSkillData, setUserSkillData] = useState(null);
 	const [level, setLevel] = useState<SkillLevel>();
 	const [viewerVisible, setViewerVisible] = useState(false);
@@ -86,6 +87,7 @@ const UserSkillSharePage: NextPageWithLayout = () => {
 		if (!userData?.user.country) return;
 
 		setCountry(countryList().getLabel(userData.user.country));
+		setAbout(userData?.user.about);
 	}, [userData]);
 
 	return (
@@ -97,25 +99,49 @@ const UserSkillSharePage: NextPageWithLayout = () => {
 			</Head>
 			<div className={styles.container}>
 				<Row>
-					<Col xs={{ span: 24 }} lg={{ span: 16 }}>
+					<Col xs={{ span: 24 }} lg={{ span: 24 }}>
 						<Space direction="vertical" size={40} style={{ width: '100%' }}>
 							<div className={styles.welcomeSection}>
 								<p>
 									Hello,
 									<br />
-									My name is {userData?.user.fullName}
+									My name is <strong>{userData?.user.fullName}</strong>
 									<br />
-									I&apos;m from {country}.
-									<br />
-									I&apos;m {userData?.user.age} years old.
+									{!!country && !!userData?.user.age && (
+										<>
+											I&apos;m from {country} and I&apos;m {userData?.user.age} years old.
+											<br />
+										</>
+									)}
+									{/* {!!about && (
+										<div>
+											In short about me:
+											<span className={styles.about}>{about}</span>
+										</div>
+									)} */}
 								</p>
 								<img src={userData?.user.avatar} alt={'avatar'} />
 							</div>
 
-							<div className={styles.titleSection}>
-								<div>I can</div>
-								<h2 className={styles.title}>{capitalizedText(userSkillData?.skill.name)}</h2>
-							</div>
+							<Space direction="vertical" className={styles.titleSection}>
+								<div>
+									<div>I can</div>
+									<h2 className={styles.title}>{capitalizedText(userSkillData?.skill.name)}</h2>
+								</div>
+								<div>
+									<div className={styles.levelName}>
+										<strong>{level?.label}</strong> level
+									</div>
+									<Progress
+										className={styles.progressBar}
+										percent={level?.index * 20}
+										steps={5}
+										status="active"
+										strokeColor={level?.color}
+										showInfo={false}
+									/>
+								</div>
+							</Space>
 
 							{userSkillData?.description?.length > 0 && (
 								<div className={styles.descriptionSection}>
@@ -204,19 +230,6 @@ const UserSkillSharePage: NextPageWithLayout = () => {
 								)}
 							</div>
 						</Space>
-					</Col>
-					<Col xs={{ span: 24 }} lg={{ span: 7, offset: 1 }}>
-						<div className={styles.levelName}>
-							<strong>{level?.label}</strong> level
-						</div>
-						<Progress
-							className={styles.progressBar}
-							percent={level?.index * 20}
-							steps={5}
-							status="active"
-							strokeColor={level?.color}
-							showInfo={false}
-						/>
 					</Col>
 				</Row>
 				{userFilesData?.userFiles.length > 0 && (

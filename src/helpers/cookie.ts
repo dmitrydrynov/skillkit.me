@@ -1,5 +1,5 @@
 export const getCookie = (name: string): string => {
-	if (typeof document === 'undefined') {
+	if (typeof window === 'undefined') {
 		return '';
 	}
 

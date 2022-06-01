@@ -140,3 +140,11 @@ query($hash: String!) {
   }
 }
 `;
+
+export const getUserSkillVisibilityByHashQuery = `
+query($hash: String!) {
+  userSkillByHash(hash: $hash) {
+    id viewMode
+  }
+}
+`;
