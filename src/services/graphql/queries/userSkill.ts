@@ -141,10 +141,56 @@ query($hash: String!) {
 }
 `;
 
-export const getUserSkillVisibilityByHashQuery = `
+export const getUserSkillForShareQuery = `
 query($hash: String!) {
-  userSkillByHash(hash: $hash) {
-    id viewMode
+  userSkillForShare(hash: $hash) {
+    viewer
+    user {
+      fullName
+      age
+      about
+      country
+      avatar
+    }
+    skill { 
+      id
+      description
+      skill {
+        id
+        name
+      }
+      level
+      experience {
+        years
+        months
+      }
+      publishedAt
+      createdAt
+      shareLink
+      tools {
+        title
+        description
+      }
+      schools {
+        title
+        description
+        startedAt
+        finishedAt
+      }
+      jobs {
+        title
+        position
+        description
+        startedAt
+        finishedAt
+      }
+      files {
+        title
+        description
+        url
+        type
+      }
+    }
   }
 }
 `;
