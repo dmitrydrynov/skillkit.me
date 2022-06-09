@@ -32,6 +32,8 @@ COPY --from=builder /app/package.json ./package.json
 # Automatically leverage output traces to reduce image size 
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --chown=nextjs:nodejs --from=builder /app/public ./public
+COPY --chown=nextjs:nodejs --from=builder /app/public/robots.txt ./public/robots.txt
+COPY --chown=nextjs:nodejs --from=builder /app/public/sitemap*.xml ./public/
 COPY --chown=nextjs:nodejs --from=builder /app/.next/standalone ./
 COPY --chown=nextjs:nodejs --from=builder /app/.next/static ./.next/static
 
