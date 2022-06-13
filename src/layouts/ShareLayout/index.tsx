@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from 'react';
+import LoadingScreen from '@components/loadingScreen';
 import { RootState } from '@store/configure-store';
 import { UserSkillViewModeEnum } from 'src/definitions/skill';
 import { Layout } from 'antd';
@@ -24,10 +25,11 @@ const ShareLayout: FC<ShareLayoutParams> = ({ children, title, viewMode }) => {
 
 	return (
 		<>
+			<LoadingScreen />
 			<Layout className={styles.layout}>
 				{/* <Header className={styles.ShareLayout_header}>Header</Header> */}
 				<Content className={styles.content}>{children}</Content>
-				<Footer>Copyright © 2022 Skillkit.me, Inc. All rights reserved.</Footer>
+				<Footer>Copyright © 2022 Skillkit.me, Created by Dzmitry Drynau. All rights reserved.</Footer>
 			</Layout>
 		</>
 	);

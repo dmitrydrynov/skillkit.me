@@ -1,16 +1,15 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import FileGallery from '@components/FileGallery';
 import { capitalizedText, readyText } from '@helpers/text';
 import ShareLayout from '@layouts/ShareLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { ssrGraphqlClient } from '@services/graphql/client';
 import { getUserSkillForShareQuery } from '@services/graphql/queries/userSkill';
-import { UserSkillViewModeEnum, getSkillLevel, SkillLevel } from 'src/definitions/skill';
-import { Col, List, message, Progress, Row, Space, Timeline, Typography } from 'antd';
+import { UserSkillViewModeEnum, SkillLevel } from 'src/definitions/skill';
+import { Col, List, Progress, Row, Space, Timeline, Typography } from 'antd';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import countryList from 'react-select-country-list';
 import styles from './style.module.less';
 
 const ReactViewer = dynamic(() => import('react-viewer'), { ssr: false });
@@ -21,31 +20,29 @@ const UserSkillSharePage: NextPageWithLayout = ({ user: userData, skill: userSki
 	const [viewerVisible, setViewerVisible] = useState(false);
 	const [selectedImage, setSelectedImage] = useState(null);
 
-	useEffect(() => {
-		if (error) message.error(error);
-	}, [error]);
+	// useEffect(() => {
+	// 	if (error) message.error(error);
+	// }, [error]);
 
-	useEffect(() => {
-		if (userSkillData) {
-			setLevel(getSkillLevel(userSkillData.level));
-		}
-	}, [userSkillData]);
+	// useEffect(() => {
+	// 	if (userSkillData) {
+	// 		setLevel(getSkillLevel(userSkillData.level));
+	// 	}
+	// }, [userSkillData]);
 
-	useEffect(() => {
-		if (!userData?.country) return;
+	// useEffect(() => {
+	// 	if (!userData?.country) return;
 
-		setCountry(countryList().getLabel(userData.country));
-	}, [userData]);
-
-	const pageTitle = `I can ${userSkillData?.skill.name}`;
+	// 	setCountry(countryList().getLabel(userData.country));
+	// }, [userData]);
 
 	return (
 		<>
 			<Head>
-				<title>{pageTitle}</title>
+				<title>I can {userSkillData?.skill.name}</title>
 				<meta name="keywords" content="cv,resume,portfolio,profile" />
 				<meta name="description" content={`The page about ${userData?.fullName} unique skill`} />
-				<meta property="og:title" content={pageTitle} />
+				<meta property="og:title" content={`I can ${userSkillData?.skill.name}`} key="og:title" />
 				<meta property="og:type" content="article" />
 				<meta property="og:url" content={process.env.NEXT_PUBLIC_APP_URL + path} />
 				<meta property="og:image" content={userData?.avatar} />
@@ -87,7 +84,7 @@ const UserSkillSharePage: NextPageWithLayout = ({ user: userData, skill: userSki
 							<Space direction="vertical" className={styles.titleSection}>
 								<h1>
 									<div>I can</div>
-									<h2 className={styles.title}>{capitalizedText(userSkillData?.skill.name)}</h2>
+									<div className={styles.title}>{capitalizedText(userSkillData?.skill.name)}</div>
 								</h1>
 								<div>
 									<div className={styles.levelName}>

@@ -91,25 +91,33 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const getLayout = Component.getLayout || ((page) => <PublicLayout>{page}</PublicLayout>);
 	const [loading, setLoading] = useState(true);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		setLoading(false);
 	}, []);
 
-	Router.events.on('routeChangeStart', progress.start);
-	Router.events.on('routeChangeComplete', progress.finish);
-	Router.events.on('routeChangeError', progress.finish);
+	Router.events.on('routeChangeStart', () => {
+		progress.start();
+		setLoading(true);
+	});
+	Router.events.on('routeChangeComplete', () => {
+		progress.finish();
+		setLoading(false);
+	});
+	Router.events.on('routeChangeError', () => {
+		progress.finish();
+		setLoading(false);
+	});
 
 	return (
 		<>
-			{!loading ? (
-				<StoreProvider store={store}>
-					<UrqlProvider value={graphqlClient}>
-						<AuthProvider>{getLayout(<Component {...pageProps} />)}</AuthProvider>
-					</UrqlProvider>
-				</StoreProvider>
-			) : (
-				<LoadingScreen />
-			)}
+			<LoadingScreen visible={loading} />
+			<StoreProvider store={store}>
+				<UrqlProvider value={graphqlClient}>
+					<AuthProvider>
+						<div style={{ opacity: loading ? 0 : 1 }}>{getLayout(<Component {...pageProps} />)}</div>
+					</AuthProvider>
+				</UrqlProvider>
+			</StoreProvider>
 		</>
 	);
 }
