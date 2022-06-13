@@ -7,7 +7,6 @@ import EditUserFileModal from '@components/modals/EditUserFileModal';
 import UserJobModal from '@components/modals/UserJobModal';
 import UserSchoolModal from '@components/modals/UserSchoolModal';
 import UserToolModal from '@components/modals/UserToolModal';
-import SkillEditorBeforeContent from '@components/SkillEditorBeforeContent';
 import { capitalizedText, readyText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
@@ -41,11 +40,14 @@ import {
 	Typography,
 } from 'antd';
 import moment from 'moment';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
+
+const SkillEditorBeforeContent = dynamic(() => import('@components/SkillEditorBeforeContent'), { ssr: false });
 
 const SkillEditorPage: NextPageWithLayout = () => {
 	const router = useRouter();

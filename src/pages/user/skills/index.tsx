@@ -5,14 +5,7 @@ import { NextPageWithLayout } from '@pages/_app';
 import { deleteUserSkillMutation, userSkillsQuery } from '@services/graphql/queries/userSkill';
 import { RootState } from '@store/configure-store';
 import { SkillLevel, getSkillLevel } from 'src/definitions/skill';
-import {
-	DeleteOutlined,
-	EditOutlined,
-	EditTwoTone,
-	NotificationOutlined,
-	NotificationTwoTone,
-	PlusOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, EditTwoTone, PlusOutlined } from '@ant-design/icons';
 import {
 	Button,
 	ConfigProvider,
@@ -80,10 +73,7 @@ const ProfilePage: NextPageWithLayout = () => {
 			{screens.sm === false && (
 				<>
 					<Menu.Item key="edit">
-						<EditOutlined /> Edit
-					</Menu.Item>
-					<Menu.Item key="share">
-						<NotificationOutlined /> Share
+						<EditOutlined /> Details
 					</Menu.Item>
 				</>
 			)}
@@ -249,10 +239,7 @@ const ProfilePage: NextPageWithLayout = () => {
 									icon={<EditTwoTone twoToneColor="#eb2f96" />}
 									onClick={() => router.push(`/user/skill/${record.id}/editor`)}
 								>
-									Editor
-								</Button>
-								<Button type="text" size="small" icon={<NotificationTwoTone twoToneColor="#eb2f96" />}>
-									Share
+									Details
 								</Button>
 							</>
 						)}
