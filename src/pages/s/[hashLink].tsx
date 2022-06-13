@@ -41,7 +41,11 @@ const UserSkillSharePage: NextPageWithLayout = ({ user: userData, skill: userSki
 				<meta property="og:title" content={`I can ${userSkillData?.skill.name}`} key="og:title" />
 				<meta property="og:type" content="article" />
 				<meta property="og:url" content={process.env.NEXT_PUBLIC_APP_URL + path} />
-				<meta property="og:image" content={userData?.avatar} />
+				<meta property="og:image" content={userData.avatar} />
+				<meta name="twitter:image:src" content={userData.avatar} />
+				<meta name="twitter:title" content={`I can ${userSkillData?.skill.name}`} />
+				<meta name="twitter:description" content={`The page about ${userData?.fullName} unique skill`} />
+				<meta name="twitter:author" content="@DmirtyDrynov" />
 			</Head>
 			<div className={styles.container}>
 				<Row>
