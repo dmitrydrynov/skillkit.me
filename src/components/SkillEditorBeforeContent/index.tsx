@@ -11,7 +11,7 @@ import { BiWorld, BiStreetView, BiLinkAlt, BiCopy, BiLinkExternal } from 'react-
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
-enum UserSkillViewModeEnum {
+export enum UserSkillViewModeEnum {
 	ONLY_ME = 'only_me',
 	BY_LINK = 'by_link',
 	EVERYONE = 'everyone',

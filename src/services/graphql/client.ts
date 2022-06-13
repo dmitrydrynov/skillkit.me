@@ -30,7 +30,7 @@ export const ssrGraphqlClient = (token: string) => {
 	});
 
 	return createClient({
-		url: process.env.NEXT_PUBLIC_BACKEND_URL || '',
+		url: process.env.BACKEND_URL || '',
 		exchanges: [dedupExchange, cacheExchange, ssr, multipartFetchExchange],
 		fetchOptions: () => {
 			return {

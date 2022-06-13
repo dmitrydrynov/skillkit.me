@@ -3,50 +3,33 @@ import FileGallery from '@components/FileGallery';
 import { capitalizedText, readyText } from '@helpers/text';
 import ShareLayout from '@layouts/ShareLayout';
 import { NextPageWithLayout } from '@pages/_app';
+import { ssrGraphqlClient } from '@services/graphql/client';
 import { getUserSkillForShareQuery } from '@services/graphql/queries/userSkill';
 import { UserSkillViewModeEnum, getSkillLevel, SkillLevel } from 'src/definitions/skill';
 import { Col, List, message, Progress, Row, Space, Timeline, Typography } from 'antd';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import countryList from 'react-select-country-list';
-import { useQuery } from 'urql';
 import styles from './style.module.less';
 
 const ReactViewer = dynamic(() => import('react-viewer'), { ssr: false });
 
-const UserSkillSharePage: NextPageWithLayout = () => {
-	const router = useRouter();
-
-	const { hashLink } = router.query;
-
-	const [userData, setUserData] = useState(null);
+const UserSkillSharePage: NextPageWithLayout = ({ user: userData, skill: userSkillData, error, path }: any) => {
 	const [country, setCountry] = useState(null);
-	const [userSkillData, setUserSkillData] = useState(null);
 	const [level, setLevel] = useState<SkillLevel>();
 	const [viewerVisible, setViewerVisible] = useState(false);
 	const [selectedImage, setSelectedImage] = useState(null);
 
-	const [{ data, error }] = useQuery({
-		query: getUserSkillForShareQuery,
-		variables: { hash: hashLink },
-		pause: !hashLink,
-	});
-
 	useEffect(() => {
-		if (error) message.error(error.message);
+		if (error) message.error(error);
 	}, [error]);
 
 	useEffect(() => {
-		if (data) {
-			const { skill: userSkill, user } = data.userSkillForShare;
-
-			setUserData(user);
-			setUserSkillData(userSkill);
-			setLevel(getSkillLevel(userSkill.level));
+		if (userSkillData) {
+			setLevel(getSkillLevel(userSkillData.level));
 		}
-	}, [data?.userSkillForShare]);
+	}, [userSkillData]);
 
 	useEffect(() => {
 		if (!userData?.country) return;
@@ -62,10 +45,9 @@ const UserSkillSharePage: NextPageWithLayout = () => {
 				<title>{pageTitle}</title>
 				<meta name="keywords" content="cv,resume,portfolio,profile" />
 				<meta name="description" content={`The page about ${userData?.fullName} unique skill`} />
-				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
 				<meta property="og:title" content={pageTitle} />
 				<meta property="og:type" content="article" />
-				<meta property="og:url" content={process.env.NEXT_PUBLIC_APP_URL + router.asPath} />
+				<meta property="og:url" content={process.env.NEXT_PUBLIC_APP_URL + path} />
 				<meta property="og:image" content={userData?.avatar} />
 			</Head>
 			<div className={styles.container}>
@@ -91,12 +73,14 @@ const UserSkillSharePage: NextPageWithLayout = () => {
 									{!!userData?.age ? ` and I'm ${userData?.age} years old.` : '.'}
 								</Col>
 								<Col>
-									<img
-										src={userData?.avatar}
-										alt={'avatar'}
-										title={`${userData?.fullName} photo`}
-										style={{ maxHeight: '200px' }}
-									/>
+									{userData?.avatar && (
+										<img
+											src={userData.avatar}
+											alt={'avatar'}
+											title={`${userData.fullName} photo`}
+											style={{ maxHeight: '200px' }}
+										/>
+									)}
 								</Col>
 							</Row>
 
@@ -153,28 +137,6 @@ const UserSkillSharePage: NextPageWithLayout = () => {
 									/>
 								)}
 							</div>
-							<div className={styles.schoolsSection}>
-								<div className={styles.headerContainer}>
-									<h2>I learned this skill in</h2>
-								</div>
-								{userSkillData?.schools?.length > 0 && (
-									<Timeline mode="left">
-										{userSkillData?.schools.map((item: any, indx: number) => (
-											<Timeline.Item key={indx}>
-												<div className={styles.userSchoolListItem}>
-													<div className={styles.userSchoolRange}>
-														{moment(item.startedAt).format('MMM, YYYY') +
-															' — ' +
-															(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
-													</div>
-													<div className={styles.userSchoolTitle}>{item.title}</div>
-													{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
-												</div>
-											</Timeline.Item>
-										))}
-									</Timeline>
-								)}
-							</div>
 							<div className={styles.jobsSection}>
 								<div className={styles.headerContainer}>
 									<h2>I used this skill in the following jobs</h2>
@@ -196,6 +158,28 @@ const UserSkillSharePage: NextPageWithLayout = () => {
 														{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
 													</div>
 												</Space>
+											</Timeline.Item>
+										))}
+									</Timeline>
+								)}
+							</div>
+							<div className={styles.schoolsSection}>
+								<div className={styles.headerContainer}>
+									<h2>I learned this skill in</h2>
+								</div>
+								{userSkillData?.schools?.length > 0 && (
+									<Timeline mode="left">
+										{userSkillData?.schools.map((item: any, indx: number) => (
+											<Timeline.Item key={indx}>
+												<div className={styles.userSchoolListItem}>
+													<div className={styles.userSchoolRange}>
+														{moment(item.startedAt).format('MMM, YYYY') +
+															' — ' +
+															(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
+													</div>
+													<div className={styles.userSchoolTitle}>{item.title}</div>
+													{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
+												</div>
 											</Timeline.Item>
 										))}
 									</Timeline>
@@ -232,9 +216,7 @@ const UserSkillSharePage: NextPageWithLayout = () => {
 					noToolbar={false}
 					noImgDetails
 					customToolbar={(toolbar) => {
-						toolbar = toolbar.filter((tool) => ['download', 'scaleX', 'scaleY'].includes(tool.key) === false);
-						console.log(toolbar);
-						return toolbar;
+						return toolbar.filter((tool) => ['download', 'scaleX', 'scaleY'].includes(tool.key) === false);
 					}}
 					showTotal={false}
 					images={userSkillData?.files
@@ -258,18 +240,26 @@ UserSkillSharePage.getLayout = (page: ReactElement) => (
 );
 
 export async function getServerSideProps(context) {
-	console.log(context);
-	// const client = ssrGraphqlClient(context.token);
+	const { hashLink } = context.query;
+	let props: any = {};
 
-	// const [{ data, error }] = useQuery({
-	// 	query: getUserSkillForShareQuery,
-	// 	variables: { hash: hashLink },
-	// 	pause: !hashLink,
-	// });
+	if (hashLink) {
+		const client = ssrGraphqlClient(context.req.cookies[process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME]);
 
-	return {
-		props: {},
-	};
+		const { data, error } = await client
+			.query(getUserSkillForShareQuery, {
+				hash: hashLink,
+			})
+			.toPromise();
+
+		props = data?.userSkillForShare;
+
+		if (error) {
+			return { notFound: true };
+		}
+	}
+
+	return { props: { ...props, path: context.req.url } };
 }
 
 export default UserSkillSharePage;

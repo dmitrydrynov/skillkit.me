@@ -74,6 +74,10 @@ const FileGallery = ({
 	};
 
 	useEffect(() => {
+		handleBreakpointChange('lg');
+	}, []);
+
+	useEffect(() => {
 		const nextPosition = { x: 0, y: 0 };
 		const columnsCount: number = responsiveCols[currentBreakpoint];
 		const layoutMatrix: Matrix = zeros(1, columnsCount) as Matrix;

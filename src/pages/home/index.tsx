@@ -56,6 +56,17 @@ const Home: NextPage = () => {
 					content="The more flexible alternative to the classic resume. Build your unique skills and share them with customers and employers."
 				/>
 				<meta name="keywords" content="cv, resume, job, skills, customers, employers, hr" />
+				<meta property="og:title" content="Skillkit — flexible alternative to the classic resume" />
+				<meta
+					property="og:description"
+					content="The more flexible alternative to the classic resume. Build your unique skills and share them with customers and employers."
+				/>
+				<meta property="og:url" content={process.env.NEXT_PUBLIC_APP_URL} />
+				<meta property="og:type" content="website" />
+				<meta
+					property="og:image"
+					content={`${process.env.NEXT_PUBLIC_APP_URL}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fintro.4e42a1a1.png&w=1080&q=75`}
+				/>
 			</Head>
 			<Row align="middle">
 				<Col xs={24} md={11} className={styles.container}>

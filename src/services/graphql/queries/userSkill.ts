@@ -185,6 +185,7 @@ query($hash: String!) {
         finishedAt
       }
       files {
+        id
         title
         description
         url
