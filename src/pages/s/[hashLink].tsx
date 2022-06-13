@@ -91,7 +91,12 @@ const UserSkillSharePage: NextPageWithLayout = () => {
 									{!!userData?.age ? ` and I'm ${userData?.age} years old.` : '.'}
 								</Col>
 								<Col>
-									<img src={userData?.avatar} alt={'avatar'} title={`${userData?.fullName} photo`} />
+									<img
+										src={userData?.avatar}
+										alt={'avatar'}
+										title={`${userData?.fullName} photo`}
+										style={{ maxHeight: '200px' }}
+									/>
 								</Col>
 							</Row>
 
@@ -251,5 +256,20 @@ UserSkillSharePage.getLayout = (page: ReactElement) => (
 		{page}
 	</ShareLayout>
 );
+
+export async function getServerSideProps(context) {
+	console.log(context);
+	// const client = ssrGraphqlClient(context.token);
+
+	// const [{ data, error }] = useQuery({
+	// 	query: getUserSkillForShareQuery,
+	// 	variables: { hash: hashLink },
+	// 	pause: !hashLink,
+	// });
+
+	return {
+		props: {},
+	};
+}
 
 export default UserSkillSharePage;

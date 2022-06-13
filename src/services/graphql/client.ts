@@ -5,7 +5,7 @@ import { cacheExchange, createClient, dedupExchange, ssrExchange } from 'urql';
 declare const window: any;
 
 export const graphqlClient = createClient({
-	url: process.env.NEXT_PUBLIC_BACKEND_URL ? process.env.NEXT_PUBLIC_BACKEND_URL : '',
+	url: process.env.NEXT_PUBLIC_BACKEND_URL || '',
 	exchanges: [dedupExchange, cacheExchange, multipartFetchExchange],
 	fetchOptions: () => {
 		const token = getCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME);
@@ -30,7 +30,7 @@ export const ssrGraphqlClient = (token: string) => {
 	});
 
 	return createClient({
-		url: 'http://skillkit_backend_dev:8000/graphql',
+		url: process.env.NEXT_PUBLIC_BACKEND_URL || '',
 		exchanges: [dedupExchange, cacheExchange, ssr, multipartFetchExchange],
 		fetchOptions: () => {
 			return {
