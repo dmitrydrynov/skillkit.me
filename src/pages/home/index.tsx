@@ -62,7 +62,7 @@ const Home: NextPage = () => {
 					content={`${process.env.NEXT_PUBLIC_APP_URL}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fintro.4e42a1a1.png&w=1080&q=75`}
 				/>
 				<meta
-					name="twitter:image:src"
+					name="twitter:images"
 					content={`${process.env.NEXT_PUBLIC_APP_URL}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fintro.4e42a1a1.png&w=1080&q=75`}
 				/>
 				<meta name="twitter:title" content="Skillkit — flexible alternative to the classic resume" />
