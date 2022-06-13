@@ -57,7 +57,7 @@ const AddProjectModal: FC<AddProjectModalArgs> = ({ visible, onClose }) => {
 
 			// router.push('/settings/profile');
 			onClose();
-		} catch (e: any) {
+		} catch (e) {
 			message.error(e.message);
 		}
 	};

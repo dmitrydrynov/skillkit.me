@@ -110,7 +110,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	return (
 		<>
-			<LoadingScreen visible={loading} />
 			<StoreProvider store={store}>
 				<UrqlProvider value={graphqlClient}>
 					<AuthProvider>
@@ -118,6 +117,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					</AuthProvider>
 				</UrqlProvider>
 			</StoreProvider>
+			<LoadingScreen visible={loading} />
 		</>
 	);
 }

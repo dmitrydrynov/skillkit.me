@@ -77,7 +77,7 @@ const AddUserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visi
 			onSave('create', data.createUserFile);
 			resetModalData();
 			setSubmitting(false);
-		} catch (error: any) {
+		} catch (error) {
 			message.error(error.message);
 			setSubmitting(false);
 		}

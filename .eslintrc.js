@@ -3,7 +3,12 @@ module.exports = {
 	extends: ['next/core-web-vitals', 'plugin:prettier/recommended'],
 	ignorePatterns: ['node_modules/*'],
 	rules: {
-		'prettier/prettier': 'error',
+		'prettier/prettier': [
+			'error',
+			{
+				endOfLine: 'auto',
+			},
+		],
 		'@next/next/no-img-element': 'off',
 		'react-hooks/exhaustive-deps': 'off',
 		'@typescript-eslint/no-unused-vars': 'off',
