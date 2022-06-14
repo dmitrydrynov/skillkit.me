@@ -86,8 +86,10 @@ const SkillEditorBeforeContent = () => {
 	};
 
 	const handleCopyShareLink = () => {
-		navigator.clipboard.writeText(shareLink);
-		message.success('The skill link copied to clipboard');
+		if (navigator.clipboard && window.isSecureContext) {
+			navigator.clipboard?.writeText(shareLink);
+			message.success('The skill link copied to clipboard');
+		}
 	};
 
 	return (
@@ -143,7 +145,7 @@ const SkillEditorBeforeContent = () => {
 						)}
 					</>,
 					<>
-						{isPublished && (
+						{isPublished && navigator.clipboard && window.isSecureContext && (
 							<Tooltip key="2" title="Copy link">
 								<Button type="text" shape="circle" size="small" onClick={handleCopyShareLink}>
 									<BiCopy />

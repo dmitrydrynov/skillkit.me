@@ -183,6 +183,10 @@ query($hash: String!) {
         description
         startedAt
         finishedAt
+        experience {
+          years
+          months
+        }
       }
       files {
         id

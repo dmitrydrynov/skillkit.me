@@ -229,7 +229,7 @@ const ProfilePage: NextPageWithLayout = () => {
 								label="Date of birth"
 								rules={[{ required: true, message: 'Please input the email!' }]}
 							>
-								<DatePicker placeholder="Birthday date" defaultPickerValue={moment()} format="MM/DD/YYYY" />
+								<DatePicker placeholder="Birthday date" format="MM/DD/YYYY" />
 							</Form.Item>
 
 							<Form.Item name="about" label="Tell about yourself shortly">

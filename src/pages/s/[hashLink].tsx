@@ -5,7 +5,7 @@ import ShareLayout from '@layouts/ShareLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { ssrGraphqlClient } from '@services/graphql/client';
 import { getUserSkillForShareQuery } from '@services/graphql/queries/userSkill';
-import { UserSkillViewModeEnum, SkillLevel } from 'src/definitions/skill';
+import { UserSkillViewModeEnum, getSkillLevel } from 'src/definitions/skill';
 import { Col, List, Progress, Row, Space, Timeline, Typography } from 'antd';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
@@ -16,25 +16,21 @@ const ReactViewer = dynamic(() => import('react-viewer'), { ssr: false });
 
 const UserSkillSharePage: NextPageWithLayout = ({ user: userData, skill: userSkillData, error, path }: any) => {
 	const [country, setCountry] = useState(null);
-	const [level, setLevel] = useState<SkillLevel>();
+	const level = getSkillLevel(userSkillData.level);
 	const [viewerVisible, setViewerVisible] = useState(false);
 	const [selectedImage, setSelectedImage] = useState(null);
 
-	// useEffect(() => {
-	// 	if (error) message.error(error);
-	// }, [error]);
+	const experience = (): number => {
+		let newExperience = 0;
 
-	// useEffect(() => {
-	// 	if (userSkillData) {
-	// 		setLevel(getSkillLevel(userSkillData.level));
-	// 	}
-	// }, [userSkillData]);
+		if (userSkillData.jobs) {
+			userSkillData.jobs.map((userJob) => {
+				newExperience += userJob.experience.years * 12 + userJob.experience.months;
+			});
+		}
 
-	// useEffect(() => {
-	// 	if (!userData?.country) return;
-
-	// 	setCountry(countryList().getLabel(userData.country));
-	// }, [userData]);
+		return newExperience;
+	};
 
 	return (
 		<>
@@ -45,7 +41,11 @@ const UserSkillSharePage: NextPageWithLayout = ({ user: userData, skill: userSki
 				<meta property="og:title" content={`I can ${userSkillData?.skill.name}`} key="og:title" />
 				<meta property="og:type" content="article" />
 				<meta property="og:url" content={process.env.NEXT_PUBLIC_APP_URL + path} />
-				<meta property="og:image" content={userData?.avatar} />
+				<meta property="og:image" content={userData.avatar} />
+				<meta name="twitter:image" content={userData.avatar} />
+				<meta name="twitter:title" content={`I can ${userSkillData?.skill.name}`} />
+				<meta name="twitter:description" content={`The page about ${userData?.fullName} unique skill`} />
+				<meta name="twitter:author" content="@DmirtyDrynov" />
 			</Head>
 			<div className={styles.container}>
 				<Row>
@@ -99,6 +99,9 @@ const UserSkillSharePage: NextPageWithLayout = ({ user: userData, skill: userSki
 										showInfo={false}
 									/>
 								</div>
+								{experience() >= 12 && <p>Work experience more than {Math.floor(experience() / 12)} year(s)</p>}
+								{experience() == 0 && <p>I haven&apos;t any experience yet</p>}
+								{experience() > 0 && experience() < 12 && <p>Work experience a little less than a year</p>}
 							</Space>
 
 							{userSkillData?.description?.length > 0 && (
