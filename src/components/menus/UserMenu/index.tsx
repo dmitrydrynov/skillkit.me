@@ -37,6 +37,10 @@ const UserMenu: FC = () => {
 			title: 'Settings',
 		},
 		{
+			link: '/',
+			title: 'Website',
+		},
+		{
 			title: 'Sign out',
 			action: async () => {
 				// await endSession();

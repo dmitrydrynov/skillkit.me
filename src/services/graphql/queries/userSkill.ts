@@ -154,6 +154,7 @@ query($hash: String!) {
     }
     skill { 
       id
+      viewMode
       description
       skill {
         id
