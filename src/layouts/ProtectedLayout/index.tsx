@@ -6,6 +6,7 @@ import { ProfileOutlined } from '@ant-design/icons';
 import { Col, Grid, Layout, Menu, Row } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { AiOutlineClose, AiOutlineMenu } from 'react-icons/ai';
 import styles from './ProtectedLayout.module.less';
 
 const { Header, Content, Sider } = Layout;
@@ -53,6 +54,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, siderMenu = null
 			<Sider
 				ref={siderRef}
 				className={styles.sider}
+				trigger={siderCollapsed ? <AiOutlineMenu /> : <AiOutlineClose />}
 				breakpoint="lg"
 				collapsedWidth={screens.sm ? 80 : 0}
 				collapsed={!screens.lg && siderCollapsed}
