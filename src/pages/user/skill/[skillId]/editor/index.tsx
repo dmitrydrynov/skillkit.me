@@ -43,6 +43,7 @@ import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
@@ -314,6 +315,20 @@ const SkillEditorPage: NextPageWithLayout = () => {
 				<title>Skill Editor - SkillKit</title>
 			</Head>
 			<div className={styles.container}>
+				<Alert
+					style={{ marginBottom: '24px' }}
+					message={
+						<>
+							You can change your name, age, city and other personal information in your{' '}
+							<Link href="/settings/profile">
+								<a target="_blank" rel="noreferrer">
+									profile settings
+								</a>
+							</Link>
+						</>
+					}
+					banner
+				/>
 				<Row>
 					<Col xs={{ span: 24 }} lg={{ span: 16 }}>
 						<Space direction="vertical" size={40} style={{ width: '100%' }}>
