@@ -5,13 +5,15 @@ import {
 	getUserSkillOptionsQuery,
 	publishUserSkillMutation,
 } from '@services/graphql/queries/userSkill';
-import { Button, message, PageHeader, Select, Space, Tooltip } from 'antd';
+import { Button, Grid, message, PageHeader, Select, Space, Tooltip } from 'antd';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { BiWorld, BiStreetView, BiLinkAlt, BiCopy, BiLinkExternal } from 'react-icons/bi';
 import { GoGear } from 'react-icons/go';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
+
+const { useBreakpoint } = Grid;
 
 export enum UserSkillViewModeEnum {
 	ONLY_ME = 'only_me',
@@ -20,6 +22,7 @@ export enum UserSkillViewModeEnum {
 }
 
 const SkillEditorBeforeContent = () => {
+	const screens = useBreakpoint();
 	const router = useRouter();
 	const { skillId } = router.query;
 
@@ -113,7 +116,11 @@ const SkillEditorBeforeContent = () => {
 					className={styles.pageHeader}
 					ghost={false}
 					title={isPublished ? 'Published' : 'Draft'}
-					subTitle={`Last update at ${moment(userSkillData?.userSkill.updatedAt).format('dddd, MMMM Do YYYY, h:mm:ss a')}`}
+					subTitle={
+						screens.sm
+							? `Last update at ${moment(userSkillData?.userSkill.updatedAt).format('dddd, MMMM Do YYYY, h:mm:ss a')}`
+							: null
+					}
 					extra={[
 						<Button key="ConfigKey" type="ghost" size="small" onClick={() => setShowShareConfigModal(true)}>
 							<GoGear size={18} />
@@ -121,7 +128,7 @@ const SkillEditorBeforeContent = () => {
 						<>
 							{isPublished && (
 								<Space key="viewModeKey">
-									<div>View Mode</div>
+									{screens.sm && <div>View Mode</div>}
 									{selectedViewMode && (
 										<Select
 											value={selectedViewMode}

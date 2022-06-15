@@ -334,8 +334,8 @@ const SkillEditorPage: NextPageWithLayout = () => {
 						<Space direction="vertical" size={40} style={{ width: '100%' }}>
 							<div className={styles.titleSection}>
 								<div>I can</div>
-								{userSkillFetching ? (
-									<Skeleton.Button style={{ width: '450px', height: '30px', marginBottom: '0.5em' }} active={true} />
+								{userSkillFetching == false ? (
+									<Skeleton.Button style={{ width: 'auto', height: '30px', marginBottom: '0.5em' }} active={true} />
 								) : (
 									<InlineEdit
 										name="skillId"

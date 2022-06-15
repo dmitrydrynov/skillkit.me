@@ -136,7 +136,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose, onFin
 				requiredMark={false}
 			>
 				<Row>
-					<Col span={14}>
+					<Col xs={{ span: 24 }} sm={{ span: 14 }}>
 						<Form.Item
 							name="skillName"
 							label="What can you do?"
@@ -168,7 +168,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose, onFin
 							</AutoComplete>
 						</Form.Item>
 					</Col>
-					<Col span={8} offset={2}>
+					<Col xs={{ span: 24 }} sm={{ span: 8, offset: 2 }}>
 						<Form.Item name="level" label="Level" rules={[{ required: true, message: 'Please input the email!' }]}>
 							<Select placeholder="Select">
 								{skillLevelsList.map((item, indx) => (
