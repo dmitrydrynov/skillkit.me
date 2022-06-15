@@ -72,7 +72,7 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 
 			message.success('Your are welcome!');
 
-			router.push('/settings/profile');
+			router.push('/user/skills');
 
 			onClose();
 		}
@@ -148,7 +148,19 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 			]}
 		>
 			<h2 className={styles.title}>Get Connect to the Skillkit</h2>
-			<p className={styles.subtitle}>Fill this form and let&apos;s go!</p>
+			<p className={styles.subtitle}>
+				{state.step === _FormStep._Register && <>Fill this form and let&apos;s go!</>}
+				{state.step === _FormStep._Password && (
+					<>
+						Enter your one-time password.
+						<br />
+						It was sent in your email
+						<br />
+						<strong>{state.email}</strong>.
+					</>
+				)}
+			</p>
+
 			<Row justify="center">
 				<Form
 					className={styles.form}
@@ -190,6 +202,3 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 };
 
 export default SignUpModal;
-function dispatch(arg0: any) {
-	throw new Error('Function not implemented.');
-}
