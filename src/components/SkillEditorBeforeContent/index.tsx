@@ -74,8 +74,6 @@ const SkillEditorBeforeContent = () => {
 				return;
 			}
 
-			debugger;
-
 			setIsPublished(true);
 			setShareLink(data?.publishUserSkill.shareLink);
 

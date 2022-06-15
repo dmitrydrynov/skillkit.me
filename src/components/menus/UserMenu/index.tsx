@@ -77,7 +77,12 @@ const UserMenu: FC = () => {
 	);
 
 	return (
-		<Menu className={styles.userMenu} defaultActiveFirst={false} selectedKeys={activeUserMenu ? ['userMenu'] : []}>
+		<Menu
+			className={styles.userMenu}
+			defaultActiveFirst={false}
+			selectedKeys={activeUserMenu ? ['userMenu'] : []}
+			disabled={logginingIn}
+		>
 			<Dropdown
 				overlay={logginingIn ? null : userMenu}
 				trigger={['click']}
@@ -90,14 +95,16 @@ const UserMenu: FC = () => {
 				<Menu.Item key="userMenuItem">
 					{logginingIn ? (
 						<Space align="center">
-							<div className={styles.info}>
-								<div className={styles.name}>
-									<Skeleton.Button style={{ width: 100, height: '18px' }} shape="round" active={true} />
+							{screens.sm && (
+								<div className={styles.info}>
+									<div className={styles.name}>
+										<Skeleton.Button style={{ width: 100, height: '18px' }} shape="round" active={true} />
+									</div>
+									<div className={styles.email}>
+										<Skeleton.Button style={{ width: 130, height: '14px' }} shape="round" active={true} />
+									</div>
 								</div>
-								<div className={styles.email}>
-									<Skeleton.Button style={{ width: 130, height: '14px' }} shape="round" active={true} />
-								</div>
-							</div>
+							)}
 							<Skeleton.Avatar size={40} active={true} />
 						</Space>
 					) : (

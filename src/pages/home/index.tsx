@@ -77,7 +77,7 @@ const Home: NextPage = () => {
 						<br />
 						Build your unique skills and share them with customers and employers.
 					</p>
-					{!loggedIn && (
+					{!loggedIn ? (
 						<Button
 							shape="round"
 							size="large"
@@ -86,6 +86,16 @@ const Home: NextPage = () => {
 							onClick={() => setVisibleSignUpModal(true)}
 						>
 							Start Now
+						</Button>
+					) : (
+						<Button
+							shape="round"
+							size="large"
+							type="primary"
+							className={styles.primaryButton}
+							onClick={() => router.push('/user/skills')}
+						>
+							Go to your skills
 						</Button>
 					)}
 				</Col>

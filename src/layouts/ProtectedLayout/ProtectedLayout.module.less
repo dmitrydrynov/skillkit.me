@@ -1,10 +1,3 @@
-@import './styles/xs.less'; // screen < 576px
-@import './styles/sm.less'; // screen ≥ 576px
-@import './styles/md.less'; // screen ≥ 768px
-@import './styles/lg.less'; // screen ≥ 992px
-@import './styles/xl.less'; // screen ≥ 1200px
-@import './styles/xxl.less'; // screen ≥ 1600px
-
 .container {
 	min-height: '100vh';
 	max-width: 1440px;
@@ -59,9 +52,9 @@
 	padding: 16px 50px;
 }
 
-@media screen and (max-width: 600px) {
-	.content {
-		padding: 0;
-		margin: 14px;
-	}
-}
+@import './styles/xs.less'; // screen < 576px
+@import './styles/sm.less'; // screen ≥ 576px
+@import './styles/md.less'; // screen ≥ 768px
+@import './styles/lg.less'; // screen ≥ 992px
+@import './styles/xl.less'; // screen ≥ 1200px
+@import './styles/xxl.less'; // screen ≥ 1600px
