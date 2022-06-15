@@ -5,7 +5,7 @@ import React, { FC, createRef, useEffect, useState } from 'react';
 import { createSkillMutation, searchSkillsQuery } from '@services/graphql/queries/skill';
 import { createUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
 import { skillLevelsList } from 'src/definitions/skill';
-import { Button, Col, Form, Modal, Row, Select, Tooltip, message, AutoComplete } from 'antd';
+import { Button, Col, Form, Modal, Row, Select, Tooltip, message, AutoComplete, Alert } from 'antd';
 import { RefSelectProps } from 'antd/lib/select';
 import Image from 'next/image';
 import { useMutation, useQuery } from 'urql';
@@ -105,7 +105,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose, onFin
 
 	return (
 		<Modal
-			title={<h2>Add skill</h2>}
+			title={<h3>Add skill</h3>}
 			visible={visible}
 			onOk={handleOk}
 			onCancel={handleCancel}
@@ -154,7 +154,7 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose, onFin
 								defaultActiveFirstOption={false}
 								showArrow={false}
 								filterOption={false}
-								placeholder="To do something ..."
+								placeholder="Make something ..."
 								notFoundContent={null}
 								onSelect={(value, option) => setSelectedSkillId(option.key as number)}
 								onSearch={(value: string) => setSkillSearchQuery(value)}
@@ -182,6 +182,27 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose, onFin
 						</Form.Item>
 					</Col>
 				</Row>
+				<Alert
+					showIcon={false}
+					icon={null}
+					message={
+						<>
+							The name of your skill should be indicated as follows: the first word is a predicate (verb), the second is a
+							object (noun), the others are an attribute (the specifics of your skill).
+							<br />
+							<br />
+							Examples:
+							<br />
+							- Develop web applications for healthcare
+							<br />
+							- Find professionals for game development industry
+							<br />
+							- Play on the guitar the music of Jimi Hendrix
+							<br />
+						</>
+					}
+					banner
+				/>
 			</Form>
 			{/* </Spin> */}
 		</Modal>
