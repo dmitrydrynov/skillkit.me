@@ -1,4 +1,5 @@
 import React, { ReactElement, useState } from 'react';
+import EmptySkills from '@assets/images/skills/empty-skills.svg';
 import { capitalizedText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
@@ -22,6 +23,7 @@ import {
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { HiDotsVertical } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
@@ -130,141 +132,164 @@ const ProfilePage: NextPageWithLayout = () => {
 				onClose={() => setVisibleAddUserSkillModal(false)}
 				onFinish={handleAddUserSkill}
 			/>
-			<PageHeader
-				className={styles.pageHeader}
-				title="Skills"
-				backIcon={false}
-				extra={[
-					<Button
-						type="primary"
-						key="add-language-button"
-						icon={<PlusOutlined />}
-						onClick={() => {
-							setUserSkillId({ id: null });
-							setVisibleAddUserSkillModal(true);
-						}}
-					>
-						Add skill
-					</Button>,
-				]}
-			/>
-			<ConfigProvider renderEmpty={customizeRenderEmpty}>
-				<Table
-					className={styles.skillTable}
-					rowClassName={styles.skillTableRow}
-					dataSource={userSkills.data?.userSkills}
-					loading={userSkills.fetching}
-					pagination={false}
-					size="middle"
-				>
-					<Table.Column
-						title="I can"
-						dataIndex={['skill', 'name']}
-						key="skillName"
-						ellipsis={true}
-						render={(value: string, data: any) => {
-							const level = getSkillLevel(data.level);
-
-							return (
-								<Space>
-									<Progress
-										type="circle"
-										percent={level.index * 20}
-										width={24}
-										showInfo={false}
-										strokeColor={level.color}
-										strokeWidth={12}
-									/>
-									<div style={{ lineHeight: 'initial' }}>
-										<Typography.Text strong>{capitalizedText(value)}</Typography.Text>
-										<br />
-										<Typography.Text type="secondary" style={{ fontSize: 12 }}>
-											{capitalizedText(level.label)}
-										</Typography.Text>
-									</div>
-								</Space>
-							);
-						}}
+			{userSkills.data?.userSkills.length === 0 && (
+				<div className={styles.emptySkillsSection}>
+					<Space direction="vertical" align="center" size="middle">
+						<Image src={EmptySkills} alt="not found any skills" />
+						<p className="text-center">You haven&apos;t listed any skills yet. You can add a new one.</p>
+						<Button
+							type="primary"
+							key="add-language-button"
+							icon={<PlusOutlined />}
+							onClick={() => {
+								setUserSkillId({ id: null });
+								setVisibleAddUserSkillModal(true);
+							}}
+						>
+							Add first skill
+						</Button>
+					</Space>
+				</div>
+			)}
+			{userSkills.data?.userSkills.length > 0 && (
+				<>
+					<PageHeader
+						className={styles.pageHeader}
+						title="Skills"
+						backIcon={false}
+						extra={[
+							<Button
+								type="primary"
+								key="add-language-button"
+								icon={<PlusOutlined />}
+								onClick={() => {
+									setUserSkillId({ id: null });
+									setVisibleAddUserSkillModal(true);
+								}}
+							>
+								Add skill
+							</Button>,
+						]}
 					/>
-					<Table.Column
-						title="Experience"
-						width="150px"
-						key="experience"
-						dataIndex="experience"
-						render={(data: unknown, record: any) => {
-							let response = "Don't have";
+					<ConfigProvider renderEmpty={customizeRenderEmpty}>
+						<Table
+							className={styles.skillTable}
+							rowClassName={styles.skillTableRow}
+							dataSource={userSkills.data?.userSkills}
+							loading={userSkills.fetching}
+							pagination={false}
+							size="middle"
+						>
+							<Table.Column
+								title="I can"
+								dataIndex={['skill', 'name']}
+								key="skillName"
+								ellipsis={true}
+								render={(value: string, data: any) => {
+									const level = getSkillLevel(data.level);
 
-							if (record.experience.years === 0 && record.experience.months > 0) {
-								response = `Less than a year`;
-							}
+									return (
+										<Space>
+											<Progress
+												type="circle"
+												percent={level.index * 20}
+												width={24}
+												showInfo={false}
+												strokeColor={level.color}
+												strokeWidth={12}
+											/>
+											<div style={{ lineHeight: 'initial' }}>
+												<Typography.Text strong>{capitalizedText(value)}</Typography.Text>
+												<br />
+												<Typography.Text type="secondary" style={{ fontSize: 12 }}>
+													{capitalizedText(level.label)}
+												</Typography.Text>
+											</div>
+										</Space>
+									);
+								}}
+							/>
+							<Table.Column
+								title="Experience"
+								width="150px"
+								key="experience"
+								dataIndex="experience"
+								render={(data: unknown, record: any) => {
+									let response = "Don't have";
 
-							if (record.experience.years == 1 && record.experience.months === 0) {
-								response = `1 year`;
-							}
+									if (record.experience.years === 0 && record.experience.months > 0) {
+										response = `Less than a year`;
+									}
 
-							if (record.experience.years === 1 && record.experience.months !== 0) {
-								response = `More than 1 year`;
-							}
+									if (record.experience.years == 1 && record.experience.months === 0) {
+										response = `1 year`;
+									}
 
-							if (record.experience.years > 1 && record.experience.months === 0) {
-								response = `${record.experience.years} years`;
-							}
+									if (record.experience.years === 1 && record.experience.months !== 0) {
+										response = `More than 1 year`;
+									}
 
-							if (record.experience.years > 1 && record.experience.months !== 0) {
-								response = `More than ${record.experience.years} years`;
-							}
+									if (record.experience.years > 1 && record.experience.months === 0) {
+										response = `${record.experience.years} years`;
+									}
 
-							return response;
-						}}
-						responsive={['lg']}
-					/>
-					<Table.Column
-						title="Last updated"
-						width="120px"
-						key="updatedAt"
-						dataIndex="updatedAt"
-						render={(data: unknown) => moment(data).fromNow()}
-						responsive={['lg']}
-					/>
-					<Table.Column
-						width="250px"
-						key="preview"
-						align="right"
-						responsive={['sm']}
-						render={(value, record: UserSkill) => (
-							<>
-								<Button
-									type="text"
-									size="small"
-									icon={<EditTwoTone twoToneColor="#eb2f96" />}
-									onClick={() => router.push(`/user/skill/${record.id}/editor`)}
-								>
-									Details
-								</Button>
-							</>
-						)}
-					/>
-					<Table.Column
-						width="60px"
-						key="action"
-						render={(data: unknown, record: UserSkill) => (
-							<Dropdown overlay={userSkillItemMenu(record.id)} trigger={['click']}>
-								<Button
-									type="text"
-									size="small"
-									className="ant-dropdown-link"
-									onClick={(e) => {
-										e.preventDefault();
-										e.stopPropagation();
-									}}
-								>
-									<HiDotsVertical />
-								</Button>
-							</Dropdown>
-						)}
-					/>
-				</Table>
-			</ConfigProvider>
+									if (record.experience.years > 1 && record.experience.months !== 0) {
+										response = `More than ${record.experience.years} years`;
+									}
+
+									return response;
+								}}
+								responsive={['lg']}
+							/>
+							<Table.Column
+								title="Last updated"
+								width="120px"
+								key="updatedAt"
+								dataIndex="updatedAt"
+								render={(data: unknown) => moment(data).fromNow()}
+								responsive={['lg']}
+							/>
+							<Table.Column
+								width="250px"
+								key="preview"
+								align="right"
+								responsive={['sm']}
+								render={(value, record: UserSkill) => (
+									<>
+										<Button
+											type="text"
+											size="small"
+											icon={<EditTwoTone twoToneColor="#eb2f96" />}
+											onClick={() => router.push(`/user/skill/${record.id}/editor`)}
+										>
+											Details
+										</Button>
+									</>
+								)}
+							/>
+							<Table.Column
+								width="60px"
+								key="action"
+								render={(data: unknown, record: UserSkill) => (
+									<Dropdown overlay={userSkillItemMenu(record.id)} trigger={['click']}>
+										<Button
+											type="text"
+											size="small"
+											className="ant-dropdown-link"
+											onClick={(e) => {
+												e.preventDefault();
+												e.stopPropagation();
+											}}
+										>
+											<HiDotsVertical />
+										</Button>
+									</Dropdown>
+								)}
+							/>
+						</Table>
+					</ConfigProvider>
+				</>
+			)}
 		</>
 	);
 };
