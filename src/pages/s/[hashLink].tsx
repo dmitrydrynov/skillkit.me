@@ -1,35 +1,43 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useMemo, useState } from 'react';
 import FileGallery from '@components/FileGallery';
+import SendEmailModal from '@components/modals/SendEmailModal';
 import { capitalizedText, readyText } from '@helpers/text';
 import ShareLayout from '@layouts/ShareLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { ssrGraphqlClient } from '@services/graphql/client';
 import { getUserSkillForShareQuery } from '@services/graphql/queries/userSkill';
 import { UserSkillViewModeEnum, getSkillLevel } from 'src/definitions/skill';
-import { Col, List, Progress, Row, Space, Timeline, Typography } from 'antd';
+import { Col, Progress, Row, Button, Space, Timeline, Badge, Popover, message } from 'antd';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
+import { BiMailSend } from 'react-icons/bi';
+import { FaInfoCircle } from 'react-icons/fa';
+import { FiMail, FiSmartphone } from 'react-icons/fi';
+import countryList from 'react-select-country-list';
 import styles from './style.module.less';
 
 const ReactViewer = dynamic(() => import('react-viewer'), { ssr: false });
 
-const UserSkillSharePage: NextPageWithLayout = ({ user: userData, skill: userSkillData, error, path }: any) => {
-	const [country, setCountry] = useState(null);
+const UserSkillSharePage: NextPageWithLayout = ({
+	user: userData,
+	skill: userSkillData,
+	error,
+	path,
+	hashLink,
+}: any) => {
+	const country = useMemo(() => (userData?.country ? countryList().getLabel(userData.country.toLowerCase()) : null), []);
 	const level = getSkillLevel(userSkillData.level);
 	const [viewerVisible, setViewerVisible] = useState(false);
 	const [selectedImage, setSelectedImage] = useState(null);
+	const [visibleSendEmailModal, setVisibleSendEmailModal] = useState(false);
 
 	const experience = (): number => {
-		let newExperience = 0;
-
-		if (userSkillData.jobs) {
-			userSkillData.jobs.map((userJob) => {
-				newExperience += userJob.experience.years * 12 + userJob.experience.months;
-			});
+		if (userSkillData.experience) {
+			return userSkillData.experience.years * 12 + userSkillData.experience.months;
 		}
 
-		return newExperience;
+		return 0;
 	};
 
 	return (
@@ -56,37 +64,55 @@ const UserSkillSharePage: NextPageWithLayout = ({ user: userData, skill: userSki
 			</Head>
 			<div className={styles.container}>
 				<Row>
-					<Col xs={{ span: 24 }} lg={{ span: 24 }}>
+					<Col xs={{ span: 24, order: 1 }} md={{ span: 6, order: 2 }} style={{ textAlign: 'center' }}>
+						{userData?.avatar && (
+							<Space direction="vertical" size="middle" className={styles.contactsAndPhoto}>
+								<img className={styles.avatar} src={userData.avatar} alt={'avatar'} title={`${userData.fullName} photo`} />
+
+								<div className={styles.contacts}>
+									{false && <h3>My contacts</h3>}
+									{false && userData?.email?.length > 0 && (
+										<Row align="middle" justify="center">
+											<FiMail size={16} style={{ marginRight: '8px' }} /> {userData.email}
+										</Row>
+									)}
+									{false && userData?.phone?.length > 0 && (
+										<Row align="middle" justify="center">
+											<FiSmartphone size={16} style={{ marginRight: '8px' }} /> {userData?.phone}
+										</Row>
+									)}
+								</div>
+
+								<Button
+									type="primary"
+									onClick={() => {
+										setVisibleSendEmailModal(true);
+									}}
+								>
+									<BiMailSend size={24} style={{ marginRight: '8px' }} /> Write me
+								</Button>
+							</Space>
+						)}
+					</Col>
+					<Col xs={{ span: 24, order: 2 }} md={{ span: 18, order: 1 }}>
 						<Space direction="vertical" size={40} style={{ width: '100%' }}>
-							<Row className={styles.welcomeSection}>
-								<Col>
-									Hello,
-									<br />
-									{!!userData?.fullName && (
-										<>
-											My name is <strong>{userData?.fullName}</strong>
-										</>
-									)}
-									{!!country && (
-										<>
-											.
-											<br />
-											I&apos;m from {country}
-										</>
-									)}
-									{!!userData?.age ? ` and I'm ${userData?.age} years old.` : '.'}
-								</Col>
-								<Col>
-									{userData?.avatar && (
-										<img
-											src={userData.avatar}
-											alt={'avatar'}
-											title={`${userData.fullName} photo`}
-											style={{ maxHeight: '200px' }}
-										/>
-									)}
-								</Col>
-							</Row>
+							<div className={styles.welcomeSection}>
+								Hello,
+								<br />
+								{!!userData?.fullName && (
+									<>
+										My name is <strong>{userData?.fullName}</strong>
+									</>
+								)}
+								{!!country && (
+									<>
+										.
+										<br />
+										I&apos;m from {country}
+									</>
+								)}
+								{!!userData?.age ? ` and I'm ${userData?.age} years old.` : '.'}
+							</div>
 
 							<Space direction="vertical" className={styles.titleSection}>
 								<h1>
@@ -117,84 +143,92 @@ const UserSkillSharePage: NextPageWithLayout = ({ user: userData, skill: userSki
 								</div>
 							)}
 
-							<div className={styles.toolsSection}>
-								<div className={styles.headerContainer}>
-									<h2>I use for this</h2>
-								</div>
-								{userSkillData?.tools?.length > 0 && (
-									<List
-										className={styles.list}
-										size="small"
-										dataSource={userSkillData?.tools}
-										renderItem={(item: any) => (
-											<List.Item className={styles.listItem}>
-												<List.Item.Meta
-													className={styles.listItemMeta}
-													title={item.title}
-													description={
-														item.description && (
-															<Typography.Paragraph ellipsis={{ tooltip: item.description }}>
-																{readyText(item.description)}
-															</Typography.Paragraph>
-														)
+							{userSkillData?.tools?.length > 0 && (
+								<div className={styles.toolsSection}>
+									<div className={styles.headerContainer}>
+										<h2>I use for this</h2>
+									</div>
+									<Space className={styles.list} size="middle">
+										{userSkillData?.tools.map((item: any, idx: number) =>
+											item.description ? (
+												<Badge
+													count={
+														<Popover
+															content={item.description}
+															overlayStyle={{
+																maxWidth: '50vw',
+															}}
+														>
+															<FaInfoCircle color="#f558a1" />
+														</Popover>
 													}
-												/>
-											</List.Item>
+													key={idx}
+												>
+													<div className={styles.listItem}>{item.title}</div>
+												</Badge>
+											) : (
+												<div className={styles.listItem}>{item.title}</div>
+											),
 										)}
-									/>
-								)}
-							</div>
-							<div className={styles.jobsSection}>
-								<div className={styles.headerContainer}>
-									<h2>I used this skill in the following jobs</h2>
+									</Space>
 								</div>
-								{userSkillData?.jobs?.length > 0 && (
-									<Timeline mode="left">
-										{userSkillData.jobs.map((item: any, indx: number) => (
-											<Timeline.Item key={indx}>
-												<Space size="large" className={styles.userJobListItem}>
-													<div className={styles.userJobInfo}>
-														<div className={styles.userJobRange}>
+							)}
+							{userSkillData?.jobs?.length > 0 && (
+								<div className={styles.jobsSection}>
+									<div className={styles.headerContainer}>
+										<h2>I used this skill in the following jobs</h2>
+									</div>
+									{userSkillData?.jobs?.length > 0 && (
+										<Timeline mode="left">
+											{userSkillData.jobs.map((item: any, indx: number) => (
+												<Timeline.Item key={indx}>
+													<Space size="large" className={styles.userJobListItem}>
+														<div className={styles.userJobInfo}>
+															<div className={styles.userJobRange}>
+																{moment(item.startedAt).format('MMM, YYYY') +
+																	' — ' +
+																	(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
+															</div>
+															<div className={styles.userJobTitle}>
+																{item.title} — {item.position}
+															</div>
+															{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
+														</div>
+													</Space>
+												</Timeline.Item>
+											))}
+										</Timeline>
+									)}
+								</div>
+							)}
+							{userSkillData?.schools?.length > 0 && (
+								<div className={styles.schoolsSection}>
+									<div className={styles.headerContainer}>
+										<h2>I learned this skill in</h2>
+									</div>
+									{userSkillData?.schools?.length > 0 && (
+										<Timeline mode="left">
+											{userSkillData?.schools.map((item: any, indx: number) => (
+												<Timeline.Item key={indx}>
+													<div className={styles.userSchoolListItem}>
+														<div className={styles.userSchoolRange}>
 															{moment(item.startedAt).format('MMM, YYYY') +
 																' — ' +
 																(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
 														</div>
-														<div className={styles.userJobTitle}>
-															{item.title} — {item.position}
-														</div>
-														{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
+														<div className={styles.userSchoolTitle}>{item.title}</div>
+														{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
 													</div>
-												</Space>
-											</Timeline.Item>
-										))}
-									</Timeline>
-								)}
-							</div>
-							<div className={styles.schoolsSection}>
-								<div className={styles.headerContainer}>
-									<h2>I learned this skill in</h2>
+												</Timeline.Item>
+											))}
+										</Timeline>
+									)}
 								</div>
-								{userSkillData?.schools?.length > 0 && (
-									<Timeline mode="left">
-										{userSkillData?.schools.map((item: any, indx: number) => (
-											<Timeline.Item key={indx}>
-												<div className={styles.userSchoolListItem}>
-													<div className={styles.userSchoolRange}>
-														{moment(item.startedAt).format('MMM, YYYY') +
-															' — ' +
-															(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
-													</div>
-													<div className={styles.userSchoolTitle}>{item.title}</div>
-													{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
-												</div>
-											</Timeline.Item>
-										))}
-									</Timeline>
-								)}
-							</div>
+							)}
 						</Space>
 					</Col>
 				</Row>
+
 				{userSkillData?.files?.length > 0 && (
 					<Row style={{ marginTop: '40px' }}>
 						<Col flex={1}>
@@ -236,6 +270,17 @@ const UserSkillSharePage: NextPageWithLayout = ({ user: userData, skill: userSki
 						})}
 				/>
 			</div>
+			<SendEmailModal
+				hash={hashLink}
+				visible={visibleSendEmailModal}
+				onSend={() => {
+					message.success('Your letter sent succesfully');
+					setVisibleSendEmailModal(false);
+				}}
+				onCancel={() => {
+					setVisibleSendEmailModal(false);
+				}}
+			/>
 		</>
 	);
 };
@@ -266,7 +311,7 @@ export async function getServerSideProps(context) {
 		}
 	}
 
-	return { props: { ...props, path: context.req.url } };
+	return { props: { ...props, path: context.req.url, hashLink } };
 }
 
 export default UserSkillSharePage;
