@@ -80,14 +80,13 @@ body {
 }
 
 /** Button **/
+a.ant-btn:not(.ant-btn-sm) {
+	padding-top: @padding-sm !important;
+}
 .ant-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-
-	&a {
-		padding-top: @padding-sm !important;
-	}
 
 	&:not(.ant-btn-text, .ant-btn-circle, .ant-btn-sm) {
 		padding-left: 24px;

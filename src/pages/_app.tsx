@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, ReactNode, useEffect, useState } from 'react';
+import { CookieConsent } from '@components/CookieConsent';
 import LoadingScreen from '@components/loadingScreen';
 import { getCookie, setCookie } from '@helpers/cookie';
 import PublicLayout from '@layouts/PublicLayout';
-import '@styles/globals.less';
 import { graphqlClient } from '@services/graphql/client';
 import { authenticatedUserQuery, signInByCodeQuery } from '@services/graphql/queries/auth';
 import { RootState, store } from '@store/configure-store';
@@ -16,6 +16,7 @@ import Router, { useRouter } from 'next/router';
 import Script from 'next/script';
 import { Provider as StoreProvider, useDispatch, useSelector } from 'react-redux';
 import { Provider as UrqlProvider, useQuery } from 'urql';
+import '@styles/globals.less';
 
 export type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactNode) => ReactNode;
@@ -127,6 +128,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 									<Component {...pageProps} />
 								</>,
 							)}
+							<CookieConsent />
 						</div>
 					</AuthProvider>
 				</UrqlProvider>

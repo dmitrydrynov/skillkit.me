@@ -1,0 +1,29 @@
+.cookiePopup {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	background-color: #ededed;
+	box-shadow: 0 0 18px -8px #111;
+	z-index: 9999;
+	transform: translateY(100%);
+	-webkit-animation: show-popup 0.5s ease-in 0.5s forwards;
+	animation: show-popup 0.5s ease-in 0.5s forwards;
+
+	.data {
+		margin: 18px 100px 18px 36px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+}
+
+@keyframes show-popup {
+	0% {
+		opacity: 0;
+		transform: translateY(100%);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0%);
+	}
+}
