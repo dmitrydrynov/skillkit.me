@@ -65,34 +65,36 @@ const UserSkillSharePage: NextPageWithLayout = ({
 			<div className={styles.container}>
 				<Row>
 					<Col xs={{ span: 24, order: 1 }} md={{ span: 6, order: 2 }} style={{ textAlign: 'center' }}>
-						{userData?.avatar && (
-							<Space direction="vertical" size="middle" className={styles.contactsAndPhoto}>
-								<img className={styles.avatar} src={userData.avatar} alt={'avatar'} title={`${userData.fullName} photo`} />
+						<Space direction="vertical" size="middle" className={styles.contactsAndPhoto}>
+							{userData?.avatar && (
+								<>
+									<img className={styles.avatar} src={userData.avatar} alt={'avatar'} title={`${userData.fullName} photo`} />
 
-								<div className={styles.contacts}>
-									{false && <h3>My contacts</h3>}
-									{false && userData?.email?.length > 0 && (
-										<Row align="middle" justify="center">
-											<FiMail size={16} style={{ marginRight: '8px' }} /> {userData.email}
-										</Row>
-									)}
-									{false && userData?.phone?.length > 0 && (
-										<Row align="middle" justify="center">
-											<FiSmartphone size={16} style={{ marginRight: '8px' }} /> {userData?.phone}
-										</Row>
-									)}
-								</div>
+									<div className={styles.contacts}>
+										{false && <h3>My contacts</h3>}
+										{false && userData?.email?.length > 0 && (
+											<Row align="middle" justify="center">
+												<FiMail size={16} style={{ marginRight: '8px' }} /> {userData.email}
+											</Row>
+										)}
+										{false && userData?.phone?.length > 0 && (
+											<Row align="middle" justify="center">
+												<FiSmartphone size={16} style={{ marginRight: '8px' }} /> {userData?.phone}
+											</Row>
+										)}
+									</div>
+								</>
+							)}
 
-								<Button
-									type="primary"
-									onClick={() => {
-										setVisibleSendEmailModal(true);
-									}}
-								>
-									<BiMailSend size={24} style={{ marginRight: '8px' }} /> Write me
-								</Button>
-							</Space>
-						)}
+							<Button
+								type="primary"
+								onClick={() => {
+									setVisibleSendEmailModal(true);
+								}}
+							>
+								<BiMailSend size={24} style={{ marginRight: '8px' }} /> Write me
+							</Button>
+						</Space>
 					</Col>
 					<Col xs={{ span: 24, order: 2 }} md={{ span: 18, order: 1 }}>
 						<Space direction="vertical" size={40} style={{ width: '100%' }}>

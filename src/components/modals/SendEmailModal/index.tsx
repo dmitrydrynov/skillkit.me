@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getErrorMessage } from '@helpers/errors';
 import { sendEmailByHashMutation } from '@services/graphql/queries/userSkill';
 import { Form, Input, message, Modal, Row } from 'antd';
@@ -22,6 +22,7 @@ type _FormData = {
 
 const SendEmailModal = ({ onSend, onCancel, hash, visible = false }: _ModalParams) => {
 	const [form] = Form.useForm();
+	const [sending, setSending] = useState(false);
 	const [, sendEmail] = useMutation(sendEmailByHashMutation);
 
 	useEffect(() => {
@@ -39,6 +40,8 @@ const SendEmailModal = ({ onSend, onCancel, hash, visible = false }: _ModalParam
 		}
 
 		try {
+			setSending(true);
+
 			const { data, error } = await sendEmail({
 				hash,
 				name,
@@ -48,13 +51,16 @@ const SendEmailModal = ({ onSend, onCancel, hash, visible = false }: _ModalParam
 
 			if (error) {
 				message.error(getErrorMessage(error));
+				setSending(false);
 				return;
 			}
 
+			setSending(false);
 			onSend(data);
 			form.resetFields();
 		} catch (error: any) {
 			message.error(error.message);
+			setSending(false);
 		}
 	};
 
@@ -65,6 +71,7 @@ const SendEmailModal = ({ onSend, onCancel, hash, visible = false }: _ModalParam
 					<BiMailSend size={32} color="#a7a7a7" style={{ marginRight: '8px' }} /> Send letter
 				</Row>
 			}
+			confirmLoading={sending}
 			visible={visible}
 			onOk={handleSend}
 			onCancel={onCancel}
