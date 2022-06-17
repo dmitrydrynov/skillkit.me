@@ -47,7 +47,7 @@ const UserSkillSharePage: NextPageWithLayout = ({
 				<meta name="keywords" content="cv,resume,portfolio,profile" />
 				<meta name="description" content={`The page about ${userData?.fullName} unique skill`} />
 				<meta property="og:title" content={`I can ${userSkillData?.skill.name}`} key="og:title" />
-				<meta property="og:description" content={`I can ${userSkillData?.skill.name}`} key="og:title" />
+				<meta property="og:description" content={`I can ${userSkillData?.skill.name}`} key="og:description" />
 				<meta property="og:type" content="article" />
 				<meta property="og:url" content={process.env.NEXT_PUBLIC_APP_URL + path} />
 				<meta property="og:image" content={userData.avatar + '?h=200'} />
