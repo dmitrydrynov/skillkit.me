@@ -11,12 +11,12 @@ const CookiesPage = () => {
 	return (
 		<div className={styles.article}>
 			<Head>
-				<title>Cookies Policy</title>
+				<title>Cookies Policy - Skillkit</title>
 				<meta name="description" content="Policy for using cookies files" />
-				<meta property="og:title" content="Cookies Policy" key="og:title" />
+				<meta property="og:title" content="Cookies Policy - Skillkit" key="og:title" />
 				<meta property="og:type" content="article" />
 				<meta property="og:url" content={process.env.NEXT_PUBLIC_APP_URL + router.route} />
-				<meta name="twitter:title" content="Cookies Policy" />
+				<meta name="twitter:title" content="Cookies Policy - Skillkit" />
 				<meta name="twitter:description" content="Policy for using cookies files" />
 				<meta key="robots" name="robots" content="noindex,follow" />
 				<meta key="googlebot" name="googlebot" content="noindex,follow" />
