@@ -151,6 +151,7 @@ query($hash: String!) {
       about
       country
       avatar
+      email
     }
     skill { 
       id
@@ -200,3 +201,20 @@ query($hash: String!) {
   }
 }
 `;
+
+export const sendEmailByHashMutation = `
+mutation(
+  $name: String!,
+  $email: String!,
+  $content: String!,
+  $hash: String!
+) {
+  sendEmailByHash(
+    name: $name
+    email: $email
+    content: $content
+    hash: $hash
+  ) {
+    result
+  }
+}`;
