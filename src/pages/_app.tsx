@@ -3,6 +3,7 @@ import React, { FC, ReactNode, useEffect, useState } from 'react';
 import { CookieConsent } from '@components/CookieConsent';
 import LoadingScreen from '@components/loadingScreen';
 import { getCookie, setCookie } from '@helpers/cookie';
+import { gtmEvent } from '@helpers/gtm';
 import PublicLayout from '@layouts/PublicLayout';
 import { graphqlClient } from '@services/graphql/client';
 import { authenticatedUserQuery, signInByCodeQuery } from '@services/graphql/queries/auth';
@@ -58,6 +59,7 @@ const AuthProvider: FC = ({ children }): any => {
 			if (token) {
 				setSessionToken(token);
 				setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, token);
+				gtmEvent('LoginEvent');
 			}
 		}
 	}, []);
@@ -65,8 +67,6 @@ const AuthProvider: FC = ({ children }): any => {
 	// If user on login process set loggining
 	useEffect(() => {
 		if (!!userData || !!userDataByCode) {
-			const who1 = userData.data ? 'UserData' : null;
-			const who2 = userDataByCode.data ? 'userDataByCode' : null;
 			dispatch(setLoginingIn(userData?.fetching || userDataByCode?.fetching));
 		}
 	}, [userData, userDataByCode]);
@@ -77,6 +77,7 @@ const AuthProvider: FC = ({ children }): any => {
 			const { token } = userDataByCode.data.signInByCode;
 			setSessionToken(token);
 			setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, token);
+			gtmEvent('LoginEvent');
 			message.success('You are welcome!');
 		}
 	}, [userDataByCode]);

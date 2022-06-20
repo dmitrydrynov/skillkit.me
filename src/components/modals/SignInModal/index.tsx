@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, useEffect, useState } from 'react';
 import { setCookie } from '@helpers/cookie';
+import { gtmEvent } from '@helpers/gtm';
 import { signInMutation } from '@services/graphql/queries/auth';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
@@ -69,6 +70,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 			setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, data.signIn.token);
 			dispatch(setLogin());
 			dispatch(setUserData({ ...data.signIn.user }));
+			gtmEvent('LoginEvent');
 		}
 
 		message.success('You are welcome!');

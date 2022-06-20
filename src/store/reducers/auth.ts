@@ -1,5 +1,4 @@
 import { Dispatch } from 'react';
-import { gtmEvent } from '@helpers/gtm';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { clearUserData } from './user';
@@ -29,7 +28,6 @@ const authReducer = (state = initialState, action: AnyAction): AuthState => {
 	switch (type) {
 		case 'LOGIN': {
 			if (process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
-				gtmEvent('LoginEvent');
 				return { ...state, loggedIn: true };
 			}
 

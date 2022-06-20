@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import introImage from '@assets/images/home/intro.png';
 import SignUpModal from '@components/modals/SignUpModal';
 import { setCookie } from '@helpers/cookie';
+import { gtmEvent } from '@helpers/gtm';
 import { redeemUserMagicAuthTokenMutation } from '@services/graphql/queries/auth';
 import { RootState } from '@store/configure-store';
 import { setLogin } from '@store/reducers/auth';
@@ -39,6 +40,7 @@ const Home: NextPage = () => {
 				}
 
 				setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, data.redeemUserMagicAuthToken.sessionToken);
+				gtmEvent('LoginEvent');
 				dispatch(setLogin());
 				dispatch(setUserData({ ...data.redeemUserMagicAuthToken.item }));
 

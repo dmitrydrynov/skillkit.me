@@ -75,6 +75,7 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 
 			message.success('You are welcome!');
 			gtmEvent('NewUserEvent');
+			gtmEvent('LoginEvent');
 
 			router.push('/user/skills');
 
