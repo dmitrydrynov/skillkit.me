@@ -10,6 +10,7 @@ import { RootState, store } from '@store/configure-store';
 import { setLogin, setLoginingIn } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
 import ProgressBar from '@badrap/bar-of-progress';
+import { message } from 'antd';
 import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import Router, { useRouter } from 'next/router';
@@ -49,42 +50,47 @@ const AuthProvider: FC = ({ children }): any => {
 		pause: !sessionToken && !loggedIn,
 	});
 
+	// If user already logged in set token
 	useEffect(() => {
 		if (process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
 			const token = getCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME);
 
 			if (token) {
 				setSessionToken(token);
+				setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, token);
 			}
 		}
 	}, []);
 
+	// If user on login process set loggining
 	useEffect(() => {
-		dispatch(setLoginingIn(userData.fetching || userDataByCode.fetching));
+		if (!!userData || !!userDataByCode) {
+			const who1 = userData.data ? 'UserData' : null;
+			const who2 = userDataByCode.data ? 'userDataByCode' : null;
+			dispatch(setLoginingIn(userData?.fetching || userDataByCode?.fetching));
+		}
 	}, [userData, userDataByCode]);
 
+	// If user logged in through code variable set token
 	useEffect(() => {
 		if (userDataByCode.data) {
 			const { token } = userDataByCode.data.signInByCode;
-			setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, token);
 			setSessionToken(token);
-			routerPush('/');
+			setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, token);
 		}
 	}, [userDataByCode]);
 
+	// If user logged in set init user data and redirect to user skills page
 	useEffect(() => {
-		const data = userData?.data || userDataByCode?.data?.signInByCode;
+		const data = userData?.data?.authenticatedUser || userDataByCode?.data?.signInByCode;
 
 		if (data && sessionToken) {
-			dispatch(setLogin({ token: sessionToken }));
-			dispatch(setUserData(data.authenticatedUser));
+			dispatch(setLogin());
+			dispatch(setUserData(data));
+			routerPush('/user/skills');
+			message.success('Your are welcome!');
 		}
-		// else {
-		// 	setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, null);
-		// 	setSessionToken(null);
-		// 	routerPush('/');
-		// }
-	}, [dispatch, sessionToken, userData, userDataByCode]);
+	}, [sessionToken, userData, userDataByCode]);
 
 	return children;
 };
@@ -118,7 +124,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 						<div style={{ opacity: loading ? 0 : 1 }}>
 							{getLayout(
 								<>
-									{process.env.NODE_ENV !== 'development' && (
+									{
 										<Script id="google-tag-manager" strategy="afterInteractive">
 											{`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -126,7 +132,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-K9N6B7P');`}
 										</Script>
-									)}
+									}
 									<Component {...pageProps} />
 								</>,
 							)}

@@ -129,7 +129,6 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	}, [userSkillData, userSkillError]);
 
 	useEffect(() => {
-		console.log(skillSearchQuery);
 		if (!skillSearchQuery) return;
 
 		searchSkills();

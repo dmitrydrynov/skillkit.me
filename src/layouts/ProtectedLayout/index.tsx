@@ -1,4 +1,4 @@
-import React, { createRef, FC, ReactElement, ReactNode, useEffect, useState } from 'react';
+import React, { createRef, FC, ReactElement, ReactNode, useState } from 'react';
 import skillKitLogo from '@assets/images/skillkit-logo.svg';
 import UserMenu from '@components/menus/UserMenu';
 import withAuth from '@helpers/withAuth';
@@ -25,9 +25,9 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({ children, siderMenu = null
 	const [siderCollapsed, setSiderCollapsed] = useState(true);
 	const siderRef = createRef<HTMLDivElement>();
 
-	useEffect(() => {
-		if (Object.entries(screens).length) console.log('Sreen sizes', screens);
-	}, [screens]);
+	// useEffect(() => {
+	// 	if (Object.entries(screens).length) console.log('Sreen sizes', screens);
+	// }, [screens]);
 
 	const handleMenuClick = ({ key }) => {
 		router.push(key);

@@ -2,7 +2,7 @@ import { Dispatch } from 'react';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { clearUserData } from './user';
-import { deleteCookie, setCookie } from '../../helpers/cookie';
+import { deleteCookie } from '../../helpers/cookie';
 import { RootState } from '../configure-store';
 
 export type AppThunk = ThunkAction<void, RootState, null, Action<string>>;
@@ -28,7 +28,6 @@ const authReducer = (state = initialState, action: AnyAction): AuthState => {
 	switch (type) {
 		case 'LOGIN': {
 			if (process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
-				setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, payload.token);
 				return { ...state, loggedIn: true };
 			}
 
@@ -49,8 +48,8 @@ const authReducer = (state = initialState, action: AnyAction): AuthState => {
 	}
 };
 
-export const setLogin = (payload: { token: string }): AnyAction => {
-	return { type: 'LOGIN', payload };
+export const setLogin = (): AnyAction => {
+	return { type: 'LOGIN' };
 };
 
 export const setLoginingIn = (payload: boolean): AnyAction => {

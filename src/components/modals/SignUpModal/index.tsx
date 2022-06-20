@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useEffect, useState } from 'react';
 import React from 'react';
+import { setCookie } from '@helpers/cookie';
 import { registerUserMutation } from '@services/graphql/queries/auth';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
@@ -67,7 +68,8 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 		}
 
 		if (data.registerUser.token.length) {
-			dispatch(setLogin({ token: data.registerUser.token }));
+			setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, data.registerUser.token);
+			dispatch(setLogin());
 			dispatch(setUserData({ ...data.registerUser.user }));
 
 			message.success('Your are welcome!');

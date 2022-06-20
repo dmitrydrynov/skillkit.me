@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import introImage from '@assets/images/home/intro.png';
 import SignUpModal from '@components/modals/SignUpModal';
+import { setCookie } from '@helpers/cookie';
 import { redeemUserMagicAuthTokenMutation } from '@services/graphql/queries/auth';
 import { RootState } from '@store/configure-store';
 import { setLogin } from '@store/reducers/auth';
@@ -37,7 +38,8 @@ const Home: NextPage = () => {
 					return;
 				}
 
-				dispatch(setLogin({ token: data.redeemUserMagicAuthToken.sessionToken }));
+				setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, data.redeemUserMagicAuthToken.sessionToken);
+				dispatch(setLogin());
 				dispatch(setUserData({ ...data.redeemUserMagicAuthToken.item }));
 
 				message.success('Your are welcome!');

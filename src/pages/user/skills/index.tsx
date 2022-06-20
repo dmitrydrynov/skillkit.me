@@ -68,7 +68,7 @@ const ProfilePage: NextPageWithLayout = () => {
 					router.push(`/user/skill/${recordId}/editor`);
 				}
 				if (key === 'share' && recordId) {
-					console.log('share skill', recordId);
+					// console.log('share skill', recordId);
 				}
 			}}
 		>
