@@ -128,6 +128,7 @@ const ProfilePage: NextPageWithLayout = () => {
 				onClose={() => setVisibleAddUserSkillModal(false)}
 				onFinish={handleAddUserSkill}
 			/>
+			{!userSkills.data && <Skeleton active />}
 			{userSkills.data?.userSkills.length === 0 && !userSkills.fetching && (
 				<div className={styles.emptySkillsSection}>
 					<Space direction="vertical" align="center" size="middle">
@@ -147,7 +148,6 @@ const ProfilePage: NextPageWithLayout = () => {
 					</Space>
 				</div>
 			)}
-			{userSkills.data?.userSkills.length === 0 && userSkills.fetching && <Skeleton active />}
 			{userSkills.data?.userSkills.length > 0 && (
 				<>
 					<PageHeader
