@@ -1,7 +1,8 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
+import skillKitLogo from '@assets/images/skillkit-logo.svg';
 import { UserSkillViewModeEnum } from 'src/definitions/skill';
-import { Layout } from 'antd';
-import { useRouter } from 'next/router';
+import { Button, Col, Layout, Row } from 'antd';
+import Image from 'next/image';
 import styles from './ShareLayout.module.less';
 
 const { Header, Content, Footer } = Layout;
@@ -12,17 +13,21 @@ type ShareLayoutParams = {
 };
 
 const ShareLayout: FC<ShareLayoutParams> = ({ children, title, viewMode }) => {
-	const router = useRouter();
-	const [, setCurrentHeaderMenuItem] = useState('');
-
-	useEffect(() => {
-		setCurrentHeaderMenuItem(router.route);
-	}, [router.route]);
-
 	return (
 		<>
 			<Layout className={styles.layout}>
-				{/* <Header className={styles.ShareLayout_header}>Header</Header> */}
+				<Header className={styles.shareLayout_header}>
+					<Row align="middle" className={styles.logoContainer}>
+						<Col flex="1">
+							<div className={styles.logo}>
+								<Image src={skillKitLogo} alt="skillKit logo" />
+							</div>
+						</Col>
+						<Col>
+							<Button href="/">Go to skillkit.me</Button>
+						</Col>
+					</Row>
+				</Header>
 				<Content className={styles.content}>{children}</Content>
 				<Footer>Copyright © 2022 Skillkit.me, Created by Dzmitry Drynau. All rights reserved.</Footer>
 			</Layout>

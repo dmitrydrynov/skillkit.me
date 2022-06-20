@@ -11,7 +11,6 @@ import { RootState, store } from '@store/configure-store';
 import { setLogin, setLoginingIn } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
 import ProgressBar from '@badrap/bar-of-progress';
-import { message } from 'antd';
 import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import Router, { useRouter } from 'next/router';
@@ -55,12 +54,7 @@ const AuthProvider: FC = ({ children }): any => {
 	useEffect(() => {
 		if (process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
 			const token = getCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME);
-
-			if (token) {
-				setSessionToken(token);
-				setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, token);
-				gtmEvent('LoginEvent');
-			}
+			setSessionToken(token);
 		}
 	}, []);
 
@@ -75,10 +69,12 @@ const AuthProvider: FC = ({ children }): any => {
 	useEffect(() => {
 		if (userDataByCode.data) {
 			const { token } = userDataByCode.data.signInByCode;
-			setSessionToken(token);
-			setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, token);
-			gtmEvent('LoginEvent');
-			message.success('You are welcome!');
+
+			if (token) {
+				setSessionToken(token);
+				setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, token);
+				gtmEvent('LoginEvent');
+			}
 		}
 	}, [userDataByCode]);
 
@@ -89,7 +85,10 @@ const AuthProvider: FC = ({ children }): any => {
 		if (data && sessionToken) {
 			dispatch(setLogin());
 			dispatch(setUserData(data));
-			routerPush('/user/skills');
+
+			if (userDataByCode?.data?.signInByCode) {
+				routerPush('/user/skills');
+			}
 		}
 	}, [sessionToken, userData, userDataByCode]);
 

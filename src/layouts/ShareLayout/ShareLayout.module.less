@@ -12,31 +12,13 @@
 	border-radius: 8px;
 }
 
-.publicLayout {
+.shareLayout {
 	padding: 40px 80px;
 
 	&_header {
-		background-color: white !important;
+		background-color: transparent !important;
 		height: 85px !important;
 		display: flex;
-		// justify-content: space-between;
-		// align-items: center;
-
-		&_menu {
-			background-color: transparent !important;
-			border-bottom: 0 !important;
-
-			:global {
-				.ant-menu-item {
-					.ant-menu-title-content {
-						padding: 8px 16px;
-						border-radius: @border-radius-base;
-						transition: background 0.3s;
-						height: @height-base;
-					}
-				}
-			}
-		}
 	}
 }
 
@@ -44,8 +26,6 @@
 	float: left;
 	width: 120px;
 	height: 40px;
-	// margin: 16px 24px 16px 0;
-	// background: rgba(0, 0, 0, 0.2);
 }
 
 .logoContainer {
