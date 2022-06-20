@@ -77,6 +77,7 @@ const AuthProvider: FC = ({ children }): any => {
 			const { token } = userDataByCode.data.signInByCode;
 			setSessionToken(token);
 			setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, token);
+			message.success('You are welcome!');
 		}
 	}, [userDataByCode]);
 
@@ -88,7 +89,6 @@ const AuthProvider: FC = ({ children }): any => {
 			dispatch(setLogin());
 			dispatch(setUserData(data));
 			routerPush('/user/skills');
-			message.success('Your are welcome!');
 		}
 	}, [sessionToken, userData, userDataByCode]);
 

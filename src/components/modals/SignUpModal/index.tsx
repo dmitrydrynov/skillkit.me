@@ -72,7 +72,7 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 			dispatch(setLogin());
 			dispatch(setUserData({ ...data.registerUser.user }));
 
-			message.success('Your are welcome!');
+			message.success('You are welcome!');
 
 			router.push('/user/skills');
 

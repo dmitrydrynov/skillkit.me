@@ -71,7 +71,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 			dispatch(setUserData({ ...data.signIn.user }));
 		}
 
-		message.success('Your are welcome!');
+		message.success('You are welcome!');
 
 		router.push('/user/skills');
 		onClose();
