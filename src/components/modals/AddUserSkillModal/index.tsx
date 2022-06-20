@@ -2,6 +2,7 @@
 /// <reference path="index.d.ts" />
 
 import React, { FC, createRef, useEffect, useState } from 'react';
+import { gtmEvent } from '@helpers/gtm';
 import { createSkillMutation, searchSkillsQuery } from '@services/graphql/queries/skill';
 import { createUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
 import { skillLevelsList } from 'src/definitions/skill';
@@ -90,6 +91,8 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose, onFin
 
 				return Promise.resolve();
 			}
+
+			gtmEvent('NewUserSkillEvent', { skillName, skillLevel: level });
 
 			message.success('New user skill added!');
 			setSkillSearchQuery(null);

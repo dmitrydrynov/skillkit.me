@@ -2,6 +2,7 @@
 import { FC, useEffect, useState } from 'react';
 import React from 'react';
 import { setCookie } from '@helpers/cookie';
+import { gtmEvent } from '@helpers/gtm';
 import { registerUserMutation } from '@services/graphql/queries/auth';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
@@ -73,6 +74,7 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 			dispatch(setUserData({ ...data.registerUser.user }));
 
 			message.success('You are welcome!');
+			gtmEvent('NewUserEvent');
 
 			router.push('/user/skills');
 

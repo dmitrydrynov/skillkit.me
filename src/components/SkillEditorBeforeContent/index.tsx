@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import UserSkillShareSettingsModal from '@components/modals/UserSkillShareSettingsModal';
+import { gtmEvent } from '@helpers/gtm';
 import {
 	editUserSkillMutation,
 	getUserSkillOptionsQuery,
@@ -76,6 +77,8 @@ const SkillEditorBeforeContent = () => {
 
 			setIsPublished(true);
 			setShareLink(data?.publishUserSkill.shareLink);
+
+			gtmEvent('PublishUserSkillEvent', { skillName: userSkillData?.userSkill.skill.name });
 
 			message.success('User skill published!');
 		} catch (error) {

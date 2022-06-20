@@ -31,6 +31,9 @@ query($id: ID!) {
     viewMode
     updatedAt
     shareLink
+    skill {
+      name
+    }
   }
 }
 `;
