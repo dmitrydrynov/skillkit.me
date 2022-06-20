@@ -5,7 +5,7 @@ import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { deleteUserSkillMutation, userSkillsQuery } from '@services/graphql/queries/userSkill';
 import { RootState } from '@store/configure-store';
-import { SkillLevel, getSkillLevel } from 'src/definitions/skill';
+import { getSkillLevel } from 'src/definitions/skill';
 import { DeleteOutlined, EditOutlined, EditTwoTone, PlusOutlined } from '@ant-design/icons';
 import {
 	Button,
@@ -16,6 +16,7 @@ import {
 	message,
 	PageHeader,
 	Progress,
+	Skeleton,
 	Space,
 	Table,
 	Typography,
@@ -45,11 +46,6 @@ const ProfilePage: NextPageWithLayout = () => {
 	});
 	const [, deleteUserSkill] = useMutation(deleteUserSkillMutation);
 	const [userSkillId, setUserSkillId] = useState<{ id: string | null } | null>(null);
-
-	const getSkillLevelIcon = (levelName: string): string => {
-		const skillLevel: SkillLevel = getSkillLevel(levelName);
-		return skillLevel.icon;
-	};
 
 	const handleAddUserSkill = async () => {
 		setVisibleAddUserSkillModal(false);
@@ -132,7 +128,7 @@ const ProfilePage: NextPageWithLayout = () => {
 				onClose={() => setVisibleAddUserSkillModal(false)}
 				onFinish={handleAddUserSkill}
 			/>
-			{userSkills.data?.userSkills.length === 0 && (
+			{userSkills.data?.userSkills.length === 0 && !userSkills.fetching && (
 				<div className={styles.emptySkillsSection}>
 					<Space direction="vertical" align="center" size="middle">
 						<Image src={EmptySkills} alt="not found any skills" />
@@ -151,6 +147,7 @@ const ProfilePage: NextPageWithLayout = () => {
 					</Space>
 				</div>
 			)}
+			{userSkills.data?.userSkills.length === 0 && userSkills.fetching && <Skeleton active />}
 			{userSkills.data?.userSkills.length > 0 && (
 				<>
 					<PageHeader
