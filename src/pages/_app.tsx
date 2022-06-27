@@ -5,7 +5,7 @@ import LoadingScreen from '@components/loadingScreen';
 import { getCookie, setCookie } from '@helpers/cookie';
 import { gtmEvent } from '@helpers/gtm';
 import PublicLayout from '@layouts/PublicLayout';
-import { graphqlClient } from '@services/graphql/client';
+import { graphqlClient, ssrGraphqlClient } from '@services/graphql/client';
 import { authenticatedUserQuery, signInByCodeQuery } from '@services/graphql/queries/auth';
 import { RootState, store } from '@store/configure-store';
 import { setLogin, setLoginingIn } from '@store/reducers/auth';
@@ -18,6 +18,8 @@ import Script from 'next/script';
 import { Provider as StoreProvider, useDispatch, useSelector } from 'react-redux';
 import { Provider as UrqlProvider, useQuery } from 'urql';
 import '@styles/globals.less';
+import { healthQuery } from '@services/graphql/queries/server';
+import UnavaibleServerPage from './503';
 
 export type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactNode) => ReactNode;
@@ -26,6 +28,7 @@ export type NextPageWithLayout = NextPage & {
 
 type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout;
+	server: { healthy: boolean };
 };
 
 const progress = new ProgressBar({
@@ -95,7 +98,7 @@ const AuthProvider: FC = ({ children }): any => {
 	return children;
 };
 
-function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+function MyApp({ Component, pageProps, server }: AppPropsWithLayout) {
 	const getLayout = Component.getLayout || ((page) => <PublicLayout>{page}</PublicLayout>);
 	const [loading, setLoading] = useState(true);
 
@@ -115,6 +118,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 		progress.finish();
 		setLoading(false);
 	});
+
+	if (server.healthy === false) return <UnavaibleServerPage />;
 
 	return (
 		<>
@@ -145,4 +150,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 		</>
 	);
 }
+
+MyApp.getInitialProps = async () => {
+	const client = ssrGraphqlClient();
+	const { data, error } = await client.query(healthQuery).toPromise();
+
+	return {
+		server: { healthy: error ? false : data?.health.healthy },
+	};
+};
+
 export default MyApp;

@@ -21,7 +21,7 @@ export const graphqlClient = createClient({
 	},
 });
 
-export const ssrGraphqlClient = (token: string) => {
+export const ssrGraphqlClient = (token: string = null) => {
 	const isServerSide = typeof window === 'undefined';
 
 	const ssr = ssrExchange({
