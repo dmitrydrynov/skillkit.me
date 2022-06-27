@@ -4,6 +4,8 @@ import { cacheExchange, createClient, dedupExchange, ssrExchange } from 'urql';
 
 declare const window: any;
 
+const API_URL = process.env.BACKEND_URL;
+
 export const graphqlClient = createClient({
 	url: process.env.NEXT_PUBLIC_BACKEND_URL || '',
 	exchanges: [dedupExchange, cacheExchange, multipartFetchExchange],

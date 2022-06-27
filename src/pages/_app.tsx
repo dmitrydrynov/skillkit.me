@@ -1,25 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { FC, ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { CookieConsent } from '@components/CookieConsent';
 import LoadingScreen from '@components/loadingScreen';
-import { getCookie, setCookie } from '@helpers/cookie';
-import { gtmEvent } from '@helpers/gtm';
 import PublicLayout from '@layouts/PublicLayout';
-import { graphqlClient, ssrGraphqlClient } from '@services/graphql/client';
-import { authenticatedUserQuery, signInByCodeQuery } from '@services/graphql/queries/auth';
-import { healthQuery } from '@services/graphql/queries/server';
-import { RootState, store } from '@store/configure-store';
-import { setLogin, setLoginingIn } from '@store/reducers/auth';
-import { setUserData } from '@store/reducers/user';
+import { graphqlClient } from '@services/graphql/client';
+import { store } from '@store/configure-store';
+import { appConfig } from 'src/config/app';
+import { AuthProvider } from 'src/providers/auth-provider';
 import ProgressBar from '@badrap/bar-of-progress';
 import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 import Script from 'next/script';
-import { Provider as StoreProvider, useDispatch, useSelector } from 'react-redux';
-import { Provider as UrqlProvider, useQuery } from 'urql';
+import { Provider as StoreProvider } from 'react-redux';
+import { Provider as UrqlProvider } from 'urql';
 import '@styles/globals.less';
-import UnavaibleServerPage from './503';
 
 export type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactNode) => ReactNode;
@@ -31,76 +26,10 @@ type AppPropsWithLayout = AppProps & {
 	server: { healthy: boolean };
 };
 
-const progress = new ProgressBar({
-	size: 2,
-	className: 'bar-of-progress',
-	delay: 100,
-	color: '#C057FF',
-});
-
-const AuthProvider: FC = ({ children }): any => {
-	const dispatch = useDispatch();
-	const { query: queryParams, push: routerPush } = useRouter();
-	const [sessionToken, setSessionToken] = useState<string | null>(null);
-	const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-	const [userDataByCode] = useQuery({
-		query: signInByCodeQuery,
-		variables: { code: queryParams.code, state: queryParams.state, serviceName: 'discord' },
-		pause: !queryParams?.code,
-	});
-	const [userData] = useQuery({
-		query: authenticatedUserQuery,
-		pause: !sessionToken && !loggedIn,
-	});
-
-	// If user already logged in set token
-	useEffect(() => {
-		if (process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
-			const token = getCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME);
-			setSessionToken(token);
-		}
-	}, []);
-
-	// If user on login process set loggining
-	useEffect(() => {
-		if (!!userData || !!userDataByCode) {
-			dispatch(setLoginingIn(userData?.fetching || userDataByCode?.fetching));
-		}
-	}, [userData, userDataByCode]);
-
-	// If user logged in through code variable set token
-	useEffect(() => {
-		if (userDataByCode.data) {
-			const { token } = userDataByCode.data.signInByCode;
-
-			if (token) {
-				setSessionToken(token);
-				setCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME, token);
-				gtmEvent('LoginEvent');
-			}
-		}
-	}, [userDataByCode]);
-
-	// If user logged in set init user data and redirect to user skills page
-	useEffect(() => {
-		const data = userData?.data?.authenticatedUser || userDataByCode?.data?.signInByCode;
-
-		if (data && sessionToken) {
-			dispatch(setLogin());
-			dispatch(setUserData(data));
-
-			if (userDataByCode?.data?.signInByCode) {
-				routerPush('/user/skills');
-			}
-		}
-	}, [sessionToken, userData, userDataByCode]);
-
-	return children;
-};
-
-function MyApp({ Component, pageProps, server }: AppPropsWithLayout) {
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const getLayout = Component.getLayout || ((page) => <PublicLayout>{page}</PublicLayout>);
 	const [loading, setLoading] = useState(true);
+	const progress = new ProgressBar(appConfig.progressBar);
 
 	useEffect(() => {
 		setLoading(false);
@@ -118,8 +47,6 @@ function MyApp({ Component, pageProps, server }: AppPropsWithLayout) {
 		progress.finish();
 		setLoading(false);
 	});
-
-	if (server.healthy === false) return <UnavaibleServerPage />;
 
 	return (
 		<>
@@ -150,14 +77,5 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 		</>
 	);
 }
-
-MyApp.getInitialProps = async () => {
-	const client = ssrGraphqlClient();
-	const { data, error } = await client.query(healthQuery).toPromise();
-
-	return {
-		server: { healthy: error ? false : data?.health.healthy },
-	};
-};
 
 export default MyApp;
