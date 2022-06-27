@@ -2,8 +2,6 @@
 /* eslint-disable @next/next/no-document-import-in-page */
 import React from 'react';
 import Document, { DocumentContext, Head, Html, Main, NextScript } from 'next/document';
-import { ssrGraphqlClient } from '@services/graphql/client';
-import { healthQuery } from '@services/graphql/queries/server';
 
 React.useLayoutEffect = React.useEffect;
 

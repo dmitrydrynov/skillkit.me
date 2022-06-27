@@ -7,6 +7,7 @@ import { gtmEvent } from '@helpers/gtm';
 import PublicLayout from '@layouts/PublicLayout';
 import { graphqlClient, ssrGraphqlClient } from '@services/graphql/client';
 import { authenticatedUserQuery, signInByCodeQuery } from '@services/graphql/queries/auth';
+import { healthQuery } from '@services/graphql/queries/server';
 import { RootState, store } from '@store/configure-store';
 import { setLogin, setLoginingIn } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
@@ -18,7 +19,6 @@ import Script from 'next/script';
 import { Provider as StoreProvider, useDispatch, useSelector } from 'react-redux';
 import { Provider as UrqlProvider, useQuery } from 'urql';
 import '@styles/globals.less';
-import { healthQuery } from '@services/graphql/queries/server';
 import UnavaibleServerPage from './503';
 
 export type NextPageWithLayout = NextPage & {
