@@ -4,6 +4,7 @@ import { InlineEdit } from '@components/InlineEdit';
 import SkillEditorMenu from '@components/menus/SkillEditorMenu';
 import AddUserFileModal from '@components/modals/AddUserFileModal';
 import EditUserFileModal from '@components/modals/EditUserFileModal';
+import SubSkillModal from '@components/modals/SubSkillModal';
 import UserJobModal from '@components/modals/UserJobModal';
 import UserSchoolModal from '@components/modals/UserSchoolModal';
 import UserToolModal from '@components/modals/UserToolModal';
@@ -59,6 +60,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const [width, setWidth] = useState(25);
 	const [selectedSkillId, setSelectedSkillId] = useState<number | null>(null);
 	const [visibleToolModal, setVisibleToolModal] = useState(false);
+	const [visibleSubSkillModal, setVisibleSubSkillModal] = useState(false);
 	const [editableUserTool, setEditableUserTool] = useState<number>(null);
 	const [visibleSchoolModal, setVisibleSchoolModal] = useState(false);
 	const [editableUserSchool, setEditableUserSchool] = useState<number>(null);
@@ -390,6 +392,21 @@ const SkillEditorPage: NextPageWithLayout = () => {
 									}
 								/>
 							</div>
+							<div className={styles.subSkillsSection}>
+								<div className={styles.headerContainer}>
+									<h2>This skill includes my following subskills</h2>
+									<Button
+										type="ghost"
+										shape="circle"
+										size="small"
+										icon={<PlusOutlined />}
+										onClick={() => {
+											setVisibleSubSkillModal(true);
+										}}
+									/>
+								</div>
+								{userToolsData?.userTools.length ? <>1</> : emptyData(`This skill is not complex`)}
+							</div>
 							<div className={styles.toolsSection}>
 								<div className={styles.headerContainer}>
 									<h2>I use for this</h2>
@@ -672,6 +689,15 @@ const SkillEditorPage: NextPageWithLayout = () => {
 				onCancel={() => {
 					setEditableUserTool(null);
 					setVisibleToolModal(false);
+				}}
+			/>
+			<SubSkillModal
+				userSkillId={skillId as string}
+				visible={visibleSubSkillModal}
+				recordId={editableUserTool}
+				onSave={handleSaveUserTool}
+				onCancel={() => {
+					setVisibleSubSkillModal(false);
 				}}
 			/>
 			<UserSchoolModal

@@ -64,6 +64,24 @@ query {
 }
 `;
 
+export const userSkillsWithChildrenQuery = `
+query {
+  userSkills(
+    orderBy: {
+      level: desc
+    }
+    hierarchy: true
+  ) {
+    id
+    skill { name }
+    children {
+      id
+      skill { name }
+    }
+  }
+}
+`;
+
 export const createUserSkillMutation = `
 mutation(
   $skillId: ID
