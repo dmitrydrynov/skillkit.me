@@ -3,16 +3,15 @@
 
 import React, { FC, createRef, useEffect, useState } from 'react';
 import { gtmEvent } from '@helpers/gtm';
-import { createSkillMutation, searchSkillsQuery } from '@services/graphql/queries/skill';
-import { createUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
-import { skillLevelsList } from 'src/definitions/skill';
-import { Button, Col, Form, Modal, Row, Select, Tooltip, message, AutoComplete, Alert } from 'antd';
+import { searchSkillsQuery } from '@services/graphql/queries/skill';
+import { createUserSkillMutation } from '@services/graphql/queries/userSkill';
+import { Button, Form, Modal, message } from 'antd';
 import { RefSelectProps } from 'antd/lib/select';
-import Image from 'next/image';
 import { useMutation, useQuery } from 'urql';
+import { AddUserSkillForm } from './AddUserSkillForm';
 import styles from './style.module.less';
 
-const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose, onFinish }) => {
+const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, onClose, onFinish }) => {
 	/** Local variables */
 	const skillRef = createRef<RefSelectProps>();
 	const [form] = Form.useForm();
@@ -27,15 +26,8 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose, onFin
 		pause: skillSearchQuery === null,
 		requestPolicy: 'network-only',
 	});
-	let [{ data: getUserSkillData }] = useQuery({
-		query: getUserSkillQuery,
-		variables: { id: recordId },
-		pause: true,
-		requestPolicy: 'network-only',
-	});
 
 	/** Mutations */
-	const [, addSkill] = useMutation(createSkillMutation);
 	const [addUserSkillResponse, addUserSkill] = useMutation(createUserSkillMutation);
 
 	useEffect(() => {
@@ -53,18 +45,6 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose, onFin
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [skillSearchQuery]);
-
-	useEffect(() => {
-		if (getUserSkillData?.userSkill) {
-			const { level, skill } = getUserSkillData.userSkill;
-
-			form.setFieldsValue({
-				skillName: skill.name,
-				level,
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [getUserSkillData]);
 
 	const handleOk = () => {
 		form.validateFields().then(async (formData: UserSkill) => {
@@ -123,91 +103,18 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, recordId, onClose, onFin
 					loading={addUserSkillResponse.fetching}
 					onClick={handleOk}
 					className={styles.submitBtn}
-					// disabled={fetching}
 				>
 					Save
 				</Button>,
 			]}
 		>
-			{/* <Spin spinning={addUserSkillResponse.fetching}> */}
-			<Form
-				className={styles.form}
+			<AddUserSkillForm
 				form={form}
-				layout="vertical"
-				name="form_in_modal"
-				initialValues={{ modifier: 'public' }}
-				requiredMark={false}
-			>
-				<Row>
-					<Col xs={{ span: 24 }} sm={{ span: 14 }}>
-						<Form.Item
-							name="skillName"
-							label="What can you do?"
-							rules={[
-								{
-									required: true,
-									message: 'Please input the skill name!',
-								},
-							]}
-						>
-							<AutoComplete
-								ref={skillRef}
-								showSearch
-								allowClear
-								defaultActiveFirstOption={false}
-								showArrow={false}
-								filterOption={false}
-								placeholder="Make something ..."
-								notFoundContent={null}
-								onSelect={(value, option) => setSelectedSkillId(option.key as number)}
-								onSearch={(value: string) => setSkillSearchQuery(value)}
-								onChange={() => setSelectedSkillId(null)}
-							>
-								{searchSkillData?.skills.map((d: any) => (
-									<AutoComplete.Option key={d.id} value={d.name}>
-										{d.name}
-									</AutoComplete.Option>
-								))}
-							</AutoComplete>
-						</Form.Item>
-					</Col>
-					<Col xs={{ span: 24 }} sm={{ span: 8, offset: 2 }}>
-						<Form.Item name="level" label="Level" rules={[{ required: true, message: 'Please input the email!' }]}>
-							<Select placeholder="Select">
-								{skillLevelsList.map((item, indx) => (
-									<Select.Option key={indx.toString()} value={item.label.toLowerCase()}>
-										<Tooltip title={item.description} placement="right">
-											<Image src={item.icon} alt="" /> {item.label}
-										</Tooltip>
-									</Select.Option>
-								))}
-							</Select>
-						</Form.Item>
-					</Col>
-				</Row>
-				<Alert
-					showIcon={false}
-					icon={null}
-					message={
-						<>
-							The name of your skill should be indicated as follows: the first word is a predicate (verb), the second is a
-							object (noun), the others are an attribute (the specifics of your skill).
-							<br />
-							<br />
-							Examples:
-							<br />
-							- Develop web applications for healthcare
-							<br />
-							- Find professionals for game development industry
-							<br />
-							- Play on the guitar the music of Jimi Hendrix
-							<br />
-						</>
-					}
-					banner
-				/>
-			</Form>
-			{/* </Spin> */}
+				searchSkillData={searchSkillData}
+				onSelectSkill={(value, option) => setSelectedSkillId(option.key as number)}
+				onSearchSkill={(value: string) => setSkillSearchQuery(value)}
+				onChangeSkill={() => setSelectedSkillId(null)}
+			/>
 		</Modal>
 	);
 };

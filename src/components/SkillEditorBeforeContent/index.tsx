@@ -126,9 +126,9 @@ const SkillEditorBeforeContent = () => {
 						<Button key="ConfigKey" type="ghost" size="small" onClick={() => setShowShareConfigModal(true)}>
 							<GoGear size={18} />
 						</Button>,
-						<>
+						<div key="viewModeKey">
 							{isPublished && (
-								<Space key="viewModeKey">
+								<Space>
 									{screens.sm && <div>View Mode</div>}
 									{selectedViewMode && (
 										<Select
@@ -153,24 +153,19 @@ const SkillEditorBeforeContent = () => {
 									)}
 								</Space>
 							)}
-						</>,
-						<>
+						</div>,
+						<div key="publishButton">
 							{!isPublished ? (
-								<Button key="1" type="primary" onClick={handlePublishBtn}>
+								<Button type="primary" onClick={handlePublishBtn}>
 									Publish
 								</Button>
 							) : (
-								<Button
-									key="1"
-									type="primary"
-									onClick={handleViewUserSkill}
-									style={{ display: 'inline-flex', alignItems: 'center' }}
-								>
+								<Button type="primary" onClick={handleViewUserSkill} style={{ display: 'inline-flex', alignItems: 'center' }}>
 									View <BiLinkExternal style={{ marginLeft: '8px' }} />
 								</Button>
 							)}
-						</>,
-						<>
+						</div>,
+						<div key="copyPutton">
 							{isPublished && navigator.clipboard && window.isSecureContext && (
 								<Tooltip key="2" title="Copy link">
 									<Button type="text" shape="circle" size="small" onClick={handleCopyShareLink}>
@@ -178,7 +173,7 @@ const SkillEditorBeforeContent = () => {
 									</Button>
 								</Tooltip>
 							)}
-						</>,
+						</div>,
 					]}
 				/>
 			</div>

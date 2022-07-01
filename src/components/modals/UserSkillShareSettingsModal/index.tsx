@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import { getErrorMessage } from '@helpers/errors';
 import { createUserToolMutation, getUserToolQuery, updateUserToolMutation } from '@services/graphql/queries/userTool';
-import { Form, message, Modal, Spin } from 'antd';
+import { Modal, Spin } from 'antd';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
@@ -25,7 +24,7 @@ const UserSkillShareSettingsModal = ({
 	recordId = null,
 	visible = false,
 }: _ModalParams) => {
-	const [form] = Form.useForm();
+	// const [form] = Form.useForm();
 	const [, createUserTool] = useMutation(createUserToolMutation);
 	const [, updateUserTool] = useMutation(updateUserToolMutation);
 	const [{ data, fetching }] = useQuery({
@@ -37,40 +36,37 @@ const UserSkillShareSettingsModal = ({
 
 	useEffect(() => {
 		if (visible === false) {
-			form.resetFields();
+			// form.resetFields();
 		}
 	}, [visible]);
 
 	useEffect(() => {
 		if (data) {
-			form.setFieldsValue({
-				title: data.userTool.title,
-				description: data.userTool.description,
-			});
+			// form.setFieldsValue({
+			// 	title: data.userTool.title,
+			// 	description: data.userTool.description,
+			// });
 		}
 	}, [data]);
 
 	const handleUpdate = async () => {
-		const { description }: _FormData = await form.validateFields();
-
-		try {
-			const { data, error } = await updateUserTool({
-				recordId,
-				data: {
-					description: description ? description : null,
-				},
-			});
-
-			if (error) {
-				message.error(getErrorMessage(error));
-				return;
-			}
-
-			onSave(data);
-			form.resetFields();
-		} catch (error: any) {
-			message.error(error.message);
-		}
+		// const { description }: _FormData = await form.validateFields();
+		// try {
+		// 	const { data, error } = await updateUserTool({
+		// 		recordId,
+		// 		data: {
+		// 			description: description ? description : null,
+		// 		},
+		// 	});
+		// 	if (error) {
+		// 		message.error(getErrorMessage(error));
+		// 		return;
+		// 	}
+		// 	onSave(data);
+		// 	form.resetFields();
+		// } catch (error: any) {
+		// 	message.error(error.message);
+		// }
 	};
 
 	return (

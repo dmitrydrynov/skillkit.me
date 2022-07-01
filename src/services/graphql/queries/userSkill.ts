@@ -8,6 +8,18 @@ query($id: ID!) {
     id
     description
     isDraft
+    isComplexSkill
+    subSkills {
+      id
+      skill { id name }
+      isDraft
+      viewMode
+      level
+      experience {
+        years
+        months
+      }
+    }
     level
     skill {
     	id
@@ -15,6 +27,24 @@ query($id: ID!) {
   	}
     updatedAt
     shareLink
+  }
+}
+`;
+
+export const getSubSkillsQuery = `
+query($id: ID!) {
+  userSkill(
+    where: {
+      id: $id
+    }
+  ) {
+    id
+    isComplexSkill
+    subSkills {
+      id
+      skill { id name }
+      isDraft
+    }
   }
 }
 `;
@@ -34,13 +64,20 @@ query($id: ID!) {
     skill {
       name
     }
+    isComplexSkill
+    subSkills {
+      id
+      skill { id name }
+      isDraft
+    }
   }
 }
 `;
 
 export const userSkillsQuery = `
-query {
+query($where: UserSkillWhereInput) {
   userSkills(
+    where: $where
     orderBy: {
       level: desc
     }
@@ -50,6 +87,7 @@ query {
       id
       name
     }
+    isComplexSkill
     level
     isDraft
     experience {
@@ -64,19 +102,49 @@ query {
 }
 `;
 
-export const userSkillsWithChildrenQuery = `
-query {
-  userSkills(
-    orderBy: {
-      level: desc
+export const addSubSkillsMutation = `
+mutation(
+  $userSkillId: ID!
+  $subSkills: [ID!]
+) {
+  addSubSkills(
+    where: {
+      id: $userSkillId
     }
-    hierarchy: true
+    subSkills: $subSkills
   ) {
-    id
-    skill { name }
-    children {
-      id
-      skill { name }
+    id 
+    isComplexSkill 
+    subSkills { 
+      id 
+      skill { 
+        id 
+        name 
+      }
+    }
+  }
+}
+`;
+
+export const deleteSubSkillMutation = `
+mutation(
+  $userSkillId: ID!
+  $subSkillId: ID!
+) {
+  deleteSubSkill(
+    where: {
+      id: $userSkillId
+    }
+    subSkillId: $subSkillId
+  ) {
+    id 
+    isComplexSkill 
+    subSkills { 
+      id 
+      skill { 
+        id
+        name 
+      }
     }
   }
 }

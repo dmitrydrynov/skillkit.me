@@ -1,7 +1,6 @@
 /* eslint-disable unused-imports/no-unused-vars */
 type AddSkillArgs = {
 	visible: boolean;
-	recordId?: string | null;
 	onClose: () => void;
 	onFinish: () => void;
 };

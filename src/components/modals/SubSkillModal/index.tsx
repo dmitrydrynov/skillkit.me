@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { getErrorMessage } from '@helpers/errors';
-import { getBase64WithPromise } from '@helpers/file';
 import { capitalizedText } from '@helpers/text';
-import { createUserFileMutation } from '@services/graphql/queries/userFile';
-import { userSkillsWithChildrenQuery } from '@services/graphql/queries/userSkill';
+import { searchSkillsQuery } from '@services/graphql/queries/skill';
+import { addSubSkillsMutation, createUserSkillMutation, userSkillsQuery } from '@services/graphql/queries/userSkill';
 import { Modal, Spin, Tabs, Form, message, TreeSelect } from 'antd';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
+import { AddUserSkillForm } from '../AddUserSkillModal/AddUserSkillForm';
 
 type _ModalParams = {
-	onSave(action: 'create' | 'update', data: any): void;
+	onSave(action: 'create' | 'update', data?: any): void;
 	onCancel(): void;
 	visible?: boolean;
-	recordId?: number;
-	userSkillId: number | string;
+	userSkill: any;
 };
 
 type _FormData = {
-	subSkills: number[];
+	subSkills?: number[];
+	level?: string;
+	skillName?: string;
 };
 
 enum _ActionEnum {
@@ -25,26 +26,54 @@ enum _ActionEnum {
 	'SelectFromList',
 }
 
-const SubSkillModal = ({ onSave, onCancel, userSkillId, recordId = null, visible = false }: _ModalParams) => {
+const SubSkillModal = ({ onSave, onCancel, userSkill, visible = false }: _ModalParams) => {
+	/** Local variables */
 	const [form] = Form.useForm();
+	/** Local state */
 	const [selectedAction, setSelectedAction] = useState(_ActionEnum.SelectFromList);
-	const [fileLoading, setFileLoading] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
-	// const [fileUrl, setFileUrl] = useState(null);
-	const [selectedFile, setSelectedFile] = useState<any>();
-	const [previewState, setPreviewState] = useState({
-		visible: false,
-		title: 'Unknown name',
+	const [skillSearchQuery, setSkillSearchQuery] = useState(null);
+	const [selectedSkillId, setSelectedSkillId] = useState<number>();
+	const [userSkillsList, setUserSkillsList] = useState([]);
+	/** Queries */
+	let [{ data: searchSkillData }, searchSkills] = useQuery({
+		query: searchSkillsQuery,
+		variables: { search: skillSearchQuery },
+		pause: skillSearchQuery === null,
+		requestPolicy: 'network-only',
 	});
-	const [showUploadBtn, setShowUploadBtn] = useState(true);
-	const [, createUserFile] = useMutation(createUserFileMutation);
-	const [userSkills] = useQuery({ query: userSkillsWithChildrenQuery, pause: !visible && !userSkillId });
-	const [userSkillsTree, setUserSkillsTree] = useState([]);
+	const [userSkills] = useQuery({
+		query: userSkillsQuery,
+		variables: {
+			where: {
+				id: { notIn: [userSkill?.id].concat(userSkill?.subSkills?.map((r) => r.id)) },
+			},
+		},
+		pause: !visible || !userSkill,
+		requestPolicy: 'network-only',
+	});
+	/** Mutations */
+	const [addUserSkillResponse, addUserSkill] = useMutation(createUserSkillMutation);
+	const [, addSubSkills] = useMutation(addSubSkillsMutation);
 
 	useEffect(() => {
-		const _tree = [];
+		form.resetFields();
+		setSelectedSkillId(null);
+		setSkillSearchQuery(null);
+	}, [visible]);
+
+	useEffect(() => {
+		if (!skillSearchQuery) return;
+
+		(async () => {
+			await searchSkills();
+		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [skillSearchQuery]);
+
+	useEffect(() => {
 		if (userSkills.data) {
-			setUserSkillsTree(prepareUserSkillData(userSkills.data.userSkills));
+			setUserSkillsList(prepareUserSkillData(userSkills.data.userSkills));
 		}
 	}, [userSkills]);
 
@@ -55,100 +84,102 @@ const SubSkillModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 					title: capitalizedText(item.skill.name),
 					value: item.id,
 					key: item.id,
-					children: prepareUserSkillData(item?.children),
 				};
 			});
 
 		return [];
 	};
 
-	const handleCreate = async () => {
-		const { title, description, uploadFile, link }: _FormData = await form.validateFields();
-
-		setSubmitting(true);
-
+	const handleSave = async () => {
 		try {
-			let createData: any = {
-				data: {
-					attachTo: 'userSkill',
-					attachId: userSkillId,
-					title,
-					description: description ? description : null,
-				},
-			};
+			setSubmitting(true);
 
-			if (link) {
-				createData.data.url = link;
-				createData.data.type = 'LINK';
-			}
+			if (selectedAction == _ActionEnum.SelectFromList) {
+				const { subSkills }: _FormData = await form.validateFields();
+				const { data, error } = await addSubSkills({
+					userSkillId: userSkill.id,
+					subSkills,
+				});
 
-			if (uploadFile && uploadFile.length) {
-				createData.data.file = uploadFile[0].originFileObj;
-				createData.data.type = 'FILE';
-			}
+				if (error) {
+					message.error(getErrorMessage(error));
+					setSubmitting(false);
+					return;
+				}
 
-			const { data, error } = await createUserFile(createData);
-
-			if (error) {
-				message.error(getErrorMessage(error));
+				onSave('update');
+				form.resetFields();
 				setSubmitting(false);
-				return;
 			}
 
-			onSave('create', data.createUserFile);
-			resetModalData();
-			setSubmitting(false);
+			if (selectedAction == _ActionEnum.AddNew) {
+				const { skillName, level }: _FormData = await form.validateFields();
+
+				const { data: _newUserSkillData, error: _newUserSkillError } = await addUserSkill({
+					skillId: selectedSkillId,
+					skillName: skillName.trim().toLowerCase(),
+					level: level.toUpperCase(),
+				});
+
+				if (_newUserSkillError) {
+					setSelectedSkillId(null);
+					setSkillSearchQuery(null);
+					addUserSkillResponse.fetching = false;
+
+					const err = _newUserSkillError.message?.split(']');
+					form.setFields([
+						{
+							name: 'skillName',
+							errors: [err[1].trim()],
+						},
+					]);
+
+					setSubmitting(false);
+					return;
+				}
+
+				const { data: _addSubSkillsData, error: _addSubSkillsError } = await addSubSkills({
+					userSkillId: userSkill.id,
+					subSkills: [_newUserSkillData.createUserSkill.id],
+				});
+
+				if (_addSubSkillsError) {
+					message.error(getErrorMessage(_addSubSkillsError));
+					setSubmitting(false);
+					return;
+				}
+
+				// gtmEvent('NewUserSkillEvent', { skillName, skillLevel: level });
+
+				setSkillSearchQuery(null);
+				setSelectedSkillId(null);
+				onSave('create');
+				form.resetFields();
+				setSubmitting(false);
+			}
 		} catch (error) {
 			message.error(error.message);
 			setSubmitting(false);
 		}
 	};
 
-	const handleFileChange = async ({ file }: any) => {
-		if (file && file.status === 'uploading') {
-			setFileLoading(true);
-			setShowUploadBtn(false);
-			const src = await getBase64WithPromise(file.originFileObj);
-
-			setSelectedFile({
-				name: file.name,
-				url: src,
-			});
-		}
-		if (file.status === 'done') {
-			setFileLoading(false);
-		}
-	};
-
-	const resetModalData = () => {
-		form.resetFields();
-		setShowUploadBtn(true);
-		setSelectedAction(_ActionEnum.SelectFromList);
-		setSelectedFile(null);
-	};
-
-	const handleFilePreview = async (file) => {
-		setPreviewState({
-			visible: true,
-			title: file.name,
-		});
-	};
-
 	return (
 		<Modal
 			title="Add subskills"
 			visible={visible}
-			onOk={() => handleCreate()}
+			onOk={() => handleSave()}
 			onCancel={() => {
 				onCancel();
-				resetModalData();
+				form.resetFields();
 			}}
 			width={650}
 			centered
+			okText="Save"
 			maskClosable={false}
 			className={styles.modal}
 			destroyOnClose={true}
 			confirmLoading={submitting}
+			okButtonProps={{ disabled: selectedAction == _ActionEnum.SelectFromList && userSkillsList.length === 0 }}
 		>
 			<Spin spinning={submitting}>
 				<Form form={form} layout="vertical" name="add_example_link_form" requiredMark={false}>
@@ -159,7 +190,6 @@ const SubSkillModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 						onTabClick={(selectedKey) => {
 							setSelectedAction(selectedKey as unknown as _ActionEnum);
 							form.resetFields();
-							setShowUploadBtn(true);
 						}}
 					>
 						<Tabs.TabPane tab={`Select from list`} key={_ActionEnum.SelectFromList}>
@@ -167,7 +197,7 @@ const SubSkillModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 								<>
 									<Form.Item
 										name="subSkills"
-										label="Subskills"
+										label="Your skills"
 										rules={[
 											{
 												required: true,
@@ -176,12 +206,14 @@ const SubSkillModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 										]}
 									>
 										<TreeSelect
-											treeData={userSkillsTree}
+											treeData={userSkillsList}
+											disabled={userSkillsList.length === 0}
 											treeCheckable
 											allowClear
 											showSearch
-											showCheckedStrategy="SHOW_PARENT"
-											placeholder="Please select"
+											placement="topLeft"
+											showArrow={false}
+											placeholder={userSkillsList.length === 0 ? 'No skills available' : 'Please select'}
 											filterTreeNode={(search, item) => {
 												const title = item.title as string;
 												return title.toLowerCase().indexOf(search.toLowerCase()) >= 0;
@@ -192,7 +224,17 @@ const SubSkillModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 							)}
 						</Tabs.TabPane>
 						<Tabs.TabPane tab={`Add new`} key={_ActionEnum.AddNew}>
-							{selectedAction == _ActionEnum.AddNew && <>In development</>}
+							{selectedAction == _ActionEnum.AddNew && (
+								<>
+									<AddUserSkillForm
+										form={form}
+										searchSkillData={searchSkillData}
+										onSelectSkill={(value, option) => setSelectedSkillId(option.key as number)}
+										onSearchSkill={(value: string) => setSkillSearchQuery(value)}
+										onChangeSkill={() => setSelectedSkillId(null)}
+									/>
+								</>
+							)}
 						</Tabs.TabPane>
 					</Tabs>
 				</Form>
