@@ -327,6 +327,11 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const handleDeleteSubSkill = async (item) => {
 		try {
 			const deletedItems = await deleteSubSkill({ userSkillId: userSkillData?.userSkill.id, subSkillId: item.id });
+
+			if (deletedItems.error) {
+				throw Error(deletedItems.error.message);
+			}
+
 			if (deletedItems) {
 				message.success(
 					<>
