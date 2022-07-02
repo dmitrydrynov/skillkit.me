@@ -3452,10 +3452,10 @@ react-hook-form@^7.14.2:
   resolved "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.14.2.tgz"
   integrity sha512-32uvgKkaE/0vOncfnJdwQhfahhocPpcb5c7F4j9Eq7dOnqS2Hg8h70Bmt6KXb6veLSWJultc1+ik9QSfqXFmLA==
 
-react-icons@^4.3.1:
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.3.1.tgz#2fa92aebbbc71f43d2db2ed1aed07361124e91ca"
-  integrity sha512-cB10MXLTs3gVuXimblAdI71jrJx8njrJZmNMEMC+sQu5B/BIOmlsAjskdqpn81y8UBVEGuHODd7/ci5DvoSzTQ==
+react-icons@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.4.0.tgz#a13a8a20c254854e1ec9aecef28a95cdf24ef703"
+  integrity sha512-fSbvHeVYo/B5/L4VhB7sBA1i2tS8MkT0Hb9t2H1AVPkwGfVHLJCqyr2Py9dKMxsyM63Eng1GkdZfbWj+Fmv8Rg==
 
 react-images@^0.5.16:
   version "0.5.19"
@@ -3518,6 +3518,13 @@ react-resizable@^3.0.4:
   dependencies:
     prop-types "15.x"
     react-draggable "^4.0.3"
+
+react-reveal@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/react-reveal/-/react-reveal-1.2.2.tgz#f47fbc44debc4c185ae2163a215a9e822c7adfef"
+  integrity sha512-JCv3fAoU6Z+Lcd8U48bwzm4pMZ79qsedSXYwpwt6lJNtj/v5nKJYZZbw3yhaQPPgYePo3Y0NOCoYOq/jcsisuw==
+  dependencies:
+    prop-types "^15.5.10"
 
 react-router-dom@^6.2.1:
   version "6.2.1"

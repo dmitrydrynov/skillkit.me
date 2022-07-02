@@ -19,6 +19,7 @@ import {
 	Skeleton,
 	Space,
 	Table,
+	Tooltip,
 	Typography,
 } from 'antd';
 import moment from 'moment';
@@ -30,6 +31,7 @@ import { HiDotsVertical } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
+import { TbArrowsJoin } from 'react-icons/tb';
 
 const { useBreakpoint } = Grid;
 const AddUserSkillModal = dynamic(() => import('@components/modals/AddUserSkillModal'), { ssr: false });
@@ -191,7 +193,14 @@ const ProfilePage: NextPageWithLayout = () => {
 												strokeWidth={12}
 											/>
 											<div style={{ lineHeight: 'initial' }}>
-												<Typography.Text strong>{capitalizedText(value)}</Typography.Text>
+												<Space align="center">
+													{data.isComplexSkill && (
+														<Tooltip title="This is complex skill">
+															<TbArrowsJoin color="#adadad" style={{ display: 'block' }} />
+														</Tooltip>
+													)}
+													<Typography.Text strong>{capitalizedText(value)}&nbsp;{data.isDraft && <span className={styles.isDraftText}>(draft)</span>}</Typography.Text>
+												</Space>
 												<br />
 												<Typography.Text type="secondary" style={{ fontSize: 12 }}>
 													{capitalizedText(level.label)}

@@ -25,6 +25,7 @@ import {
 	UserSkillViewModeEnum,
 } from 'src/definitions/skill';
 import { DeleteOutlined, EditOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
+import { TbArrowsJoin } from 'react-icons/tb';
 import {
 	Alert,
 	AutoComplete,
@@ -472,7 +473,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 												>
 													<List.Item.Meta
 														avatar={
-															<Tooltip title={level.description} placement="right">
+															<Tooltip title={level.description}>
 																<Progress
 																	type="circle"
 																	percent={level.index * 20}
@@ -485,7 +486,14 @@ const SkillEditorPage: NextPageWithLayout = () => {
 														}
 														title={
 															<div style={{ lineHeight: 'initial' }}>
-																<Typography.Text strong>{capitalizedText(item.skill.name)}</Typography.Text>
+																<Space align="center">
+																	{item.isComplexSkill && (
+																		<Tooltip title="This is complex skill">
+																			<TbArrowsJoin color="#adadad" style={{ display: 'block' }} />
+																		</Tooltip>
+																	)}
+																	<Typography.Text strong>{capitalizedText(item.skill.name)}</Typography.Text>
+																</Space>
 																<br />
 																<Typography.Text type="secondary" style={{ fontSize: 12 }}>
 																	{experienceAsText(item.experience)}
