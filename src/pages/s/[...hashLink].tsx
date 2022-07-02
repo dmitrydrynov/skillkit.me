@@ -11,14 +11,13 @@ import { Col, Progress, Row, Button, Space, Timeline, Badge, Popover, message, L
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { BiMailSend } from 'react-icons/bi';
 import { FaInfoCircle } from 'react-icons/fa';
 import { FiMail, FiSmartphone } from 'react-icons/fi';
+import { TbArrowNarrowLeft, TbArrowNarrowRight, TbArrowsJoin } from 'react-icons/tb';
 import countryList from 'react-select-country-list';
 import styles from './style.module.less';
-import { TbArrowNarrowLeft, TbArrowNarrowRight, TbArrowsJoin } from 'react-icons/tb';
-import { useRouter } from 'next/router';
-import Slide from 'react-reveal/Slide';
 
 const ReactViewer = dynamic(() => import('react-viewer'), { ssr: false });
 

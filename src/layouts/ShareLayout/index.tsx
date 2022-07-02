@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import skillKitLogo from '@assets/images/skillkit-logo.svg';
-import { UserSkillViewModeEnum } from 'src/definitions/skill';
 import { Button, Col, Layout, Row } from 'antd';
 import Image from 'next/image';
 import styles from './ShareLayout.module.less';
