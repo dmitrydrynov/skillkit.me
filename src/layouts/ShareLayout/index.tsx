@@ -7,12 +7,9 @@ import styles from './ShareLayout.module.less';
 
 const { Header, Content, Footer } = Layout;
 
-type ShareLayoutParams = {
-	title: string;
-	viewMode: UserSkillViewModeEnum;
-};
+type ShareLayoutParams = {};
 
-const ShareLayout: FC<ShareLayoutParams> = ({ children, title, viewMode }) => {
+const ShareLayout: FC<ShareLayoutParams> = ({ children }) => {
 	return (
 		<>
 			<Layout className={styles.layout}>

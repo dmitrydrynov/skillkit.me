@@ -15,6 +15,7 @@ query($id: ID!) {
       isDraft
       viewMode
       level
+      isComplexSkill
       experience {
         years
         months
@@ -69,6 +70,7 @@ query($id: ID!) {
       id
       skill { id name }
       isDraft
+      isComplexSkill
     }
   }
 }
@@ -143,7 +145,7 @@ mutation(
       id 
       skill { 
         id
-        name 
+        name
       }
     }
   }
@@ -258,6 +260,19 @@ query($hash: String!) {
       publishedAt
       createdAt
       shareLink
+      isComplexSkill
+      subSkills {
+        id
+        level
+        viewMode
+        shareLink
+        isComplexSkill
+        skill { name }
+        experience {
+          years
+          months
+        }
+      }
       tools {
         title
         description

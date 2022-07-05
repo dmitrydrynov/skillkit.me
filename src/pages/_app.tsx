@@ -29,22 +29,23 @@ type AppPropsWithLayout = AppProps & {
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const getLayout = Component.getLayout || ((page) => <PublicLayout>{page}</PublicLayout>);
 	const [loading, setLoading] = useState(true);
-	const progress = new ProgressBar(appConfig.progressBar);
+	const [progress, setProgress] = useState(null);
 
 	useEffect(() => {
+		setProgress(new ProgressBar(appConfig.progressBar));
 		setLoading(false);
 	}, []);
 
 	Router.events.on('routeChangeStart', () => {
-		progress.start();
+		progress?.start();
 		setLoading(true);
 	});
 	Router.events.on('routeChangeComplete', () => {
-		progress.finish();
+		progress?.finish();
 		setLoading(false);
 	});
 	Router.events.on('routeChangeError', () => {
-		progress.finish();
+		progress?.finish();
 		setLoading(false);
 	});
 
