@@ -16,7 +16,7 @@ export const capitalizedText = (text: string) => {
 };
 
 export const experienceAsText = (experience: { months: number; years: number }): string => {
-	let response = "No experience data";
+	let response = 'No experience data';
 
 	if (experience.years === 0 && experience.months > 0) {
 		response = `Less than a year`;

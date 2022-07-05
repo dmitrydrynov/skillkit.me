@@ -25,7 +25,6 @@ import {
 	UserSkillViewModeEnum,
 } from 'src/definitions/skill';
 import { DeleteOutlined, EditOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
-import { TbArrowsJoin } from 'react-icons/tb';
 import {
 	Alert,
 	AutoComplete,
@@ -55,6 +54,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { BiLinkAlt, BiWorld } from 'react-icons/bi';
 import { FiEyeOff } from 'react-icons/fi';
+import { TbArrowsJoin } from 'react-icons/tb';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 

@@ -28,10 +28,10 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { HiDotsVertical } from 'react-icons/hi';
+import { TbArrowsJoin } from 'react-icons/tb';
 import { useSelector } from 'react-redux';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
-import { TbArrowsJoin } from 'react-icons/tb';
 
 const { useBreakpoint } = Grid;
 const AddUserSkillModal = dynamic(() => import('@components/modals/AddUserSkillModal'), { ssr: false });
@@ -199,7 +199,9 @@ const ProfilePage: NextPageWithLayout = () => {
 															<TbArrowsJoin color="#adadad" style={{ display: 'block' }} />
 														</Tooltip>
 													)}
-													<Typography.Text strong>{capitalizedText(value)}&nbsp;{data.isDraft && <span className={styles.isDraftText}>(draft)</span>}</Typography.Text>
+													<Typography.Text strong>
+														{capitalizedText(value)}&nbsp;{data.isDraft && <span className={styles.isDraftText}>(draft)</span>}
+													</Typography.Text>
 												</Space>
 												<br />
 												<Typography.Text type="secondary" style={{ fontSize: 12 }}>

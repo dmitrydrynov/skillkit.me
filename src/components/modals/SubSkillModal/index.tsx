@@ -47,7 +47,7 @@ const SubSkillModal = ({ onSave, onCancel, userSkill, visible = false }: _ModalP
 		variables: {
 			where: {
 				id: { notIn: [userSkill?.id].concat(userSkill?.subSkills?.map((r) => r.id)) },
-        isDraft: false,
+				isDraft: false,
 			},
 		},
 		pause: !visible || !userSkill,
@@ -59,7 +59,7 @@ const SubSkillModal = ({ onSave, onCancel, userSkill, visible = false }: _ModalP
 
 	useEffect(() => {
 		form.resetFields();
-    setSelectedAction(_ActionEnum.SelectFromList)
+		setSelectedAction(_ActionEnum.SelectFromList);
 		setSelectedSkillId(null);
 		setSkillSearchQuery(null);
 	}, [visible]);
