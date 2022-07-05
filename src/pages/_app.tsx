@@ -29,22 +29,23 @@ type AppPropsWithLayout = AppProps & {
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const getLayout = Component.getLayout || ((page) => <PublicLayout>{page}</PublicLayout>);
 	const [loading, setLoading] = useState(true);
-	const progress = new ProgressBar(appConfig.progressBar);
+	const [progress, setProgress] = useState(null);
 
 	useEffect(() => {
+		setProgress(new ProgressBar(appConfig.progressBar));
 		setLoading(false);
 	}, []);
 
 	Router.events.on('routeChangeStart', () => {
-		progress.start();
+		progress?.start();
 		setLoading(true);
 	});
 	Router.events.on('routeChangeComplete', () => {
-		progress.finish();
+		progress?.finish();
 		setLoading(false);
 	});
 	Router.events.on('routeChangeError', () => {
-		progress.finish();
+		progress?.finish();
 		setLoading(false);
 	});
 
@@ -57,7 +58,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 							{getLayout(
 								<>
 									{
-										<Script id="google-tag-manager" strategy="afterInteractive">
+										<Script id="google-tag-manager" strategy="beforeInteractive">
 											{`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=

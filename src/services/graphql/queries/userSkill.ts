@@ -8,6 +8,19 @@ query($id: ID!) {
     id
     description
     isDraft
+    isComplexSkill
+    subSkills {
+      id
+      skill { id name }
+      isDraft
+      viewMode
+      level
+      isComplexSkill
+      experience {
+        years
+        months
+      }
+    }
     level
     skill {
     	id
@@ -15,6 +28,24 @@ query($id: ID!) {
   	}
     updatedAt
     shareLink
+  }
+}
+`;
+
+export const getSubSkillsQuery = `
+query($id: ID!) {
+  userSkill(
+    where: {
+      id: $id
+    }
+  ) {
+    id
+    isComplexSkill
+    subSkills {
+      id
+      skill { id name }
+      isDraft
+    }
   }
 }
 `;
@@ -34,13 +65,21 @@ query($id: ID!) {
     skill {
       name
     }
+    isComplexSkill
+    subSkills {
+      id
+      skill { id name }
+      isDraft
+      isComplexSkill
+    }
   }
 }
 `;
 
 export const userSkillsQuery = `
-query {
+query($where: UserSkillWhereInput) {
   userSkills(
+    where: $where
     orderBy: {
       level: desc
     }
@@ -50,6 +89,7 @@ query {
       id
       name
     }
+    isComplexSkill
     level
     isDraft
     experience {
@@ -60,6 +100,54 @@ query {
     createdAt
     updatedAt
     shareLink
+  }
+}
+`;
+
+export const addSubSkillsMutation = `
+mutation(
+  $userSkillId: ID!
+  $subSkills: [ID!]
+) {
+  addSubSkills(
+    where: {
+      id: $userSkillId
+    }
+    subSkills: $subSkills
+  ) {
+    id 
+    isComplexSkill 
+    subSkills { 
+      id 
+      skill { 
+        id 
+        name 
+      }
+    }
+  }
+}
+`;
+
+export const deleteSubSkillMutation = `
+mutation(
+  $userSkillId: ID!
+  $subSkillId: ID!
+) {
+  deleteSubSkill(
+    where: {
+      id: $userSkillId
+    }
+    subSkillId: $subSkillId
+  ) {
+    id 
+    isComplexSkill 
+    subSkills { 
+      id 
+      skill { 
+        id
+        name
+      }
+    }
   }
 }
 `;
@@ -172,6 +260,19 @@ query($hash: String!) {
       publishedAt
       createdAt
       shareLink
+      isComplexSkill
+      subSkills {
+        id
+        level
+        viewMode
+        shareLink
+        isComplexSkill
+        skill { name }
+        experience {
+          years
+          months
+        }
+      }
       tools {
         title
         description

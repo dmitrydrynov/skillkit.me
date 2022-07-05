@@ -1,19 +1,21 @@
-import { ReactElement, useMemo, useState } from 'react';
+import { ReactElement, useEffect, useMemo, useState } from 'react';
 import FileGallery from '@components/FileGallery';
 import SendEmailModal from '@components/modals/SendEmailModal';
-import { capitalizedText, readyText } from '@helpers/text';
+import { capitalizedText, experienceAsText, readyText } from '@helpers/text';
 import ShareLayout from '@layouts/ShareLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { ssrGraphqlClient } from '@services/graphql/client';
 import { getUserSkillForShareQuery } from '@services/graphql/queries/userSkill';
 import { UserSkillViewModeEnum, getSkillLevel } from 'src/definitions/skill';
-import { Col, Progress, Row, Button, Space, Timeline, Badge, Popover, message } from 'antd';
+import { Col, Progress, Row, Button, Space, Timeline, Badge, Popover, message, List, Tooltip, Typography } from 'antd';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { BiMailSend } from 'react-icons/bi';
 import { FaInfoCircle } from 'react-icons/fa';
 import { FiMail, FiSmartphone } from 'react-icons/fi';
+import { TbArrowNarrowLeft, TbArrowNarrowRight, TbArrowsJoin } from 'react-icons/tb';
 import countryList from 'react-select-country-list';
 import styles from './style.module.less';
 
@@ -26,11 +28,23 @@ const UserSkillSharePage: NextPageWithLayout = ({
 	path,
 	hashLink,
 }: any) => {
+	const router = useRouter();
 	const country = useMemo(() => (userData?.country ? countryList().getLabel(userData.country.toLowerCase()) : null), []);
 	const level = getSkillLevel(userSkillData.level);
+	const [historyLinks, setHistoryLinks] = useState(hashLink);
 	const [viewerVisible, setViewerVisible] = useState(false);
 	const [selectedImage, setSelectedImage] = useState(null);
+	const [visibleBackBar, setVisibleBackBar] = useState(false);
+	const [inTransitionProp, setInTransitionProp] = useState(false);
 	const [visibleSendEmailModal, setVisibleSendEmailModal] = useState(false);
+
+	useEffect(() => {
+		console.log('start', hashLink);
+
+		if (hashLink.length > 1) {
+			setVisibleBackBar(true);
+		}
+	}, [hashLink]);
 
 	const experience = (): number => {
 		if (userSkillData.experience) {
@@ -38,6 +52,38 @@ const UserSkillSharePage: NextPageWithLayout = ({
 		}
 
 		return 0;
+	};
+
+	const handleSubSkillClick = (item) => {
+		if (!item.shareLink) {
+			message.error('This link wrong. Sorry :(');
+			return;
+		}
+
+		const { pathname: subSkillPath } = new URL(item.shareLink);
+		const match = subSkillPath.match(/^\/s\/([\w]*)/);
+		const subSkillHaskLink = match[1];
+
+		router.push({ pathname: '/s/[...hashLink]', query: { hashLink: [...hashLink, subSkillHaskLink] } });
+	};
+
+	const handleBack = () => {
+		let _hashLink = hashLink;
+
+		if (_hashLink.length < 2) {
+			message.error('This link wrong. Sorry :(');
+			return;
+		}
+
+		_hashLink = _hashLink.slice(0, -1);
+
+		if (_hashLink.length < 2) {
+			setVisibleBackBar(false);
+		}
+
+		console.log('to', _hashLink);
+
+		router.push({ pathname: '/s/[...hashLink]', query: { hashLink: _hashLink } });
 	};
 
 	return (
@@ -68,6 +114,13 @@ const UserSkillSharePage: NextPageWithLayout = ({
 				)}
 			</Head>
 			<div className={styles.container}>
+				{hashLink.length > 1 && (
+					<div className={styles.backBar}>
+						<Button type="text" icon={<TbArrowNarrowLeft />} onClick={handleBack}>
+							Back
+						</Button>
+					</div>
+				)}
 				<Row>
 					<Col xs={{ span: 24, order: 1 }} md={{ span: 6, order: 2 }} style={{ textAlign: 'center' }}>
 						<Space direction="vertical" size="middle" className={styles.contactsAndPhoto}>
@@ -96,14 +149,16 @@ const UserSkillSharePage: NextPageWithLayout = ({
 								</>
 							)}
 
-							<Button
-								type="primary"
-								onClick={() => {
-									setVisibleSendEmailModal(true);
-								}}
-							>
-								<BiMailSend size={24} style={{ marginRight: '8px' }} /> Write me
-							</Button>
+							{hashLink.length == 1 && (
+								<Button
+									type="primary"
+									onClick={() => {
+										setVisibleSendEmailModal(true);
+									}}
+								>
+									<BiMailSend size={24} style={{ marginRight: '8px' }} /> Write me
+								</Button>
+							)}
 						</Space>
 					</Col>
 					<Col xs={{ span: 24, order: 2 }} md={{ span: 18, order: 1 }}>
@@ -152,6 +207,73 @@ const UserSkillSharePage: NextPageWithLayout = ({
 							{userSkillData?.description?.length > 0 && (
 								<div className={styles.descriptionSection}>
 									<p className={styles.description}>{userSkillData?.description ? readyText(userSkillData?.description) : ''}</p>
+								</div>
+							)}
+
+							{userSkillData?.subSkills?.length > 0 && (
+								<div className={styles.subSkillsSection}>
+									<div className={styles.headerContainer}>
+										<h2>This skill includes my following subskills</h2>
+									</div>
+									<List
+										size="small"
+										itemLayout="horizontal"
+										dataSource={userSkillData?.subSkills.sort((a, b) => {
+											const aLevel = getSkillLevel(a.level);
+											const bLevel = getSkillLevel(b.level);
+
+											return bLevel.index - aLevel.index;
+										})}
+										renderItem={(item: any) => {
+											const level = getSkillLevel(item.level);
+
+											return (
+												<List.Item
+													className={styles.listItem}
+													actions={[
+														<>
+															{item.viewMode !== UserSkillViewModeEnum.ONLY_ME ? (
+																<Button type="text" onClick={() => handleSubSkillClick(item)}>
+																	View <TbArrowNarrowRight />
+																</Button>
+															) : null}
+														</>,
+													]}
+												>
+													<List.Item.Meta
+														avatar={
+															<Tooltip title={level.description}>
+																<Progress
+																	type="circle"
+																	percent={level.index * 20}
+																	width={24}
+																	showInfo={false}
+																	strokeColor={level.color}
+																	strokeWidth={12}
+																/>
+															</Tooltip>
+														}
+														title={
+															<div style={{ lineHeight: 'initial' }}>
+																<Space align="center">
+																	{item.isComplexSkill && (
+																		<Tooltip title="This is complex skill">
+																			<TbArrowsJoin color="#adadad" style={{ display: 'block' }} />
+																		</Tooltip>
+																	)}
+																	<Typography.Text strong>{capitalizedText(item.skill.name)}</Typography.Text>
+																</Space>
+																<br />
+																<Typography.Text type="secondary" style={{ fontSize: 12 }}>
+																	{experienceAsText(item.experience)}
+																</Typography.Text>
+															</div>
+														}
+													/>
+												</List.Item>
+											);
+										}}
+									/>
 								</div>
 							)}
 
@@ -283,7 +405,7 @@ const UserSkillSharePage: NextPageWithLayout = ({
 				/>
 			</div>
 			<SendEmailModal
-				hash={hashLink}
+				hash={hashLink[hashLink.length - 1]}
 				visible={visibleSendEmailModal}
 				onSend={() => {
 					message.success('Your letter sent succesfully');
@@ -297,29 +419,31 @@ const UserSkillSharePage: NextPageWithLayout = ({
 	);
 };
 
-UserSkillSharePage.getLayout = (page: ReactElement) => (
-	<ShareLayout title="User skill data" viewMode={UserSkillViewModeEnum.BY_LINK}>
-		{page}
-	</ShareLayout>
-);
+UserSkillSharePage.getLayout = (page: ReactElement) => <ShareLayout>{page}</ShareLayout>;
 
 export async function getServerSideProps(context) {
 	const { hashLink } = context.query;
 	let props: any = {};
 
-	if (hashLink) {
+	if (hashLink.length > 0) {
 		const client = ssrGraphqlClient(context.req.cookies[process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME]);
 
 		const { data, error } = await client
 			.query(getUserSkillForShareQuery, {
-				hash: hashLink,
+				hash: hashLink[hashLink.length - 1],
 			})
 			.toPromise();
 
-		props = data?.userSkillForShare;
-
 		if (error) {
 			return { notFound: true };
+		}
+
+		props = data?.userSkillForShare;
+
+		if (props.viewer !== 'me') {
+			props.skill.subSkills = props.skill.subSkills.filter(
+				(subSkill: any) => subSkill.viewMode !== UserSkillViewModeEnum.ONLY_ME,
+			);
 		}
 	}
 

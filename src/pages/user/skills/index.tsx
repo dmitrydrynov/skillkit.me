@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import EmptySkills from '@assets/images/skills/empty-skills.svg';
-import { capitalizedText } from '@helpers/text';
+import { capitalizedText, experienceAsText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { deleteUserSkillMutation, userSkillsQuery } from '@services/graphql/queries/userSkill';
@@ -19,6 +19,7 @@ import {
 	Skeleton,
 	Space,
 	Table,
+	Tooltip,
 	Typography,
 } from 'antd';
 import moment from 'moment';
@@ -27,6 +28,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { HiDotsVertical } from 'react-icons/hi';
+import { TbArrowsJoin } from 'react-icons/tb';
 import { useSelector } from 'react-redux';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
@@ -45,11 +47,9 @@ const ProfilePage: NextPageWithLayout = () => {
 		requestPolicy: 'network-only',
 	});
 	const [, deleteUserSkill] = useMutation(deleteUserSkillMutation);
-	const [userSkillId, setUserSkillId] = useState<{ id: string | null } | null>(null);
 
 	const handleAddUserSkill = async () => {
 		setVisibleAddUserSkillModal(false);
-		setUserSkillId(null);
 		await refreshUserSkills();
 	};
 
@@ -123,7 +123,6 @@ const ProfilePage: NextPageWithLayout = () => {
 				<title>My Skills - SkillKit</title>
 			</Head>
 			<AddUserSkillModal
-				recordId={userSkillId?.id}
 				visible={visibleAddUserSkillModal}
 				onClose={() => setVisibleAddUserSkillModal(false)}
 				onFinish={handleAddUserSkill}
@@ -139,7 +138,6 @@ const ProfilePage: NextPageWithLayout = () => {
 							key="add-language-button"
 							icon={<PlusOutlined />}
 							onClick={() => {
-								setUserSkillId({ id: null });
 								setVisibleAddUserSkillModal(true);
 							}}
 						>
@@ -160,7 +158,6 @@ const ProfilePage: NextPageWithLayout = () => {
 								key="add-language-button"
 								icon={<PlusOutlined />}
 								onClick={() => {
-									setUserSkillId({ id: null });
 									setVisibleAddUserSkillModal(true);
 								}}
 							>
@@ -196,7 +193,16 @@ const ProfilePage: NextPageWithLayout = () => {
 												strokeWidth={12}
 											/>
 											<div style={{ lineHeight: 'initial' }}>
-												<Typography.Text strong>{capitalizedText(value)}</Typography.Text>
+												<Space align="center">
+													{data.isComplexSkill && (
+														<Tooltip title="This is complex skill">
+															<TbArrowsJoin color="#adadad" style={{ display: 'block' }} />
+														</Tooltip>
+													)}
+													<Typography.Text strong>
+														{capitalizedText(value)}&nbsp;{data.isDraft && <span className={styles.isDraftText}>(draft)</span>}
+													</Typography.Text>
+												</Space>
 												<br />
 												<Typography.Text type="secondary" style={{ fontSize: 12 }}>
 													{capitalizedText(level.label)}
@@ -211,31 +217,7 @@ const ProfilePage: NextPageWithLayout = () => {
 								width="150px"
 								key="experience"
 								dataIndex="experience"
-								render={(data: unknown, record: any) => {
-									let response = "Don't have";
-
-									if (record.experience.years === 0 && record.experience.months > 0) {
-										response = `Less than a year`;
-									}
-
-									if (record.experience.years == 1 && record.experience.months === 0) {
-										response = `1 year`;
-									}
-
-									if (record.experience.years === 1 && record.experience.months !== 0) {
-										response = `More than 1 year`;
-									}
-
-									if (record.experience.years > 1 && record.experience.months === 0) {
-										response = `${record.experience.years} years`;
-									}
-
-									if (record.experience.years > 1 && record.experience.months !== 0) {
-										response = `More than ${record.experience.years} years`;
-									}
-
-									return response;
-								}}
+								render={(data: unknown, record: any) => experienceAsText(record.experience)}
 								responsive={['lg']}
 							/>
 							<Table.Column

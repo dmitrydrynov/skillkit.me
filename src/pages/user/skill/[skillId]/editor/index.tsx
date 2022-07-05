@@ -4,19 +4,26 @@ import { InlineEdit } from '@components/InlineEdit';
 import SkillEditorMenu from '@components/menus/SkillEditorMenu';
 import AddUserFileModal from '@components/modals/AddUserFileModal';
 import EditUserFileModal from '@components/modals/EditUserFileModal';
+import SubSkillModal from '@components/modals/SubSkillModal';
 import UserJobModal from '@components/modals/UserJobModal';
 import UserSchoolModal from '@components/modals/UserSchoolModal';
 import UserToolModal from '@components/modals/UserToolModal';
-import { capitalizedText, readyText } from '@helpers/text';
+import { capitalizedText, experienceAsText, readyText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { searchSkillsQuery } from '@services/graphql/queries/skill';
 import { deleteUserFileMutation, userFilesQuery } from '@services/graphql/queries/userFile';
 import { deleteUserJobMutation, userJobsQuery } from '@services/graphql/queries/userJob';
 import { deleteUserSchoolMutation, userSchoolsQuery } from '@services/graphql/queries/userSchool';
-import { editUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
+import { deleteSubSkillMutation, editUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
 import { deleteUserToolMutation, userToolsQuery } from '@services/graphql/queries/userTool';
-import { checkSkillLevel, getSkillLevel, SkillLevel, skillLevelsList } from 'src/definitions/skill';
+import {
+	checkSkillLevel,
+	getSkillLevel,
+	SkillLevel,
+	skillLevelsList,
+	UserSkillViewModeEnum,
+} from 'src/definitions/skill';
 import { DeleteOutlined, EditOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
 import {
 	Alert,
@@ -45,6 +52,9 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { BiLinkAlt, BiWorld } from 'react-icons/bi';
+import { FiEyeOff } from 'react-icons/fi';
+import { TbArrowsJoin } from 'react-icons/tb';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
@@ -59,6 +69,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const [width, setWidth] = useState(25);
 	const [selectedSkillId, setSelectedSkillId] = useState<number | null>(null);
 	const [visibleToolModal, setVisibleToolModal] = useState(false);
+	const [visibleSubSkillModal, setVisibleSubSkillModal] = useState(false);
 	const [editableUserTool, setEditableUserTool] = useState<number>(null);
 	const [visibleSchoolModal, setVisibleSchoolModal] = useState(false);
 	const [editableUserSchool, setEditableUserSchool] = useState<number>(null);
@@ -113,6 +124,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const [, deleteUserSchool] = useMutation(deleteUserSchoolMutation);
 	const [, deleteUserJob] = useMutation(deleteUserJobMutation);
 	const [, deleteUserFile] = useMutation(deleteUserFileMutation);
+	const [, deleteSubSkill] = useMutation(deleteSubSkillMutation);
 
 	useEffect(() => {
 		if (userSkillError) {
@@ -289,7 +301,12 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const handleSaveUserFile = () => {
 		message.success('User file updated!');
 		setVisibleEditUserFileModal(false);
-		refreshUserFiles();
+		refreshUserJobs();
+	};
+
+	const handleSaveSubSkills = () => {
+		message.success('Subskills updated!');
+		setVisibleSubSkillModal(false);
 	};
 
 	const handleDeleteUserFile = async (item) => {
@@ -302,6 +319,27 @@ const SkillEditorPage: NextPageWithLayout = () => {
 					</>,
 				);
 				refreshUserFiles();
+			}
+		} catch (error: any) {
+			message.error(error.message);
+		}
+	};
+
+	const handleDeleteSubSkill = async (item) => {
+		try {
+			const deletedItems = await deleteSubSkill({ userSkillId: userSkillData?.userSkill.id, subSkillId: item.id });
+
+			if (deletedItems.error) {
+				throw Error(deletedItems.error.message);
+			}
+
+			if (deletedItems) {
+				message.success(
+					<>
+						The subskill <strong>{capitalizedText(item.name)}</strong> removed
+					</>,
+				);
+				// refreshUserSkills();
 			}
 		} catch (error: any) {
 			message.error(error.message);
@@ -389,6 +427,113 @@ const SkillEditorPage: NextPageWithLayout = () => {
 										/>
 									}
 								/>
+							</div>
+							<div className={styles.subSkillsSection}>
+								<div className={styles.headerContainer}>
+									<h2>This skill includes my following subskills</h2>
+									<Button
+										type="ghost"
+										shape="circle"
+										size="small"
+										icon={<PlusOutlined />}
+										onClick={() => {
+											setVisibleSubSkillModal(true);
+										}}
+									/>
+								</div>
+								{userSkillData?.userSkill.subSkills.length > 0 ? (
+									<List
+										className={styles.list}
+										size="small"
+										itemLayout="horizontal"
+										dataSource={userSkillData?.userSkill.subSkills.sort((a, b) => {
+											const aLevel = getSkillLevel(a.level);
+											const bLevel = getSkillLevel(b.level);
+
+											return bLevel.index - aLevel.index;
+										})}
+										loading={userSkillFetching}
+										renderItem={(item: any) => {
+											const level = getSkillLevel(item.level);
+
+											return (
+												<List.Item
+													className={styles.listItem}
+													actions={[
+														<Popconfirm
+															key="delete-subskill"
+															title="Are you sure to delete this subskill?"
+															onConfirm={() => {
+																handleDeleteSubSkill(item);
+															}}
+															okText="Yes"
+															cancelText="No"
+															icon={<WarningTwoTone />}
+														>
+															<Button key="editItemButtons" className="editItemButtons" size="small">
+																<DeleteOutlined />
+															</Button>
+														</Popconfirm>,
+													]}
+												>
+													<List.Item.Meta
+														avatar={
+															<Tooltip title={level.description}>
+																<Progress
+																	type="circle"
+																	percent={level.index * 20}
+																	width={24}
+																	showInfo={false}
+																	strokeColor={level.color}
+																	strokeWidth={12}
+																/>
+															</Tooltip>
+														}
+														title={
+															<div style={{ lineHeight: 'initial' }}>
+																<Space align="center">
+																	{item.isComplexSkill && (
+																		<Tooltip title="This is complex skill">
+																			<TbArrowsJoin color="#adadad" style={{ display: 'block' }} />
+																		</Tooltip>
+																	)}
+																	<Typography.Text strong>{capitalizedText(item.skill.name)}</Typography.Text>
+																</Space>
+																<br />
+																<Typography.Text type="secondary" style={{ fontSize: 12 }}>
+																	{experienceAsText(item.experience)}
+																</Typography.Text>
+															</div>
+														}
+													/>
+													<div>
+														{
+															<>
+																{item.viewMode === UserSkillViewModeEnum.ONLY_ME && (
+																	<Tooltip title="View mode: only me">
+																		<FiEyeOff />
+																	</Tooltip>
+																)}
+																{item.viewMode === UserSkillViewModeEnum.BY_LINK && (
+																	<Tooltip title="View mode: by link">
+																		<BiLinkAlt />
+																	</Tooltip>
+																)}
+																{item.viewMode === UserSkillViewModeEnum.EVERYONE && (
+																	<Tooltip title="View mode: everyone">
+																		<BiWorld />
+																	</Tooltip>
+																)}
+															</>
+														}
+													</div>
+												</List.Item>
+											);
+										}}
+									/>
+								) : (
+									emptyData(`This skill is not complex`)
+								)}
 							</div>
 							<div className={styles.toolsSection}>
 								<div className={styles.headerContainer}>
@@ -672,6 +817,14 @@ const SkillEditorPage: NextPageWithLayout = () => {
 				onCancel={() => {
 					setEditableUserTool(null);
 					setVisibleToolModal(false);
+				}}
+			/>
+			<SubSkillModal
+				userSkill={userSkillData?.userSkill}
+				visible={visibleSubSkillModal}
+				onSave={handleSaveSubSkills}
+				onCancel={() => {
+					setVisibleSubSkillModal(false);
 				}}
 			/>
 			<UserSchoolModal
