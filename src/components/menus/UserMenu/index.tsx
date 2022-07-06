@@ -2,6 +2,7 @@ import { FC, ReactNode, useState } from 'react';
 import React from 'react';
 import { RootState } from '@store/configure-store';
 import { setLogout } from '@store/reducers/auth';
+import { UserRole } from 'src/definitions/user';
 import { Avatar, Dropdown, Menu, Space, Skeleton, Grid } from 'antd';
 import Avvvatars from 'avvvatars-react';
 import Link from 'next/link';
@@ -16,6 +17,9 @@ type MenuItem = {
 	title: string;
 	action?: () => void;
 	before?: ReactNode;
+	can?: {
+		roles?: UserRole[];
+	};
 };
 
 const UserMenu: FC = () => {
@@ -28,6 +32,11 @@ const UserMenu: FC = () => {
 	const authUser = useSelector((state: RootState) => state.user);
 
 	const userMenuItems: MenuItem[] = [
+		{
+			link: '/admin/posts',
+			title: 'Administration',
+			can: { roles: [UserRole.ADMIN] },
+		},
 		{
 			link: '/user/skills',
 			title: 'My skills',
@@ -55,24 +64,26 @@ const UserMenu: FC = () => {
 
 	const userMenu = (
 		<Menu ref={null}>
-			{userMenuItems.map((menuItem, idx) => (
-				<React.Fragment key={idx}>
-					{!!menuItem.before && menuItem.before}
-					<Menu.Item key={idx.toString()}>
-						{!!menuItem.link && (
-							<Link href={menuItem.link}>
-								<a>{menuItem.title}</a>
-							</Link>
-						)}
+			{userMenuItems
+				.filter((i) => undefined === i.can || (undefined !== i.can && i.can.roles.includes(authUser.role.name)))
+				.map((menuItem, idx) => (
+					<React.Fragment key={idx}>
+						{!!menuItem.before && menuItem.before}
+						<Menu.Item key={idx.toString()}>
+							{!!menuItem.link && (
+								<Link href={menuItem.link}>
+									<a>{menuItem.title}</a>
+								</Link>
+							)}
 
-						{!!menuItem.action && (
-							<span onClick={menuItem.action} aria-hidden="true">
-								{menuItem.title}
-							</span>
-						)}
-					</Menu.Item>
-				</React.Fragment>
-			))}
+							{!!menuItem.action && (
+								<span onClick={menuItem.action} aria-hidden="true">
+									{menuItem.title}
+								</span>
+							)}
+						</Menu.Item>
+					</React.Fragment>
+				))}
 		</Menu>
 	);
 

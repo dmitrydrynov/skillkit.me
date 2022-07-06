@@ -21,7 +21,10 @@ class MyDocument extends Document {
 					<NextScript />
 					<noscript
 						dangerouslySetInnerHTML={{
-							__html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K9N6B7P" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
+							__html:
+								process.env.NODE_ENV == 'development'
+									? `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K9N6B7P&gtm_auth=xcw78CtpYYSpOm4rHyKemw&gtm_preview=env-14&gtm_cookies_win=x" height="0" width="0" style="display:none;visibility:hidden"></iframe>`
+									: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K9N6B7P" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
 						}}
 					/>
 				</body>
