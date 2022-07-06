@@ -8,7 +8,7 @@ export type UserState = {
 	fullName: string;
 	email: string;
 	avatar?: string;
-	role: UserRole;
+	role: { name: UserRole };
 	useOTP: boolean;
 	age?: number;
 	country: string;
@@ -20,7 +20,7 @@ const initialState: UserState = {
 	lastName: '',
 	fullName: '',
 	email: '',
-	role: UserRole.UNKNOWN,
+	role: { name: UserRole.UNKNOWN },
 	useOTP: false,
 	age: null,
 	country: '',

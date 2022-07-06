@@ -53,6 +53,7 @@ query {
     email
     avatar
     useOTP
+    role { name }
   }
 }
 `;

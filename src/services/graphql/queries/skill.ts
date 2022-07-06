@@ -12,6 +12,16 @@ query($search: String) {
 }
 `;
 
+export const skillsDataQuery = `
+query {
+  skills {
+    id
+    name
+    createdAt
+  }
+}
+`;
+
 export const createSkillMutation = `
 mutation($name: String!) {
   createSkill(name: $name) {

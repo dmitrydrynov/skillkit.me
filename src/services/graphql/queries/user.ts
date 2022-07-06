@@ -69,6 +69,21 @@ query ($id: Float!) {
 }
 `;
 
+export const usersDataQuery = `
+query {
+  users {
+    id
+    fullName
+    email
+    country
+    avatar
+    age
+    role { name }
+    createdAt
+  }
+}
+`;
+
 export const updateUserMutation = `
 mutation(
   $id: Float!
