@@ -5,11 +5,13 @@ import { NextPageWithLayout } from '@pages/_app';
 import { postsDataQuery } from '@services/graphql/queries/post';
 import { RootState } from '@store/configure-store';
 import { UserRole } from 'src/definitions/user';
-import { Avatar, Space, Table } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Avatar, Button, PageHeader, Space, Table } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import Avvvatars from 'avvvatars-react';
 import moment from 'moment';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { useQuery } from 'urql';
 import styles from './style.module.less';
@@ -21,6 +23,7 @@ interface DataType {
 }
 
 const AdminPostsPage: NextPageWithLayout = () => {
+	const router = useRouter();
 	const { loggedIn } = useSelector((state: RootState) => state.auth);
 	const [{ data: responsePostsData }] = useQuery({
 		query: postsDataQuery,
@@ -91,6 +94,23 @@ const AdminPostsPage: NextPageWithLayout = () => {
 
 	return (
 		<>
+			<PageHeader
+				className={styles.pageHeader}
+				title="Posts"
+				backIcon={false}
+				extra={[
+					<Button
+						type="primary"
+						key="add-post-button"
+						icon={<PlusOutlined />}
+						onClick={() => {
+							router.push(`/admin/post/editor`);
+						}}
+					>
+						New post
+					</Button>,
+				]}
+			/>
 			<Table className={styles.postsTable} columns={columns} dataSource={prepareData} />
 		</>
 	);
