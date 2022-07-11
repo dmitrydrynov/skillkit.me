@@ -11,6 +11,7 @@ import type { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { useQuery } from 'urql';
+import styles from './style.module.less';
 
 interface DataType {
 	id: number;
@@ -71,7 +72,7 @@ const AdminSkillsPage: NextPageWithLayout = () => {
 
 	return (
 		<>
-			<Table columns={columns} dataSource={prepareData} />
+			<Table className={styles.skillsTable} columns={columns} dataSource={prepareData} />
 		</>
 	);
 };

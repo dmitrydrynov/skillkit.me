@@ -12,6 +12,7 @@ import moment from 'moment';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { useQuery } from 'urql';
+import styles from './style.module.less';
 
 interface DataType {
 	id: number;
@@ -90,7 +91,7 @@ const AdminPostsPage: NextPageWithLayout = () => {
 
 	return (
 		<>
-			<Table columns={columns} dataSource={prepareData} />
+			<Table className={styles.postsTable} columns={columns} dataSource={prepareData} />
 		</>
 	);
 };

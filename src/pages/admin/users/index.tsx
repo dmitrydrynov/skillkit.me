@@ -11,6 +11,7 @@ import Avvvatars from 'avvvatars-react';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { useQuery } from 'urql';
+import styles from './style.module.less';
 
 interface DataType {
 	id: number;
@@ -37,6 +38,7 @@ const AdminUsersPage: NextPageWithLayout = () => {
 			key: 'id',
 			sorter: (a, b) => a.id - b.id,
 			width: 60,
+			responsive: ['lg'],
 		},
 		{
 			title: 'User',
@@ -60,11 +62,13 @@ const AdminUsersPage: NextPageWithLayout = () => {
 			dataIndex: 'age',
 			key: 'age',
 			sorter: (a, b) => a.age - b.age,
+			responsive: ['lg'],
 		},
 		{
 			title: 'Email',
 			dataIndex: 'email',
 			key: 'email',
+			responsive: ['lg'],
 		},
 		{
 			title: 'Role',
@@ -105,7 +109,7 @@ const AdminUsersPage: NextPageWithLayout = () => {
 
 	return (
 		<>
-			<Table columns={columns} dataSource={prepareData} />
+			<Table className={styles.usersTable} columns={columns} dataSource={prepareData} />
 		</>
 	);
 };

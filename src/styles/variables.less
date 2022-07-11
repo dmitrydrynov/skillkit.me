@@ -70,3 +70,21 @@
 @select-single-item-height-lg: @height-base;
 
 @layout-body-background: @gray-2;
+
+.defaultTable() {
+	:global {
+		.ant-table-thead > tr > th {
+			background-color: unset;
+
+			&::before {
+				display: none;
+			}
+		}
+		.ant-table-tbody > tr > td {
+			border: unset;
+		}
+		.ant-table table {
+			border-spacing: 0 4px;
+		}
+	}
+}
