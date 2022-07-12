@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import introImage from '@assets/images/home/intro.png';
+import introImage from '@assets/images/home/volunteer-illustration.png';
 import SignUpModal from '@components/modals/SignUpModal';
 import { setCookie } from '@helpers/cookie';
 import { gtmEvent } from '@helpers/gtm';
@@ -63,11 +63,11 @@ const Home: NextPage = () => {
 				<meta property="og:type" content="website" />
 				<meta
 					property="og:image"
-					content={`${process.env.NEXT_PUBLIC_APP_URL}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fintro.4e42a1a1.png&w=1080&q=75`}
+					content={`${process.env.NEXT_PUBLIC_APP_URL}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fvolunteer-illustration.ff9f1da2.png&w=1080&q=75`}
 				/>
 				<meta
 					name="twitter:images"
-					content={`${process.env.NEXT_PUBLIC_APP_URL}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fintro.4e42a1a1.png&w=1080&q=75`}
+					content={`${process.env.NEXT_PUBLIC_APP_URL}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fvolunteer-illustration.ff9f1da2.png&w=1080&q=75`}
 				/>
 				<meta name="twitter:title" content="Skillkit — flexible alternative to the classic resume" />
 				<meta name="twitter:description" content="Build your unique skills and share them with customers and employers." />
@@ -103,7 +103,7 @@ const Home: NextPage = () => {
 						</Button>
 					)}
 				</Col>
-				<Col xs={24} md={{ span: 11, offset: 2 }}>
+				<Col xs={24} md={{ span: 12, offset: 1 }}>
 					<Image src={introImage} alt="" />
 				</Col>
 			</Row>

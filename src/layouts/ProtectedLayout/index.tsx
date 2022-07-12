@@ -1,4 +1,4 @@
-import React, { createRef, FC, ReactElement, ReactNode, useEffect, useState } from 'react';
+import React, { createContext, createRef, FC, ReactElement, ReactNode, useEffect, useState } from 'react';
 import skillKitLogo from '@assets/images/skillkit-logo.svg';
 import UserMenu from '@components/menus/UserMenu';
 import withAuth from '@helpers/withAuth';
@@ -26,6 +26,8 @@ type ProtectedLayoutParams = {
 	};
 };
 
+export const PageContext = createContext({});
+
 const ProtectedLayout: FC<ProtectedLayoutParams> = ({
 	children,
 	title,
@@ -36,6 +38,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({
 	const router = useRouter();
 	const screens = useBreakpoint();
 	const [siderCollapsed, setSiderCollapsed] = useState(true);
+	const [pageData, setPageData] = useState(null);
 	const siderRef = createRef<HTMLDivElement>();
 	const authUser = useSelector((state: RootState) => state.user);
 
@@ -106,8 +109,10 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({
 							</Col>
 						</Row>
 					</Header>
-					{beforeContent ? beforeContent : null}
-					<Content className={styles.content}>{children}</Content>
+					<PageContext.Provider value={{ pageData, setPageData }}>
+						{beforeContent ? beforeContent : null}
+						<Content className={styles.content}>{children}</Content>
+					</PageContext.Provider>
 				</Layout>
 			</Layout>
 		</>

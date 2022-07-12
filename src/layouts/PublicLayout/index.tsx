@@ -33,7 +33,7 @@ const PublicLayout: FC = ({ children }) => {
 	};
 
 	return (
-		<>
+		<div className={styles.container}>
 			{<SignInModal visible={visibleSignInModal} onClose={() => setVisibleSignInModal(false)} />}
 			{<SignUpModal visible={visibleSignUpModal} onClose={() => setVisibleSignUpModal(false)} />}
 			<Layout className={styles.layout}>
@@ -64,7 +64,7 @@ const PublicLayout: FC = ({ children }) => {
 				<BetaModeModal />
 				{/* <Footer>Copyright © 2021 AnyCompany, Inc. All rights reserved.</Footer> */}
 			</Layout>
-		</>
+		</div>
 	);
 };
 

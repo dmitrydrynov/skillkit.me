@@ -1,9 +1,9 @@
-import React, { ReactElement, useState } from 'react';
+import React, { HTMLAttributes, ReactElement, ReactHTML, useState } from 'react';
 import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Form } from 'antd';
 import styles from './style.module.less';
 
-export type InlineEditRequest = {
+export type InlineEditRequest = HTMLAttributes<ReactHTML> & {
 	name: string;
 	initialValue?: any;
 	viewMode?: ReactElement;
@@ -18,6 +18,7 @@ export const InlineEdit = ({
 	initialValue = null,
 	viewMode,
 	editMode,
+	className = null,
 	onSave = () => {},
 	onCancel = () => {},
 	onEdit = () => {},
@@ -50,7 +51,7 @@ export const InlineEdit = ({
 	);
 
 	return (
-		<div className={styles.container}>
+		<div className={styles.container + ' ' + className}>
 			<Form
 				form={form}
 				name="inlineForm"

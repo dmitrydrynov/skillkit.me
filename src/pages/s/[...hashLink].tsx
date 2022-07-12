@@ -293,7 +293,7 @@ const UserSkillSharePage: NextPageWithLayout = ({
 																maxWidth: '50vw',
 															}}
 														>
-															<FaInfoCircle color="#f558a1" />
+															<FaInfoCircle color="#313c5d" />
 														</Popover>
 													}
 													key={idx}

@@ -43,7 +43,7 @@ const AdminPostsPage: NextPageWithLayout = () => {
 			title: 'Post',
 			dataIndex: 'title',
 			key: 'title',
-			render: (title, post) => <Link href={`/admin/post/edit/${post.id}`}>{title}</Link>,
+			render: (title, post) => <Link href={`/admin/post/editor/${post.id}`}>{title}</Link>,
 		},
 		{
 			title: 'Author',

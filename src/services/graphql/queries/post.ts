@@ -10,6 +10,7 @@ query {
     isDraft
     author { id fullName avatar email }
     category { id name }
+    viewMode
   }
 }
 `;
@@ -30,16 +31,45 @@ query($id: ID!) {
     isDraft
     author { id fullName avatar email }
     category { id name }
+    viewMode
   }
 }
 `;
 
 export const createPostMutation = `
-mutation($name: PostCreateInput!) {
+mutation($data: PostCreateInput!) {
   createPost(data: $data) {
     id
     slug
-    title
+    createdAt
+    updatedAt
   }
+}
+`;
+
+export const updatePostMutation = `
+mutation(
+  $recordId: ID!
+  $data: PostUpdateInput!
+) {
+  updatePost(
+    where: {
+      id: $recordId
+    }
+    data: $data
+  ) { 
+    id 
+    slug
+    createdAt
+    updatedAt
+    isDraft
+    viewMode
+  }
+}
+`;
+
+export const publishPostMutation = `
+mutation($recordId: ID!) {
+  publishPost(id: $recordId) { id publishedAt isDraft viewMode }
 }
 `;

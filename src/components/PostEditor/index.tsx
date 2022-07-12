@@ -16,7 +16,14 @@ import Warning from '@editorjs/warning';
 import { createReactEditorJS } from 'react-editor-js';
 import styles from './style.module.less';
 
-const PostEditor = ({ data, imageArray = [], handleInstance }) => {
+type PostEditorParams = {
+	data: any;
+	imageArray: any[];
+	handleInstance: any;
+	onChange?: () => void;
+};
+
+const PostEditor = ({ data, imageArray = [], handleInstance, onChange = () => {} }: PostEditorParams) => {
 	const EditorJS: any = createReactEditorJS();
 	const EDITOR_JS_TOOLS = {
 		embed: {
@@ -80,12 +87,15 @@ const PostEditor = ({ data, imageArray = [], handleInstance }) => {
 	// pass EDITOR_JS_TOOLS in tools props to configure tools with editor.js
 	return (
 		<div className={styles.editor}>
-			<EditorJS
-				instanceRef={(instance) => handleInstance(instance)}
-				tools={EDITOR_JS_TOOLS}
-				data={data}
-				placeholder={`Write from here...`}
-			/>
+			{!!data && (
+				<EditorJS
+					onInitialize={handleInstance}
+					tools={EDITOR_JS_TOOLS}
+					defaultValue={data}
+					placeholder={`Write from here...`}
+					onChange={onChange}
+				/>
+			)}
 		</div>
 	);
 };
