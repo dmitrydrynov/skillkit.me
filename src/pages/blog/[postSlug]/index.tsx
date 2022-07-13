@@ -18,7 +18,7 @@ const BlogPostPage = ({ post, readingTime, meta }) => {
 				<meta name="description" content={meta.description} />
 				<meta property="og:title" content={post.title} key="og:title" />
 				<meta property="og:type" content="article" />
-				<meta property="og:url" content={process.env.NEXT_PUBLIC_APP_URL + router.route} />
+				<meta property="og:url" content={meta.url} />
 				<meta name="twitter:title" content={post.title} />
 				<meta name="twitter:description" content={meta.description} />
 				{post.viewMode !== PostViewModeEnum.EVERYONE && (
@@ -77,7 +77,7 @@ export async function getServerSideProps(context) {
 		props: {
 			post: { ...postData, content },
 			readingTime: readingTime('ABCD fgh'),
-			meta: { description },
+			meta: { description, url: process.env.NEXT_PUBLIC_APP_URL + context.resolvedUrl },
 		},
 	};
 }
