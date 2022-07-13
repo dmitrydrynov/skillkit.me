@@ -958,6 +958,14 @@ buffer@^5.5.0:
     base64-js "^1.3.1"
     ieee754 "^1.1.13"
 
+buffer@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/buffer/-/buffer-6.0.3.tgz#2ace578459cc8fbe2a70aaa8f52ee63b6a74c6c6"
+  integrity sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==
+  dependencies:
+    base64-js "^1.3.1"
+    ieee754 "^1.2.1"
+
 call-bind@^1.0.0, call-bind@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/call-bind/-/call-bind-1.0.2.tgz"
@@ -1320,6 +1328,13 @@ domhandler@4.3.0, domhandler@^4.2.0, domhandler@^4.2.2:
   dependencies:
     domelementtype "^2.2.0"
 
+domhandler@4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/domhandler/-/domhandler-4.3.1.tgz#8d792033416f59d68bc03a5aa7b018c1ca89279c"
+  integrity sha512-GrwoxYN+uWlzO8uhUXRl0P+kHE4GtVPfYzVLcUxPL7KNdHKj66vvlhiweIHqYYXWlw+T8iLMp42Lm67ghw4WMQ==
+  dependencies:
+    domelementtype "^2.2.0"
+
 domutils@^2.8.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/domutils/-/domutils-2.8.0.tgz#4437def5db6e2d1f5d6ee859bd95ca7d02048135"
@@ -1364,6 +1379,13 @@ draftjs-utils@^0.9.4:
   resolved "https://registry.yarnpkg.com/draftjs-utils/-/draftjs-utils-0.9.4.tgz#976c61aa133dbbbfedd65ae1dd6627d7b98c6f08"
   integrity sha512-KYjABSbGpJrwrwmxVj5UhfV37MF/p0QRxKIyL+/+QOaJ8J9z1FBKxkblThbpR0nJi9lxPQWGg+gh+v0dAsSCCg==
 
+editorjs-blocks-react-renderer@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/editorjs-blocks-react-renderer/-/editorjs-blocks-react-renderer-1.2.4.tgz#bec61247187cc082a4d5b21c616025515a5553b8"
+  integrity sha512-oplMOLKAgMBJ/URPXDOa5pm5XAoTTAn1p+NS9AdbH+Fr2fbnTZuiYIhQdmlkXQfH+DVtPztAFtz5G54z6aDq3w==
+  dependencies:
+    html-react-parser "^1.4.5"
+
 editorjs-button@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/editorjs-button/-/editorjs-button-1.0.4.tgz#14fa4750f420278f9963177d38ea618c1997bfbb"
@@ -1373,6 +1395,16 @@ editorjs-drag-drop@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/editorjs-drag-drop/-/editorjs-drag-drop-1.1.2.tgz#090eed9875a6bd0d0243aa52c0f30b7052917116"
   integrity sha512-vgr0QgYScfIp1kurfh8FmceIAnS+ce3Vdtt5Z2SYTf3j0/eL3B5o5FrwOLJBv9GLumqXETZXbYcCo8Q75c7twQ==
+
+editorjs-react-renderer@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/editorjs-react-renderer/-/editorjs-react-renderer-3.2.0.tgz#b168640528ce6fed04559f787f8a74ea6578e505"
+  integrity sha512-7W2Rz48Ik0ZoxEleBvIpvy/+gTKNKQ5/RwxH5vuhXOgkBQjY4WiAtUh9AtnKzExUIJLMnb9Wamv1UVf0dQS5mw==
+  dependencies:
+    buffer "^6.0.3"
+    classnames "^2.3.1"
+    html-react-parser "^1.4.0"
+    react "^17.0.2"
 
 electron-to-chromium@^1.4.71:
   version "1.4.71"
@@ -2073,6 +2105,24 @@ html-dom-parser@1.1.0:
     domhandler "4.3.0"
     htmlparser2 "7.2.0"
 
+html-dom-parser@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/html-dom-parser/-/html-dom-parser-1.2.0.tgz#8f689b835982ffbf245eda99730e92b8462c111e"
+  integrity sha512-2HIpFMvvffsXHFUFjso0M9LqM+1Lm22BF+Df2ba+7QHJXjk63pWChEnI6YG27eaWqUdfnh5/Vy+OXrNTtepRsg==
+  dependencies:
+    domhandler "4.3.1"
+    htmlparser2 "7.2.0"
+
+html-react-parser@^1.4.0, html-react-parser@^1.4.5:
+  version "1.4.14"
+  resolved "https://registry.yarnpkg.com/html-react-parser/-/html-react-parser-1.4.14.tgz#577b7a90be0c61eebbbc488d914ad08398c79ef5"
+  integrity sha512-pxhNWGie8Y+DGDpSh8cTa0k3g8PsDcwlfolA+XxYo1AGDeB6e2rdlyv4ptU9bOTiZ2i3fID+6kyqs86MN0FYZQ==
+  dependencies:
+    domhandler "4.3.1"
+    html-dom-parser "1.2.0"
+    react-property "2.0.0"
+    style-to-js "1.1.1"
+
 html-react-parser@^1.4.8:
   version "1.4.8"
   resolved "https://registry.yarnpkg.com/html-react-parser/-/html-react-parser-1.4.8.tgz#27bc0f9dc294c875daeca8a21a48d5b845a1364e"
@@ -2117,7 +2167,7 @@ iconv-lite@^0.6.2:
   dependencies:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
-ieee754@^1.1.13:
+ieee754@^1.1.13, ieee754@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.2.1.tgz#8eb7a10a63fff25d15a57b001586d177d1b0d352"
   integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==
@@ -4110,6 +4160,13 @@ style-to-js@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/style-to-js/-/style-to-js-1.1.0.tgz#631cbb20fce204019b3aa1fcb5b69d951ceac4ac"
   integrity sha512-1OqefPDxGrlMwcbfpsTVRyzwdhr4W0uxYQzeA2F1CBc8WG04udg2+ybRnvh3XYL4TdHQrCahLtax2jc8xaE6rA==
+  dependencies:
+    style-to-object "0.3.0"
+
+style-to-js@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/style-to-js/-/style-to-js-1.1.1.tgz#417786986cda61d4525c80aed9d1123a6a7af9b8"
+  integrity sha512-RJ18Z9t2B02sYhZtfWKQq5uplVctgvjTfLWT7+Eb1zjUjIrWzX5SdlkwLGQozrqarTmEzJJ/YmdNJCUNI47elg==
   dependencies:
     style-to-object "0.3.0"
 

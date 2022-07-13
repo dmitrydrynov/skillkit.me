@@ -40,3 +40,22 @@ export const experienceAsText = (experience: { months: number; years: number }):
 
 	return response;
 };
+
+export function readingTime(text: string) {
+	const wpm = 225;
+	const words = text.trim().split(/\s+/).length;
+	const time = Math.ceil(words / wpm);
+
+	return time;
+}
+
+export function textLimit(text, limit) {
+	text = text.trim();
+	if (text.length <= limit) return text;
+	text = text.slice(0, limit);
+	const lastSpace = text.lastIndexOf(' ');
+	if (lastSpace > 0) {
+		text = text.substr(0, lastSpace);
+	}
+	return text + '...';
+}

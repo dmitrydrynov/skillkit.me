@@ -1,6 +1,6 @@
 export const postsDataQuery = `
-query {
-  posts {
+query($where: PostWhereInput) {
+  posts(where: $where) {
     id
     slug
     title
@@ -11,16 +11,15 @@ query {
     author { id fullName avatar email }
     category { id name }
     viewMode
+    publishedAt
   }
 }
 `;
 
 export const getPostQuery = `
-query($id: ID!) {
+query($where: PostWhereInput!) {
   post(
-    where: {
-      id: $id
-    }
+    where: $where
   ) {
     id
     slug
@@ -32,6 +31,7 @@ query($id: ID!) {
     author { id fullName avatar email }
     category { id name }
     viewMode
+    publishedAt
   }
 }
 `;
@@ -71,5 +71,17 @@ mutation(
 export const publishPostMutation = `
 mutation($recordId: ID!) {
   publishPost(id: $recordId) { id publishedAt isDraft viewMode }
+}
+`;
+
+export const uploadImageMutation = `
+mutation($image: Upload!) {
+  uploadImage(image: $image) { url }
+}
+`;
+
+export const removeImageMutation = `
+mutation($imageUrl: String!) {
+  removeImage(imageUrl: $imageUrl) { result }
 }
 `;

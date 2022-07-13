@@ -5,14 +5,14 @@ import PostEditorMenu from '@components/menus/PostEditorMenu';
 import PostEditorBeforeContent, { PostViewModeEnum } from '@components/PostEditorBeforeContent';
 import ProtectedLayout, { PageContext } from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
-import { getPostQuery } from '@services/graphql/queries/post';
+import { getPostQuery, removeImageMutation, uploadImageMutation } from '@services/graphql/queries/post';
 import { RootState } from '@store/configure-store';
 import { UserRole } from 'src/definitions/user';
 import { Input } from 'antd';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { useQuery } from 'urql';
+import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
 const PostEditor = dynamic(() => import('@components/PostEditor'), { ssr: false });
@@ -21,6 +21,7 @@ const AdminPostEditPage: NextPageWithLayout = () => {
 	const titleEditMinWidth = 16;
 	const router = useRouter();
 	const { loggedIn } = useSelector((state: RootState) => state.auth);
+	const [uploadedImages, setUploadedImages] = useState([]);
 	const [post, setPost] = useState({
 		id: null,
 		title: 'Unknown title',
@@ -34,20 +35,29 @@ const AdminPostEditPage: NextPageWithLayout = () => {
 	const [titleWidth, setTitleWidth] = useState(titleEditMinWidth);
 	const [{ data: queryResponse }] = useQuery({
 		query: getPostQuery,
-		variables: { id: router.query.id },
+		variables: { where: { id: { equals: router.query.id } } },
 		pause: !loggedIn || !router.query.id,
 		requestPolicy: 'network-only',
 	});
+	const [, uploadImage] = useMutation(uploadImageMutation);
+	const [, removeImage] = useMutation(removeImageMutation);
 
 	useEffect(() => {
 		if (queryResponse?.post) {
-			setPost({ ...queryResponse?.post, content: JSON.parse(queryResponse?.post.content) });
+			const content = JSON.parse(queryResponse?.post.content);
+			const uploadedImages = parsePostImages(content);
+			setPost({ ...queryResponse?.post, content });
+			setUploadedImages(uploadedImages);
 		}
 	}, [queryResponse]);
 
 	useEffect(() => {
 		setPageData(post);
 	}, [post]);
+
+	useEffect(() => {
+		console.log('uploadedImages', uploadedImages.length);
+	}, [uploadedImages]);
 
 	const handleInstance = async (instance) => {
 		editorInstance.current = instance;
@@ -58,19 +68,89 @@ const AdminPostEditPage: NextPageWithLayout = () => {
 		setTitleWidth(value?.length > titleEditMinWidth ? value?.length : titleEditMinWidth);
 	};
 
-	const handleTitleSave = async (value: any) => {
+	const handleTitleChange = async (value: any) => {
 		const title = value.title || 'Unknown title';
 		setPost({ ...post, title });
 	};
 
 	const handlePostEditorChange = async () => {
 		if (editorInstance.current) {
+			const _uploadedImages = parsePostImages(post.content);
+
 			const content = await editorInstance.current.save();
 			const _content = content.blocks?.length ? content : null;
 			setPost((previousPost) => {
 				return { ...previousPost, content: _content };
 			});
+			// setUploadedImages(parsePostImages(_content));
+			const currentImages = parsePostImages(_content);
+			console.log('images', _uploadedImages.length, currentImages.length);
 		}
+	};
+
+	const handleUploadImage = async (image: any) => {
+		const { data, error } = await uploadImage({ image });
+
+		if (error) {
+			return { success: false };
+		}
+
+		setUploadedImages((previous) => [...previous, data.uploadImage.url]);
+
+		return {
+			success: 1,
+			file: {
+				url: data.uploadImage.url,
+			},
+		};
+	};
+
+	const parsePostImages = (content = null) => {
+		const _content = content ? content : post.content;
+		let _images = [];
+		// document
+		// 	.querySelectorAll('.image-tool__image-picture')
+		// 	.forEach((x: any) => _images.push(x.src.includes('/images/') && x.src));
+
+		if (_content?.blocks) {
+			_images = _content.blocks.filter((block) => block.type === 'image').map((block) => block.data.file.url);
+		}
+
+		return _images;
+	};
+
+	// remove image from uploadedImages
+	const removeFromImageArray = (img) => {
+		const _array = uploadedImages.filter((image) => image !== img);
+		// setUploadedImages(() => array);
+	};
+
+	const clearEditorLeftoverImages = async (content) => {
+		// Get editorJs images
+		const currentImages = parsePostImages();
+
+		console.log('images', uploadedImages.length, currentImages.length);
+
+		if (uploadedImages.length > currentImages.length) {
+			// image deleted
+			for (const img of uploadedImages) {
+				if (!currentImages.includes(img)) {
+					try {
+						// delete image from backend
+						await removeImage({ imageUrl: img });
+						// remove from array
+						removeFromImageArray(img);
+						console.log('image removed', img);
+					} catch (err) {
+						console.log(err.message);
+					}
+				}
+			}
+		}
+	};
+
+	const handleReady = () => {
+		// setUploadedImages(parsePostImages(queryResponse?.post));
 	};
 
 	return (
@@ -78,7 +158,7 @@ const AdminPostEditPage: NextPageWithLayout = () => {
 			<InlineEdit
 				name="title"
 				initialValue={post.title}
-				onSave={handleTitleSave}
+				onSave={handleTitleChange}
 				className={styles.titleInlineEdit}
 				viewMode={<h1 className={styles.title}>{post.title}</h1>}
 				editMode={
@@ -91,9 +171,21 @@ const AdminPostEditPage: NextPageWithLayout = () => {
 				}
 			/>
 			{router.query.id ? (
-				<PostEditor handleInstance={handleInstance} data={post.content} imageArray={[]} onChange={handlePostEditorChange} />
+				<PostEditor
+					handleInstance={handleInstance}
+					data={post.content}
+					onChange={handlePostEditorChange}
+					onUploadImage={handleUploadImage}
+					onReady={handleReady}
+				/>
 			) : (
-				<PostEditor handleInstance={handleInstance} data={{}} imageArray={[]} onChange={handlePostEditorChange} />
+				<PostEditor
+					handleInstance={handleInstance}
+					data={{}}
+					onChange={handlePostEditorChange}
+					onUploadImage={handleUploadImage}
+					onReady={handleReady}
+				/>
 			)}
 		</>
 	);
