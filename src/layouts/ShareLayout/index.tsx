@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import skillKitLogo from '@assets/images/skillkit-logo.svg';
+import skillKitLogo from '@assets/images/skillkit-alpha-logo.svg';
 import { Button, Col, Layout, Row } from 'antd';
 import Image from 'next/image';
 import styles from './ShareLayout.module.less';

@@ -1,5 +1,5 @@
 import React, { createContext, createRef, FC, ReactElement, ReactNode, useEffect, useState } from 'react';
-import skillKitLogo from '@assets/images/skillkit-logo.svg';
+import skillKitLogo from '@assets/images/skillkit-alpha-logo.svg';
 import UserMenu from '@components/menus/UserMenu';
 import withAuth from '@helpers/withAuth';
 import { RootState } from '@store/configure-store';

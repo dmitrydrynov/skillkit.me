@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from 'react';
-import skillKitLogo from '@assets/images/skillkit-logo.svg';
+import skillKitLogo from '@assets/images/skillkit-alpha-logo.svg';
 import UserMenu from '@components/menus/UserMenu';
-import BetaModeModal from '@components/modals/BetaModeModal';
 import SignInModal from '@components/modals/SignInModal';
 import SignUpModal from '@components/modals/SignUpModal';
 import { RootState } from '@store/configure-store';
@@ -61,7 +60,7 @@ const PublicLayout: FC = ({ children }) => {
 					</Row>
 				</Header>
 				<Content className={styles.content}>{children}</Content>
-				<BetaModeModal />
+				{/* <BetaModeModal /> */}
 				{/* <Footer>Copyright © 2021 AnyCompany, Inc. All rights reserved.</Footer> */}
 			</Layout>
 		</div>
