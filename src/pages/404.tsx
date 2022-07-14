@@ -2,7 +2,7 @@ import { Button, Result } from 'antd';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
-const NoFoundPage: NextPage = () => {
+const NotFoundPage: NextPage = () => {
 	const router = useRouter();
 
 	return (
@@ -19,4 +19,4 @@ const NoFoundPage: NextPage = () => {
 	);
 };
 
-export default NoFoundPage;
+export default NotFoundPage;

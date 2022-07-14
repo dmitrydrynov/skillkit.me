@@ -4,8 +4,9 @@ import UserMenu from '@components/menus/UserMenu';
 import SignInModal from '@components/modals/SignInModal';
 import SignUpModal from '@components/modals/SignUpModal';
 import { RootState } from '@store/configure-store';
-import { Button, Col, Layout, Row, Space } from 'antd';
+import { Button, Col, Layout, Menu, Row, Space } from 'antd';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import styles from './PublicLayout.module.less';
@@ -40,8 +41,31 @@ const PublicLayout: FC = ({ children }) => {
 					<Row align="middle" className={styles.logoContainer}>
 						<Col flex="1">
 							<div className={styles.logo}>
-								<Image src={skillKitLogo} alt="skillKit logo" />
+								<Link href="/">
+									<a>
+										<Image src={skillKitLogo} alt="skillKit logo" />
+									</a>
+								</Link>
 							</div>
+							<Menu mode="horizontal">
+								<Menu.SubMenu key="blog" title="Our blog">
+									<Menu.Item key="posts">
+										<Link href="/blog" passHref>
+											All Posts
+										</Link>
+									</Menu.Item>
+									<Menu.Item key="articles">
+										<Link href="/blog/[categorySlug]" as={`/blog/articles`} passHref>
+											Articles
+										</Link>
+									</Menu.Item>
+									<Menu.Item key="updates">
+										<Link href="/blog/[categorySlug]" as={`/blog/updates`} passHref>
+											Updates
+										</Link>
+									</Menu.Item>
+								</Menu.SubMenu>
+							</Menu>
 						</Col>
 						<Col>
 							{!loggedIn && !logginingIn ? (

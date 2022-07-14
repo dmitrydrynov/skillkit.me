@@ -5,12 +5,9 @@ import { getPostQuery } from '@services/graphql/queries/post';
 import Blocks from 'editorjs-blocks-react-renderer';
 import moment from 'moment';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import styles from './style.module.less';
 
-const BlogPostPage = ({ post, readingTime, meta }) => {
-	const router = useRouter();
-
+const BlogPostPage = ({ data: post, meta }) => {
 	return (
 		<>
 			<Head>
@@ -35,7 +32,7 @@ const BlogPostPage = ({ post, readingTime, meta }) => {
 					<span className={styles.sep} />
 					published at {moment(post.publishedAt).format('ll')} by {post.author.fullName}
 					<span className={styles.sep} />
-					{readingTime} min read
+					{meta.readingTime} min read
 				</div>
 			</div>
 			<article className={styles.article}>
@@ -46,16 +43,16 @@ const BlogPostPage = ({ post, readingTime, meta }) => {
 };
 
 export async function getServerSideProps(context) {
-	const { postSlug } = context.query;
+	const { slug } = context.query;
 	let postData: any = {};
 	let description: string = 'Blog artical on Skillkit';
 
-	if (postSlug.length > 0) {
+	if (slug) {
 		const client = ssrGraphqlClient(context.req.cookies[process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME]);
 
 		const { data, error } = await client
 			.query(getPostQuery, {
-				where: { slug: { equals: postSlug } },
+				where: { slug: { equals: slug } },
 			})
 			.toPromise();
 
@@ -75,9 +72,12 @@ export async function getServerSideProps(context) {
 
 	return {
 		props: {
-			post: { ...postData, content },
-			readingTime: readingTime('ABCD fgh'),
-			meta: { description, url: process.env.NEXT_PUBLIC_APP_URL + context.resolvedUrl },
+			data: { ...postData, content },
+			meta: {
+				description,
+				url: process.env.NEXT_PUBLIC_APP_URL + context.resolvedUrl,
+				readingTime: readingTime('ABCD fgh'),
+			},
 		},
 	};
 }
