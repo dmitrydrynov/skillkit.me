@@ -1,4 +1,5 @@
-import React, { createContext, createRef, FC, ReactElement, ReactNode, useEffect, useState } from 'react';
+import React, { createContext, createRef, ReactElement, ReactNode, useEffect, useState } from 'react';
+import { ReactFC } from '@appTypes/react';
 import skillKitLogo from '@assets/images/skillkit-alpha-logo.svg';
 import UserMenu from '@components/menus/UserMenu';
 import withAuth from '@helpers/withAuth';
@@ -28,7 +29,7 @@ type ProtectedLayoutParams = {
 
 export const PageContext = createContext({});
 
-const ProtectedLayout: FC<ProtectedLayoutParams> = ({
+const ProtectedLayout: ReactFC<ProtectedLayoutParams> = ({
 	children,
 	title,
 	siderMenu = null,

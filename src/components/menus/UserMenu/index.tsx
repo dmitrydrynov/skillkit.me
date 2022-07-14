@@ -54,7 +54,7 @@ const UserMenu: FC = () => {
 			action: async () => {
 				// await endSession();
 
-				dispatch(setLogout());
+				dispatch<any>(setLogout());
 
 				router.push('/');
 			},

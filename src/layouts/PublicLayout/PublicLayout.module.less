@@ -1,15 +1,7 @@
-.container {
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	background: #fff;
-}
-
 .layout {
 	min-height: 100% !important;
 	margin: 0px auto;
 	max-width: 1440px;
-	background-color: white !important;
 }
 
 .content {
@@ -20,27 +12,11 @@
 	padding: 40px 80px;
 
 	&_header {
-		background-color: white !important;
+		background-color: transparent !important;
 		height: 85px !important;
 		display: flex;
 		// justify-content: space-between;
 		// align-items: center;
-
-		&_menu {
-			background-color: transparent !important;
-			border-bottom: 0 !important;
-
-			:global {
-				.ant-menu-item {
-					.ant-menu-title-content {
-						padding: 8px 16px;
-						border-radius: @border-radius-base;
-						transition: background 0.3s;
-						height: @height-base;
-					}
-				}
-			}
-		}
 	}
 }
 

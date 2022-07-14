@@ -1,5 +1,5 @@
 import { PostViewModeEnum } from '@components/PostEditorBeforeContent';
-import { readingTime, textLimit } from '@helpers/text';
+import { readingTimeOfEditorBlocks, textLimit } from '@helpers/text';
 import { ssrGraphqlClient } from '@services/graphql/client';
 import { getPostQuery } from '@services/graphql/queries/post';
 import Blocks from 'editorjs-blocks-react-renderer';
@@ -43,16 +43,16 @@ const BlogPostPage = ({ data: post, meta }) => {
 };
 
 export async function getServerSideProps(context) {
-	const { slug } = context.query;
+	const { postSlug } = context.query;
 	let postData: any = {};
 	let description: string = 'Blog artical on Skillkit';
 
-	if (slug) {
+	if (postSlug) {
 		const client = ssrGraphqlClient(context.req.cookies[process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME]);
 
 		const { data, error } = await client
 			.query(getPostQuery, {
-				where: { slug: { equals: slug } },
+				where: { slug: { equals: postSlug } },
 			})
 			.toPromise();
 
@@ -70,13 +70,15 @@ export async function getServerSideProps(context) {
 		description = textLimit(firstParagraph?.data.text, 170);
 	}
 
+	console.log('blocks');
+
 	return {
 		props: {
 			data: { ...postData, content },
 			meta: {
 				description,
 				url: process.env.NEXT_PUBLIC_APP_URL + context.resolvedUrl,
-				readingTime: readingTime('ABCD fgh'),
+				readingTime: readingTimeOfEditorBlocks(content.blocks),
 			},
 		},
 	};

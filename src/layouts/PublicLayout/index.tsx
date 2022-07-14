@@ -1,10 +1,12 @@
-import { FC, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ReactFC } from '@appTypes/react';
 import skillKitLogo from '@assets/images/skillkit-alpha-logo.svg';
+import HeaderMenu from '@components/menus/HeaderMenu';
 import UserMenu from '@components/menus/UserMenu';
 import SignInModal from '@components/modals/SignInModal';
 import SignUpModal from '@components/modals/SignUpModal';
 import { RootState } from '@store/configure-store';
-import { Button, Col, Layout, Menu, Row, Space } from 'antd';
+import { Button, Col, Layout, Row, Space } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -13,7 +15,7 @@ import styles from './PublicLayout.module.less';
 
 const { Header, Footer, Content } = Layout;
 
-const PublicLayout: FC = ({ children }) => {
+const PublicLayout: ReactFC = ({ children }) => {
 	const router = useRouter();
 	const [, setCurrentHeaderMenuItem] = useState('');
 	const { loggedIn, logginingIn } = useSelector((state: RootState) => state.auth);
@@ -33,7 +35,7 @@ const PublicLayout: FC = ({ children }) => {
 	};
 
 	return (
-		<div className={styles.container}>
+		<>
 			{<SignInModal visible={visibleSignInModal} onClose={() => setVisibleSignInModal(false)} />}
 			{<SignUpModal visible={visibleSignUpModal} onClose={() => setVisibleSignUpModal(false)} />}
 			<Layout className={styles.layout}>
@@ -43,29 +45,11 @@ const PublicLayout: FC = ({ children }) => {
 							<div className={styles.logo}>
 								<Link href="/">
 									<a>
-										<Image src={skillKitLogo} alt="skillKit logo" />
+										<Image src={skillKitLogo} alt="Skillkit logo" />
 									</a>
 								</Link>
 							</div>
-							<Menu mode="horizontal">
-								<Menu.SubMenu key="blog" title="Our blog">
-									<Menu.Item key="posts">
-										<Link href="/blog" passHref>
-											All Posts
-										</Link>
-									</Menu.Item>
-									<Menu.Item key="articles">
-										<Link href="/blog/[categorySlug]" as={`/blog/articles`} passHref>
-											Articles
-										</Link>
-									</Menu.Item>
-									<Menu.Item key="updates">
-										<Link href="/blog/[categorySlug]" as={`/blog/updates`} passHref>
-											Updates
-										</Link>
-									</Menu.Item>
-								</Menu.SubMenu>
-							</Menu>
+							<HeaderMenu />
 						</Col>
 						<Col>
 							{!loggedIn && !logginingIn ? (
@@ -87,7 +71,7 @@ const PublicLayout: FC = ({ children }) => {
 				{/* <BetaModeModal /> */}
 				{/* <Footer>Copyright © 2021 AnyCompany, Inc. All rights reserved.</Footer> */}
 			</Layout>
-		</div>
+		</>
 	);
 };
 

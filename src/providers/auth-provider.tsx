@@ -1,4 +1,5 @@
-import { FC, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ReactFC } from '@appTypes/react';
 import { getCookie, setCookie } from '@helpers/cookie';
 import { gtmEvent } from '@helpers/gtm';
 import { authenticatedUserQuery, signInByCodeQuery } from '@services/graphql/queries/auth';
@@ -9,7 +10,7 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useQuery } from 'urql';
 
-export const AuthProvider: FC = ({ children }): any => {
+export const AuthProvider: ReactFC = ({ children }): any => {
 	const dispatch = useDispatch();
 	const { query: queryParams, push: routerPush } = useRouter();
 	const [sessionToken, setSessionToken] = useState<string | null>(null);

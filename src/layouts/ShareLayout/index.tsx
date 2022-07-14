@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactFC } from '@appTypes/react';
 import skillKitLogo from '@assets/images/skillkit-alpha-logo.svg';
 import { Button, Col, Layout, Row } from 'antd';
 import Image from 'next/image';
@@ -8,7 +8,7 @@ const { Header, Content, Footer } = Layout;
 
 type ShareLayoutParams = {};
 
-const ShareLayout: FC<ShareLayoutParams> = ({ children }) => {
+const ShareLayout: ReactFC<ShareLayoutParams> = ({ children }) => {
 	return (
 		<>
 			<Layout className={styles.layout}>

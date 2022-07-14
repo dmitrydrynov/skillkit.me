@@ -18,6 +18,8 @@
 		"paths": {
 			"@assets/*": ["src/assets/*"],
 			"@components/*": ["src/components/*"],
+      "@views/*": ["src/views/*"],
+      "@appTypes/*": ["src/types/*"],
 			"@helpers/*": ["src/helpers/*"],
 			"@layouts/*": ["src/layouts/*"],
 			"@pages/*": ["src/pages/*"],

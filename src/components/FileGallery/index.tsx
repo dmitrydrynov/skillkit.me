@@ -3,11 +3,9 @@ import { getImageSizeFromName } from '@helpers/file';
 import { WarningTwoTone, DeleteOutlined } from '@ant-design/icons';
 import { Button, Col, Popconfirm, Row, Typography } from 'antd';
 import { index, Matrix, multiply, ones, range, zeros } from 'mathjs';
-import { Responsive, WidthProvider } from 'react-grid-layout';
+import { Responsive as ResponsiveGridLayout } from 'react-grid-layout';
 import { FcLink } from 'react-icons/fc';
 import styles from './style.module.less';
-
-const ResponsiveGridLayout = WidthProvider(Responsive);
 
 type FileGalleryArgs = {
 	fileList: any[];

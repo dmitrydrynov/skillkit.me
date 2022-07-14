@@ -59,3 +59,17 @@ export function textLimit(text, limit) {
 	}
 	return text + '...';
 }
+
+export const textOnly = (textWithHTML: string) => textWithHTML.replace(/(<([^>]+)>)/gi, '');
+
+export function readingTimeOfEditorBlocks(blocks: any[]): number {
+	const paragraphs = blocks.filter((block) => block.type === 'paragraph');
+	let text = '';
+
+	if (paragraphs.length > 0)
+		paragraphs.map((p) => {
+			text += ' ' + textOnly(p.data.text);
+		});
+
+	return readingTime(text);
+}
