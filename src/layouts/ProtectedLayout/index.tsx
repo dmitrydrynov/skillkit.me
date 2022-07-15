@@ -62,13 +62,9 @@ const ProtectedLayout: ReactFC<ProtectedLayoutParams> = ({
 		setSiderCollapsed(true);
 	};
 
-	const defaultSiderMenu = (
-		<Menu mode="inline" selectedKeys={[router.route]} onClick={handleMenuClick}>
-			<Menu.Item key="/user/skills" icon={<ProfileOutlined />}>
-				My skills
-			</Menu.Item>
-		</Menu>
-	);
+	const items = [{ label: 'My skills', key: '/user/skills', icon: <ProfileOutlined /> }];
+
+	const defaultSiderMenu = <Menu mode="inline" selectedKeys={[router.route]} onClick={handleMenuClick} items={items} />;
 
 	return (
 		<>

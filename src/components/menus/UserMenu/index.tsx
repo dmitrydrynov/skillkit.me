@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from 'react';
+import { FC, useState } from 'react';
 import React from 'react';
 import { RootState } from '@store/configure-store';
 import { setLogout } from '@store/reducers/auth';
@@ -14,9 +14,9 @@ const { useBreakpoint } = Grid;
 
 type MenuItem = {
 	link?: string;
-	title: string;
+	title?: string;
 	action?: () => void;
-	before?: ReactNode;
+	divider?: boolean;
 	can?: {
 		roles?: UserRole[];
 	};
@@ -50,42 +50,42 @@ const UserMenu: FC = () => {
 			title: 'Website',
 		},
 		{
+			divider: true,
+		},
+		{
 			title: 'Sign out',
 			action: async () => {
-				// await endSession();
-
 				dispatch<any>(setLogout());
-
 				router.push('/');
 			},
-			before: <Menu.Divider />,
 		},
 	];
 
-	const userMenu = (
-		<Menu ref={null}>
-			{userMenuItems
-				.filter((i) => undefined === i.can || (undefined !== i.can && i.can.roles.includes(authUser.role.name)))
-				.map((menuItem, idx) => (
-					<React.Fragment key={idx}>
-						{!!menuItem.before && menuItem.before}
-						<Menu.Item key={idx.toString()}>
-							{!!menuItem.link && (
-								<Link href={menuItem.link}>
-									<a>{menuItem.title}</a>
-								</Link>
-							)}
+	const items = userMenuItems
+		.filter((i) => undefined === i.can || (undefined !== i.can && i.can.roles.includes(authUser.role.name)))
+		.map((menuItem, idx) =>
+			menuItem.divider
+				? { type: 'divider', key: idx }
+				: {
+						label: (
+							<>
+								{!!menuItem.link && (
+									<Link href={menuItem.link}>
+										<a>{menuItem.title}</a>
+									</Link>
+								)}
+								{!!menuItem.action && (
+									<span onClick={menuItem.action} aria-hidden="true">
+										{menuItem.title}
+									</span>
+								)}
+							</>
+						),
+						key: idx,
+				  },
+		);
 
-							{!!menuItem.action && (
-								<span onClick={menuItem.action} aria-hidden="true">
-									{menuItem.title}
-								</span>
-							)}
-						</Menu.Item>
-					</React.Fragment>
-				))}
-		</Menu>
-	);
+	const authprizedDropdownMenu = <Menu items={items} />;
 
 	return (
 		<Menu
@@ -93,49 +93,53 @@ const UserMenu: FC = () => {
 			defaultActiveFirst={false}
 			selectedKeys={activeUserMenu ? ['userMenu'] : []}
 			disabled={logginingIn}
-		>
-			<Dropdown
-				overlay={logginingIn ? null : userMenu}
-				trigger={['click']}
-				onVisibleChange={(visible: boolean) => {
-					setActiveUserMenu(visible);
-				}}
-				placement="bottomRight"
-				arrow={false}
-			>
-				<Menu.Item key="userMenuItem">
-					{logginingIn ? (
-						<Space align="center">
-							{screens.sm && (
-								<div className={styles.info}>
-									<div className={styles.name}>
-										<Skeleton.Button style={{ width: 100, height: '18px' }} shape="round" active={true} />
-									</div>
-									<div className={styles.email}>
-										<Skeleton.Button style={{ width: 130, height: '14px' }} shape="round" active={true} />
-									</div>
-								</div>
-							)}
-							<Skeleton.Avatar size={40} active={true} />
-						</Space>
-					) : (
-						<Space align="center">
-							{screens.sm && (
-								<div className={styles.info}>
-									<div className={styles.name}>{authUser.fullName}</div>
-									<div className={styles.email}>{authUser.email}</div>
-								</div>
-							)}
-							{authUser.avatar ? (
-								<Avatar size={40} src={authUser.avatar} className={`${styles.avatar} ant-dropdown-link`} />
+			items={[
+				{
+					key: 'userMenu',
+					label: (
+						<Dropdown
+							overlay={logginingIn ? null : authprizedDropdownMenu}
+							trigger={['click']}
+							onVisibleChange={(visible: boolean) => {
+								setActiveUserMenu(visible);
+							}}
+							placement="bottomRight"
+							arrow={false}
+						>
+							{logginingIn ? (
+								<Space align="center">
+									{screens.sm && (
+										<div className={styles.info}>
+											<div className={styles.name}>
+												<Skeleton.Button style={{ width: 100, height: '18px' }} shape="round" active={true} />
+											</div>
+											<div className={styles.email}>
+												<Skeleton.Button style={{ width: 130, height: '14px' }} shape="round" active={true} />
+											</div>
+										</div>
+									)}
+									<Skeleton.Avatar size={40} active={true} />
+								</Space>
 							) : (
-								<Avvvatars value={authUser.email} style="shape" size={40} border />
+								<Space align="center">
+									{screens.sm && (
+										<div className={styles.info}>
+											<div className={styles.name}>{authUser.fullName}</div>
+											<div className={styles.email}>{authUser.email}</div>
+										</div>
+									)}
+									{authUser.avatar ? (
+										<Avatar size={40} src={authUser.avatar} className={`${styles.avatar} ant-dropdown-link`} />
+									) : (
+										<Avvvatars value={authUser.email} style="shape" size={40} border />
+									)}
+								</Space>
 							)}
-						</Space>
-					)}
-				</Menu.Item>
-			</Dropdown>
-		</Menu>
+						</Dropdown>
+					),
+				},
+			]}
+		></Menu>
 	);
 };
 

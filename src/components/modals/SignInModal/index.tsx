@@ -5,7 +5,7 @@ import { gtmEvent } from '@helpers/gtm';
 import { signInMutation } from '@services/graphql/queries/auth';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
-import { Button, Form, Input, Modal, message, Divider } from 'antd';
+import { Button, Form, Input, Modal, message, Divider, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { SiDiscord } from 'react-icons/si';
 import { useDispatch } from 'react-redux';
@@ -121,7 +121,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 			maskClosable={false}
 			className={styles.modal}
 			footer={[
-				<React.Fragment key="footer-signin">
+				<Space key="footer-signin" direction="vertical">
 					<Button
 						key="submit"
 						type="primary"
@@ -141,7 +141,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 					>
 						<SiDiscord /> Sign in with Discord
 					</Button>
-				</React.Fragment>,
+				</Space>,
 			]}
 		>
 			<h2 className={styles.title}>Sign in</h2>

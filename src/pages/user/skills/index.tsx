@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import EmptySkills from '@assets/images/skills/empty-skills.svg';
 import { capitalizedText, experienceAsText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
@@ -40,6 +40,17 @@ const ProfilePage: NextPageWithLayout = () => {
 	const router = useRouter();
 	const screens = useBreakpoint();
 	const [visibleAddUserSkillModal, setVisibleAddUserSkillModal] = useState(false);
+	const [items, setItems] = useState<any[]>([
+		{
+			key: 'delete',
+			danger: true,
+			label: (
+				<>
+					<DeleteOutlined /> Delete
+				</>
+			),
+		},
+	]);
 	const userId = useSelector((state: RootState) => state.user.id);
 	const [userSkills, refreshUserSkills] = useQuery({
 		query: userSkillsQuery,
@@ -53,8 +64,27 @@ const ProfilePage: NextPageWithLayout = () => {
 		await refreshUserSkills();
 	};
 
+	useEffect(() => {
+		if (screens.sm === false) {
+			setItems((prevous) => {
+				return [
+					{
+						key: 'edit',
+						label: (
+							<>
+								<EditOutlined /> Details
+							</>
+						),
+					},
+					...prevous,
+				];
+			});
+		}
+	}, [screens]);
+
 	const userSkillItemMenu = (recordId?: string) => (
 		<Menu
+			items={items}
 			onClick={({ key, domEvent }) => {
 				domEvent.stopPropagation();
 				if (key === 'delete' && recordId) {
@@ -67,18 +97,7 @@ const ProfilePage: NextPageWithLayout = () => {
 					// console.log('share skill', recordId);
 				}
 			}}
-		>
-			{screens.sm === false && (
-				<>
-					<Menu.Item key="edit">
-						<EditOutlined /> Details
-					</Menu.Item>
-				</>
-			)}
-			<Menu.Item key="delete" danger>
-				<DeleteOutlined /> Delete
-			</Menu.Item>
-		</Menu>
+		/>
 	);
 
 	const handleDeleteUserSkill = async (recordId?: string) => {

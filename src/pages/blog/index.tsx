@@ -2,15 +2,20 @@ import { PostViewModeEnum } from '@components/PostEditorBeforeContent';
 import { ssrGraphqlClient } from '@services/graphql/client';
 import { postsDataQuery } from '@services/graphql/queries/post';
 import { postCategoriesDataQuery } from '@services/graphql/queries/postCategory';
-import Head from 'next/head';
 import Link from 'next/link';
 
 const BlogPage = ({ posts, categories }) => {
 	return (
 		<>
-			<Head>
-				<title>Our Blog - Skillkit</title>
-			</Head>
+			{/* <Head>
+				<title>Blog</title>
+				<meta name="description" content="Latest news and articles about Skillkit" />
+				<meta property="og:title" content="Latest news and articles about Skillkit" key="og:title" />
+				<meta property="og:type" content="website" />
+				<meta property="og:url" content="https://skillkit.me/blog" />
+				<meta name="twitter:title" content="Blog" />
+				<meta name="twitter:description" content="Latest news and articles about Skillkit" />
+			</Head> */}
 			<h1>Our Blog</h1>
 			{categories?.length > 0 && (
 				<>
@@ -51,7 +56,7 @@ export async function getServerSideProps(context) {
 
 	const categoriesResponse = await client.query(postCategoriesDataQuery).toPromise();
 
-	console.log(categoriesResponse);
+	// console.log(categoriesResponse);
 
 	return {
 		props: {

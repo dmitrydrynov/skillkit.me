@@ -8,14 +8,13 @@ import { redeemUserMagicAuthTokenMutation } from '@services/graphql/queries/auth
 import { RootState } from '@store/configure-store';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
-import styles from '@styles/home.module.less';
-import { message, Button, Row, Col } from 'antd';
+import { message, Button, Row, Col, Space } from 'antd';
 import type { NextPage } from 'next';
-import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from 'urql';
+import styles from './style.module.less';
 
 const Home: NextPage = () => {
 	const router = useRouter();
@@ -53,10 +52,13 @@ const Home: NextPage = () => {
 
 	return (
 		<>
-			<Head>
+			{/* <Head>
 				<title>Skillkit — flexible alternative to the classic resume</title>
 				<meta name="description" content="Build your unique skills and share them with customers and employers." />
-				<meta name="keywords" content="cv, resume, job, skills, customers, employers, hr" />
+				<meta
+					name="keywords"
+					content="cv, resume, job, skills, customers, employers, profession, career, human resources"
+				/>
 				<meta property="og:title" content="Skillkit — flexible alternative to the classic resume" />
 				<meta property="og:description" content="Build your unique skills and share them with customers and employers." />
 				<meta property="og:url" content={process.env.NEXT_PUBLIC_APP_URL} />
@@ -72,7 +74,7 @@ const Home: NextPage = () => {
 				<meta name="twitter:title" content="Skillkit — flexible alternative to the classic resume" />
 				<meta name="twitter:description" content="Build your unique skills and share them with customers and employers." />
 				<meta name="twitter:author" content="@DmirtyDrynov" />
-			</Head>
+			</Head> */}
 			<Row align="middle">
 				<Col xs={24} md={11} className={styles.container}>
 					<h1>You are more than your profession</h1>
@@ -82,15 +84,18 @@ const Home: NextPage = () => {
 						Build your unique skills and share them with customers and employers.
 					</p>
 					{!loggedIn ? (
-						<Button
-							shape="round"
-							size="large"
-							type="primary"
-							className={styles.primaryButton}
-							onClick={() => setVisibleSignUpModal(true)}
-						>
-							Start Now
-						</Button>
+						<Space direction="vertical" align="center">
+							<Button
+								shape="round"
+								size="large"
+								type="primary"
+								className={styles.primaryButton}
+								onClick={() => setVisibleSignUpModal(true)}
+							>
+								Create my skillkit
+							</Button>
+							<div className={styles.noCreditCardInfo}>It&apos;s free. No credit card required</div>
+						</Space>
 					) : (
 						<Button
 							shape="round"

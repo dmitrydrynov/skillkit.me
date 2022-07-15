@@ -10,6 +10,12 @@ type AdminMenuParams = {
 const AdminMenu = ({ selectedItem = 'profile' }: AdminMenuParams) => {
 	const router = useRouter();
 
+	const items = [
+		{ label: 'Posts', key: '/admin/posts', icon: <TbBook2 /> },
+		{ label: 'Users', key: '/admin/users', icon: <TbUsers /> },
+		{ label: 'Skills', key: '/admin/skills', icon: <GiSkills /> },
+	];
+
 	const handleProfileMenu = ({ key }) => {
 		if (key === 'back') {
 			router.back();
@@ -18,19 +24,7 @@ const AdminMenu = ({ selectedItem = 'profile' }: AdminMenuParams) => {
 		}
 	};
 
-	return (
-		<Menu onClick={handleProfileMenu} mode="inline" defaultSelectedKeys={[selectedItem]}>
-			<Menu.Item key="/admin/posts" icon={<TbBook2 />}>
-				Posts
-			</Menu.Item>
-			<Menu.Item key="/admin/users" icon={<TbUsers />}>
-				Users
-			</Menu.Item>
-			<Menu.Item key="/admin/skills" icon={<GiSkills />}>
-				Skills
-			</Menu.Item>
-		</Menu>
-	);
+	return <Menu onClick={handleProfileMenu} mode="inline" defaultSelectedKeys={[selectedItem]} items={items} />;
 };
 
 export default AdminMenu;

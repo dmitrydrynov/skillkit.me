@@ -9,6 +9,12 @@ type SettingsMenuParams = {
 const SettingsMenu = ({ selectedItem = 'profile' }: SettingsMenuParams) => {
 	const router = useRouter();
 
+	const items = [
+		{ label: 'Back to my skills', key: '/user/skills', icon: <ArrowLeftOutlined /> },
+		{ label: 'Profile', key: '/settings/profile', icon: <UserOutlined /> },
+		{ label: 'Security', key: '/settings/security', icon: <SecurityScanOutlined /> },
+	];
+
 	const handleProfileMenu = ({ key }) => {
 		if (key === 'back') {
 			router.back();
@@ -17,19 +23,7 @@ const SettingsMenu = ({ selectedItem = 'profile' }: SettingsMenuParams) => {
 		}
 	};
 
-	return (
-		<Menu onClick={handleProfileMenu} mode="inline" defaultSelectedKeys={[selectedItem]}>
-			<Menu.Item key="/user/skills" icon={<ArrowLeftOutlined />}>
-				Back to my skills
-			</Menu.Item>
-			<Menu.Item key="/settings/profile" icon={<UserOutlined />}>
-				Profile
-			</Menu.Item>
-			<Menu.Item key="/settings/security" icon={<SecurityScanOutlined />}>
-				Security
-			</Menu.Item>
-		</Menu>
-	);
+	return <Menu onClick={handleProfileMenu} mode="inline" defaultSelectedKeys={[selectedItem]} items={items} />;
 };
 
 export default SettingsMenu;

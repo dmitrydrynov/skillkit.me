@@ -51,6 +51,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
 	return (
 		<>
+			{/* <DefaultSeo {...configSEO} /> */}
 			<Script
 				id="google-tag-manager"
 				strategy="afterInteractive"
@@ -64,10 +65,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			<StoreProvider store={store}>
 				<UrqlProvider value={graphqlClient}>
 					<AuthProvider>
-						<div style={{ opacity: loading ? 0 : 1 }}>
-							{getLayout(<Component {...pageProps} />)}
+						<>
+							{getLayout(<Component {...pageProps} style={{ opacity: loading ? 0 : 1 }} />)}
 							<CookieConsent />
-						</div>
+						</>
 					</AuthProvider>
 				</UrqlProvider>
 			</StoreProvider>

@@ -39,8 +39,6 @@ const UserSkillSharePage: NextPageWithLayout = ({
 	const [visibleSendEmailModal, setVisibleSendEmailModal] = useState(false);
 
 	useEffect(() => {
-		console.log('start', hashLink);
-
 		if (hashLink.length > 1) {
 			setVisibleBackBar(true);
 		}
@@ -80,8 +78,6 @@ const UserSkillSharePage: NextPageWithLayout = ({
 		if (_hashLink.length < 2) {
 			setVisibleBackBar(false);
 		}
-
-		console.log('to', _hashLink);
 
 		router.push({ pathname: '/s/[...hashLink]', query: { hashLink: _hashLink } });
 	};

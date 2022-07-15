@@ -5,6 +5,8 @@ import { useRouter } from 'next/router';
 const SkillEditorMenu = () => {
 	const router = useRouter();
 
+	const items = [{ label: 'Back to my skills', key: '/user/skills', icon: <ArrowLeftOutlined /> }];
+
 	const handleClickMenu = ({ key }) => {
 		if (key === 'back') {
 			router.back();
@@ -13,13 +15,7 @@ const SkillEditorMenu = () => {
 		}
 	};
 
-	return (
-		<Menu onClick={handleClickMenu} mode="inline">
-			<Menu.Item key="/user/skills" icon={<ArrowLeftOutlined />}>
-				Back to my skills
-			</Menu.Item>
-		</Menu>
-	);
+	return <Menu onClick={handleClickMenu} mode="inline" items={items} />;
 };
 
 export default SkillEditorMenu;

@@ -571,20 +571,27 @@ const SkillEditorPage: NextPageWithLayout = () => {
 																className="editItemButtons"
 																size="small"
 																overlay={
-																	<Menu>
-																		<Popconfirm
-																			key="delete-user-tool"
-																			title="Are you sure to delete this tool?"
-																			onConfirm={() => handleDeleteUserTool(item)}
-																			okText="Yes"
-																			cancelText="No"
-																			icon={<WarningTwoTone />}
-																		>
-																			<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
-																				Delete
-																			</Menu.Item>
-																		</Popconfirm>
-																	</Menu>
+																	<Menu
+																		items={[
+																			{
+																				key: 'delete',
+																				icon: <DeleteOutlined />,
+																				label: (
+																					<Popconfirm
+																						key="delete-user-tool"
+																						title="Are you sure to delete this tool?"
+																						onConfirm={() => handleDeleteUserTool(item)}
+																						okText="Yes"
+																						cancelText="No"
+																						icon={<WarningTwoTone />}
+																					>
+																						Delete
+																					</Popconfirm>
+																				),
+																				danger: true,
+																			},
+																		]}
+																	/>
 																}
 																onClick={() => {
 																	setEditableUserTool(item.id);
@@ -638,20 +645,27 @@ const SkillEditorPage: NextPageWithLayout = () => {
 															className="editItemButtons"
 															size="small"
 															overlay={
-																<Menu>
-																	<Popconfirm
-																		key="delete-user-school"
-																		title="Are you sure to delete this school?"
-																		onConfirm={() => handleDeleteUserSchool(item)}
-																		okText="Yes"
-																		cancelText="No"
-																		icon={<WarningTwoTone />}
-																	>
-																		<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
-																			Delete
-																		</Menu.Item>
-																	</Popconfirm>
-																</Menu>
+																<Menu
+																	items={[
+																		{
+																			key: 'delete',
+																			icon: <DeleteOutlined />,
+																			label: (
+																				<Popconfirm
+																					key="delete-user-school"
+																					title="Are you sure to delete this school?"
+																					onConfirm={() => handleDeleteUserSchool(item)}
+																					okText="Yes"
+																					cancelText="No"
+																					icon={<WarningTwoTone />}
+																				>
+																					Delete
+																				</Popconfirm>
+																			),
+																			danger: true,
+																		},
+																	]}
+																/>
 															}
 															onClick={() => {
 																setEditableUserSchool(item.id);
@@ -704,20 +718,27 @@ const SkillEditorPage: NextPageWithLayout = () => {
 															className="editItemButtons"
 															size="small"
 															overlay={
-																<Menu>
-																	<Popconfirm
-																		key="delete-user-job"
-																		title="Are you sure to delete this job?"
-																		onConfirm={() => handleDeleteUserJob(item)}
-																		okText="Yes"
-																		cancelText="No"
-																		icon={<WarningTwoTone />}
-																	>
-																		<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
-																			Delete
-																		</Menu.Item>
-																	</Popconfirm>
-																</Menu>
+																<Menu
+																	items={[
+																		{
+																			key: 'delete',
+																			icon: <DeleteOutlined />,
+																			label: (
+																				<Popconfirm
+																					key="delete-user-job"
+																					title="Are you sure to delete this job?"
+																					onConfirm={() => handleDeleteUserJob(item)}
+																					okText="Yes"
+																					cancelText="No"
+																					icon={<WarningTwoTone />}
+																				>
+																					Delete
+																				</Popconfirm>
+																			),
+																			danger: true,
+																		},
+																	]}
+																/>
 															}
 															onClick={() => {
 																setEditableUserJob(item.id);
@@ -871,7 +892,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 };
 
 SkillEditorPage.getLayout = (page: ReactElement) => (
-	<ProtectedLayout title="Skill Editor" siderMenu={<SkillEditorMenu />} beforeContent={<SkillEditorBeforeContent />}>
+	<ProtectedLayout title="Skill Editor" siderMenu={<SkillEditorMenu />}>
 		{page}
 	</ProtectedLayout>
 );

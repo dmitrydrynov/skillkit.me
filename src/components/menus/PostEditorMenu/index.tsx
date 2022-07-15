@@ -5,6 +5,8 @@ import { useRouter } from 'next/router';
 const PostEditorMenu = () => {
 	const router = useRouter();
 
+	const items = [{ label: 'Back to posts', key: '/admin/posts', icon: <ArrowLeftOutlined /> }];
+
 	const handleClickMenu = ({ key }) => {
 		if (key === 'back') {
 			router.back();
@@ -13,13 +15,7 @@ const PostEditorMenu = () => {
 		}
 	};
 
-	return (
-		<Menu onClick={handleClickMenu} mode="inline">
-			<Menu.Item key="/admin/posts" icon={<ArrowLeftOutlined />}>
-				Back to posts
-			</Menu.Item>
-		</Menu>
-	);
+	return <Menu onClick={handleClickMenu} mode="inline" items={items} />;
 };
 
 export default PostEditorMenu;

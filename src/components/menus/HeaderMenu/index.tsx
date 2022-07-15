@@ -1,44 +1,43 @@
-import { FC, ReactNode } from 'react';
-import React from 'react';
-import { UserRole } from 'src/definitions/user';
-import { Menu, Grid } from 'antd';
+import { FC } from 'react';
+import { Menu } from 'antd';
 import Link from 'next/link';
 import styles from './HeaderMenu.module.less';
 
-const { useBreakpoint } = Grid;
-
-type MenuItem = {
-	link?: string;
-	title: string;
-	action?: () => void;
-	before?: ReactNode;
-	can?: {
-		roles?: UserRole[];
-	};
-};
-
 const HeaderMenu: FC = () => {
-	return (
-		<Menu mode="horizontal" className={styles.headerMenu}>
-			<Menu.SubMenu key="blog" title="Our blog">
-				<Menu.Item key="posts">
-					<Link href="/blog" passHref>
-						All Posts
-					</Link>
-				</Menu.Item>
-				<Menu.Item key="articles">
-					<Link href="/blog/[categorySlug]" as={`/blog/articles`} passHref>
-						Articles
-					</Link>
-				</Menu.Item>
-				<Menu.Item key="updates">
-					<Link href="/blog/[categorySlug]" as={`/blog/updates`} passHref>
-						Updates
-					</Link>
-				</Menu.Item>
-			</Menu.SubMenu>
-		</Menu>
-	);
+	const items = [
+		{
+			label: 'Our blog',
+			key: 'blog',
+			children: [
+				{
+					label: (
+						<Link href="/blog" passHref>
+							All Posts
+						</Link>
+					),
+					key: 'posts',
+				},
+				{
+					label: (
+						<Link href="/blog/articles" passHref>
+							Articles
+						</Link>
+					),
+					key: 'articles',
+				},
+				{
+					label: (
+						<Link href="/blog/updates" passHref>
+							Updates
+						</Link>
+					),
+					key: 'updates',
+				},
+			],
+		},
+	];
+
+	return <Menu mode="horizontal" className={styles.headerMenu} items={items} />;
 };
 
 export default HeaderMenu;

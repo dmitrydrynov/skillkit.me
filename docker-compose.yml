@@ -39,8 +39,7 @@ services:
 
 networks:
  external_network:
-  external:
-   name: skillkit_network
+  name: skillkit_network
 
 volumes:
  uploads:

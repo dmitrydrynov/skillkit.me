@@ -6,7 +6,7 @@ import { gtmEvent } from '@helpers/gtm';
 import { registerUserMutation } from '@services/graphql/queries/auth';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
-import { Button, Col, Form, Input, Modal, Row, message, Divider } from 'antd';
+import { Button, Col, Form, Input, Modal, Row, message, Divider, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { SiDiscord } from 'react-icons/si';
 import { useDispatch } from 'react-redux';
@@ -129,7 +129,8 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 			maskClosable={false}
 			className={styles.modal}
 			footer={[
-				<React.Fragment key="footer-signup">
+				<Space key="footer-signup" direction="vertical">
+					<div className={styles.noCreditCardInfo}>It&apos;s free. No credit card required</div>
 					<Button
 						key="submit"
 						type="primary"
@@ -149,7 +150,7 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 					>
 						<SiDiscord /> Sign up with Discord
 					</Button>
-				</React.Fragment>,
+				</Space>,
 			]}
 		>
 			<h2 className={styles.title}>Get Connect to the Skillkit</h2>

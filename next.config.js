@@ -23,7 +23,7 @@ const plugins = [
 
 /** Main Next.js configuration */
 const mainConfig = {
-  output: 'standalone',
+	output: 'standalone',
 	reactStrictMode: false,
 	swcMinify: true,
 	images: {
