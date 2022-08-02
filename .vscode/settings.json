@@ -1,8 +1,8 @@
 {
   "eslint.lintTask.enable": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll": true
-  },
+  // "editor.codeActionsOnSave": {
+  //   "source.fixAll": true
+  // },
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   },

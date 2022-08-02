@@ -5,7 +5,7 @@ import { gtmEvent } from '@helpers/gtm';
 import { signInMutation } from '@services/graphql/queries/auth';
 import { setLogin } from '@store/reducers/auth';
 import { setUserData } from '@store/reducers/user';
-import { Button, Form, Input, Modal, message, Divider } from 'antd';
+import { Button, Form, Input, Modal, message, Divider, Space } from 'antd';
 import { useRouter } from 'next/router';
 import { SiDiscord } from 'react-icons/si';
 import { useDispatch } from 'react-redux';
@@ -121,17 +121,20 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 			maskClosable={false}
 			className={styles.modal}
 			footer={[
-				<React.Fragment key="footer-signin">
-					<Button
-						key="submit"
-						type="primary"
-						loading={authorizedResponse.fetching && !authorizedResponse.error}
-						onClick={handleOk}
-						className={styles.submitBtn}
-					>
-						{state.step === _FormStep._Email && 'Next'}
-						{state.step === _FormStep._Password && 'Sign in'}
-					</Button>
+				<Space key="footer-signin" direction="vertical">
+					<div>
+						<Button
+							key="submit"
+							type="primary"
+							loading={authorizedResponse.fetching && !authorizedResponse.error}
+							onClick={handleOk}
+							className={styles.submitBtn}
+						>
+							{state.step === _FormStep._Email && 'Next'}
+							{state.step === _FormStep._Password && 'Sign in'}
+						</Button>
+						<div className={styles.noCreditCardInfo}>It&apos;s free. No credit card required</div>
+					</div>
 					<Divider>or</Divider>
 					<Button
 						key="discord-login"
@@ -141,7 +144,7 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 					>
 						<SiDiscord /> Sign in with Discord
 					</Button>
-				</React.Fragment>,
+				</Space>,
 			]}
 		>
 			<h2 className={styles.title}>Sign in</h2>

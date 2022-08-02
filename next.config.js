@@ -26,7 +26,7 @@ const mainConfig = {
 	reactStrictMode: false,
 	swcMinify: true,
 	images: {
-		domains: ['cdn.discordapp.com'],
+		domains: ['cdn.discordapp.com', 'localhost:2368'],
 	},
 	experimental: {
 		outputStandalone: true,

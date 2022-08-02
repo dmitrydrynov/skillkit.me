@@ -64,10 +64,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 			<StoreProvider store={store}>
 				<UrqlProvider value={graphqlClient}>
 					<AuthProvider>
-						<div style={{ opacity: loading ? 0 : 1 }}>
-							{getLayout(<Component {...pageProps} />)}
-							<CookieConsent />
-						</div>
+						{getLayout(<Component {...pageProps} style={{ opacity: loading ? 0 : 1 }} />)}
+						<CookieConsent />
 					</AuthProvider>
 				</UrqlProvider>
 			</StoreProvider>

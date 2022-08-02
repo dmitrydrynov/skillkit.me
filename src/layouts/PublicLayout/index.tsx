@@ -6,6 +6,7 @@ import SignUpModal from '@components/modals/SignUpModal';
 import { RootState } from '@store/configure-store';
 import { Button, Col, Layout, Row, Space } from 'antd';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import styles from './PublicLayout.module.less';
@@ -40,7 +41,11 @@ const PublicLayout: FC = ({ children }) => {
 					<Row align="middle" className={styles.logoContainer}>
 						<Col flex="1">
 							<div className={styles.logo}>
-								<Image src={skillKitLogo} alt="skillKit logo" />
+								<Link href="/">
+									<a>
+										<Image src={skillKitLogo} alt="skillKit logo" />
+									</a>
+								</Link>
 							</div>
 						</Col>
 						<Col>

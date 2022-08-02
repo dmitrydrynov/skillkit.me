@@ -3,7 +3,6 @@
 
 .form {
 	flex: 1;
-
 	:global {
 		.ant-form-item-label {
 			& > label {
@@ -42,12 +41,18 @@
 }
 
 .modal {
+  .noCreditCardInfo {
+		font-size: 12px;
+		color: #a1a1a1;
+    margin-top: 6px;
+	}
+  
 	:global {
 		.ant-modal-body {
 			padding: 24px;
 		}
 		.ant-modal-footer {
-			padding: 24px;
+			padding: 0 24px 24px;
 			text-align: center;
 			border: 0;
 		}
