@@ -26,7 +26,7 @@ const mainConfig = {
 	reactStrictMode: false,
 	swcMinify: true,
 	images: {
-		domains: ['cdn.discordapp.com', 'localhost:2368'],
+		domains: ['cdn.discordapp.com', 'localhost:2368', 'editor.skillkit.me'],
 	},
 	experimental: {
 		outputStandalone: true,
