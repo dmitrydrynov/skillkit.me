@@ -154,7 +154,8 @@ const UserSkillSharePage: NextPageWithLayout = ({
 									type="primary"
 									onClick={() => {
 										setVisibleSendEmailModal(true);
-									}}>
+									}}
+								>
 									<BiMailSend size={24} style={{ marginRight: '8px' }} /> Write me
 								</Button>
 							)}
@@ -237,7 +238,8 @@ const UserSkillSharePage: NextPageWithLayout = ({
 																</Button>
 															) : null}
 														</>,
-													]}>
+													]}
+												>
 													<List.Item.Meta
 														avatar={
 															<Tooltip title={level.description}>
@@ -289,11 +291,13 @@ const UserSkillSharePage: NextPageWithLayout = ({
 															content={item.description}
 															overlayStyle={{
 																maxWidth: '50vw',
-															}}>
+															}}
+														>
 															<FaInfoCircle color="#313c5d" />
 														</Popover>
 													}
-													key={idx}>
+													key={idx}
+												>
 													<div className={styles.listItem}>{item.title}</div>
 												</Badge>
 											) : (

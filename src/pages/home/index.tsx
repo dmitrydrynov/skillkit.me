@@ -88,7 +88,8 @@ const Home: NextPage = () => {
 								size="large"
 								type="primary"
 								className={styles.primaryButton}
-								onClick={() => setVisibleSignUpModal(true)}>
+								onClick={() => setVisibleSignUpModal(true)}
+							>
 								Create my skillkit
 							</Button>
 							<div className={styles.noCreditCardInfo}>It&apos;s free. No credit card required</div>
@@ -99,7 +100,8 @@ const Home: NextPage = () => {
 							size="large"
 							type="primary"
 							className={styles.primaryButton}
-							onClick={() => router.push('/user/skills')}>
+							onClick={() => router.push('/user/skills')}
+						>
 							Go to your skills
 						</Button>
 					)}

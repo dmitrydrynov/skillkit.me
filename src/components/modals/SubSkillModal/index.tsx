@@ -181,7 +181,8 @@ const SubSkillModal = ({ onSave, onCancel, userSkill, visible = false }: _ModalP
 			className={styles.modal}
 			destroyOnClose={true}
 			confirmLoading={submitting}
-			okButtonProps={{ disabled: selectedAction == _ActionEnum.SelectFromList && userSkillsList.length === 0 }}>
+			okButtonProps={{ disabled: selectedAction == _ActionEnum.SelectFromList && userSkillsList.length === 0 }}
+		>
 			<Spin spinning={submitting}>
 				<Form form={form} layout="vertical" name="add_example_link_form" requiredMark={false}>
 					<Tabs
@@ -191,7 +192,8 @@ const SubSkillModal = ({ onSave, onCancel, userSkill, visible = false }: _ModalP
 						onTabClick={(selectedKey) => {
 							setSelectedAction(selectedKey as unknown as _ActionEnum);
 							form.resetFields();
-						}}>
+						}}
+					>
 						<Tabs.TabPane tab={`Select from list`} key={_ActionEnum.SelectFromList}>
 							{selectedAction == _ActionEnum.SelectFromList && (
 								<>
@@ -203,7 +205,8 @@ const SubSkillModal = ({ onSave, onCancel, userSkill, visible = false }: _ModalP
 												required: true,
 												message: 'This field is required.',
 											},
-										]}>
+										]}
+									>
 										<TreeSelect
 											treeData={userSkillsList}
 											disabled={userSkillsList.length === 0}

@@ -57,7 +57,8 @@ export const InlineEdit = ({
 				name="inlineForm"
 				onFinish={handleSaveBtn}
 				initialValues={{ [name]: initialValue }}
-				style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+				style={{ display: 'flex', alignItems: 'center', width: '100%' }}
+			>
 				{editting ? (
 					<Form.Item name={name} noStyle>
 						{editMode}

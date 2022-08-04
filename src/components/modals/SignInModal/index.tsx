@@ -128,7 +128,8 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 							type="primary"
 							loading={authorizedResponse.fetching && !authorizedResponse.error}
 							onClick={handleOk}
-							className={styles.submitBtn}>
+							className={styles.submitBtn}
+						>
 							{state.step === _FormStep._Email && 'Next'}
 							{state.step === _FormStep._Password && 'Sign in'}
 						</Button>
@@ -139,11 +140,13 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 						key="discord-login"
 						type="text"
 						href={process.env.NEXT_PUBLIC_DISCORD_AUTH_URL}
-						className={styles.oauthButton}>
+						className={styles.oauthButton}
+					>
 						<SiDiscord /> Sign in with Discord
 					</Button>
 				</Space>,
-			]}>
+			]}
+		>
 			<h2 className={styles.title}>Sign in</h2>
 			<div className={styles.subtitle}>
 				{state.step === _FormStep._Email && <>Enter your email address to sign in your account</>}
@@ -163,7 +166,8 @@ const SignInModal: FC<SignInModalArgs> = ({ visible, onClose }) => {
 				name="form_in_modal"
 				initialValues={{ modifier: 'public' }}
 				requiredMark={false}
-				onKeyUp={handleKeyUpForm}>
+				onKeyUp={handleKeyUpForm}
+			>
 				{state.step === _FormStep._Email && (
 					<Form.Item name="email" rules={[{ required: true, message: 'Please input the email!' }]}>
 						<Input autoFocus={true} placeholder="Email" />

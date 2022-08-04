@@ -154,7 +154,8 @@ const PostEditorBeforeContent = () => {
 											onChange={() => {}}
 											size="small"
 											bordered={false}
-											onSelect={handleViewModeSelect}>
+											onSelect={handleViewModeSelect}
+										>
 											<Select.Option value={PostViewModeEnum.ONLY_ME}>
 												<BiStreetView style={{ marginRight: '4px' }} /> Only me
 											</Select.Option>
@@ -185,7 +186,8 @@ const PostEditorBeforeContent = () => {
 										<Button
 											type={postData?.id ? 'primary' : 'default'}
 											onClick={handleViewPost}
-											style={{ display: 'inline-flex', alignItems: 'center' }}>
+											style={{ display: 'inline-flex', alignItems: 'center' }}
+										>
 											View <BiLinkExternal style={{ marginLeft: '8px' }} />
 										</Button>
 									)}

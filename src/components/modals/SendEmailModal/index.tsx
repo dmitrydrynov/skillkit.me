@@ -79,7 +79,8 @@ const SendEmailModal = ({ onSend, onCancel, hash, visible = false }: _ModalParam
 			centered
 			maskClosable={false}
 			className={styles.modal}
-			destroyOnClose={true}>
+			destroyOnClose={true}
+		>
 			<Form className={styles.form} form={form} layout="vertical" name="add_tool_form" requiredMark={true}>
 				<Form.Item name="hash" hidden={true} />
 

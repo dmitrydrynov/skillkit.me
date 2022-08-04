@@ -127,7 +127,8 @@ const AddUserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visi
 			maskClosable={false}
 			className={styles.modal}
 			destroyOnClose={true}
-			confirmLoading={submitting}>
+			confirmLoading={submitting}
+		>
 			<Spin spinning={submitting}>
 				<Form form={form} layout="vertical" name="add_example_link_form" requiredMark={false}>
 					<Tabs
@@ -138,7 +139,8 @@ const AddUserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visi
 							setSelectedAction(selectedKey as unknown as _ActionEnum);
 							form.resetFields();
 							setShowUploadBtn(true);
-						}}>
+						}}
+					>
 						<Tabs.TabPane tab={`Add link`} key={_ActionEnum.AddLink}>
 							{selectedAction == _ActionEnum.AddLink && (
 								<>
@@ -156,7 +158,8 @@ const AddUserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visi
 												type: 'url',
 												message: 'This field must be a valid url.',
 											},
-										]}>
+										]}
+									>
 										<Input />
 									</Form.Item>
 
@@ -186,7 +189,8 @@ const AddUserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visi
 										label="Upload file"
 										rules={[{ required: true, message: 'Please input the field!' }]}
 										valuePropName="fileList"
-										getValueFromEvent={normUploadFile}>
+										getValueFromEvent={normUploadFile}
+									>
 										<Upload
 											listType="picture"
 											className={styles.uploader}
@@ -194,7 +198,8 @@ const AddUserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visi
 											onPreview={handleFilePreview}
 											onRemove={() => setShowUploadBtn(true)}
 											style={{ maxWidth: '200px' }}
-											maxCount={1}>
+											maxCount={1}
+										>
 											{showUploadBtn && (
 												<Button type="ghost">{fileLoading ? <LoadingOutlined /> : <PlusOutlined />} Select file</Button>
 											)}
@@ -206,7 +211,8 @@ const AddUserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visi
 										visible={previewState.visible}
 										title={previewState.title}
 										footer={null}
-										onCancel={() => setPreviewState({ visible: false, title: 'Unknown name' })}>
+										onCancel={() => setPreviewState({ visible: false, title: 'Unknown name' })}
+									>
 										<img alt={selectedFile?.name} style={{ maxWidth: '100%' }} src={selectedFile?.url} />
 									</Modal>
 

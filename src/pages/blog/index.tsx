@@ -25,7 +25,8 @@ const PostsPage: FC = (props: any) => (
 								alt={post.title}
 								className={styles.featureImage}
 							/>
-						}>
+						}
+					>
 						<Card.Meta
 							title={
 								<Link href={`${process.env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`}>

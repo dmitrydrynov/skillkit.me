@@ -81,7 +81,8 @@ AdminSkillsPage.getLayout = (page: ReactElement) => (
 	<ProtectedLayout
 		title="Skills"
 		can={{ roles: [UserRole.ADMIN] }}
-		siderMenu={<AdminMenu selectedItem="/admin/skills" />}>
+		siderMenu={<AdminMenu selectedItem="/admin/skills" />}
+	>
 		{page}
 	</ProtectedLayout>
 );

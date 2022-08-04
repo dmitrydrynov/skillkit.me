@@ -138,7 +138,8 @@ const SkillEditorBeforeContent = () => {
 											onChange={() => {}}
 											size="small"
 											bordered={false}
-											onSelect={handleViewModeSelect}>
+											onSelect={handleViewModeSelect}
+										>
 											<Select.Option value={UserSkillViewModeEnum.ONLY_ME}>
 												<BiStreetView style={{ marginRight: '4px' }} /> Only me
 											</Select.Option>

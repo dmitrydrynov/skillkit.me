@@ -105,7 +105,8 @@ const AdminPostsPage: NextPageWithLayout = () => {
 						icon={<PlusOutlined />}
 						onClick={() => {
 							router.push(`/admin/post/editor`);
-						}}>
+						}}
+					>
 						New post
 					</Button>,
 				]}

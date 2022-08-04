@@ -182,7 +182,7 @@ const AdminPostEditPage: NextPageWithLayout = () => {
 				setFeatureImage(data.uploadImage);
 				setPost({ ...post, featureImage: data.uploadImage.url });
 				console.log('uploadImage', data);
-				onSuccess('Ok');
+				onSuccess('Ok', null);
 			} catch (error: any) {
 				onError(error);
 			}
@@ -276,7 +276,8 @@ AdminPostEditPage.getLayout = (page: ReactElement) => (
 		title="Post Editor"
 		can={{ roles: [UserRole.ADMIN] }}
 		siderMenu={<PostEditorMenu />}
-		beforeContent={<PostEditorBeforeContent />}>
+		beforeContent={<PostEditorBeforeContent />}
+	>
 		{page}
 	</ProtectedLayout>
 );

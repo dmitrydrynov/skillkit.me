@@ -202,7 +202,8 @@ const FileGallery = ({
 			isDraggable={false}
 			isResizable={false}
 			onBreakpointChange={handleBreakpointChange}
-			layouts={layout}>
+			layouts={layout}
+		>
 			{layout[currentBreakpoint]?.length > 0 &&
 				fileList.map((record, idx) => {
 					return (
@@ -211,7 +212,8 @@ const FileGallery = ({
 								className={styles['item-' + record.type.toLowerCase()]}
 								key={'n' + idx}
 								style={{ backgroundImage: record.type === 'LINK' ? null : `url(${record.url})` }}
-								onClick={() => handleItemClick(record, idx)}>
+								onClick={() => handleItemClick(record, idx)}
+							>
 								{!onlyView && (
 									<Popconfirm
 										key="delete-user-file"
@@ -219,7 +221,8 @@ const FileGallery = ({
 										onConfirm={() => onDelete(record)}
 										okText="Yes"
 										cancelText="No"
-										icon={<WarningTwoTone />}>
+										icon={<WarningTwoTone />}
+									>
 										<Button shape="circle" size="small" className="close">
 											<DeleteOutlined />
 										</Button>

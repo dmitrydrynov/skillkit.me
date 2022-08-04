@@ -11,7 +11,8 @@ export const AddUserSkillForm = ({ form, searchSkillData, onSelectSkill, onSearc
 			layout="vertical"
 			name="form_in_modal"
 			initialValues={{ modifier: 'public' }}
-			requiredMark={false}>
+			requiredMark={false}
+		>
 			<Row>
 				<Col xs={{ span: 24 }} sm={{ span: 14 }}>
 					<Form.Item
@@ -22,7 +23,8 @@ export const AddUserSkillForm = ({ form, searchSkillData, onSelectSkill, onSearc
 								required: true,
 								message: 'Please input the skill name!',
 							},
-						]}>
+						]}
+					>
 						<AutoComplete
 							showSearch
 							allowClear
@@ -33,7 +35,8 @@ export const AddUserSkillForm = ({ form, searchSkillData, onSelectSkill, onSearc
 							notFoundContent={null}
 							onSelect={onSelectSkill}
 							onSearch={onSearchSkill}
-							onChange={onChangeSkill}>
+							onChange={onChangeSkill}
+						>
 							{searchSkillData?.skills.map((d: any) => (
 								<AutoComplete.Option key={d.id} value={d.name}>
 									{d.name}

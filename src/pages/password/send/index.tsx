@@ -44,7 +44,8 @@ const ResetPasswordPage: NextPage = () => {
 					layout="vertical"
 					initialValues={{ modifier: 'public' }}
 					style={{ marginBottom: '40px' }}
-					onFinish={handleFormFinish}>
+					onFinish={handleFormFinish}
+				>
 					<Form.Item name="email" label="Email" rules={[{ required: true, message: 'Please input the email!' }]}>
 						<Input />
 					</Form.Item>

@@ -136,7 +136,8 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 							type="primary"
 							loading={registerUserResponse.fetching}
 							onClick={handleOk}
-							className={styles.submitBtn}>
+							className={styles.submitBtn}
+						>
 							{state.step === _FormStep._Register && 'Next'}
 							{state.step === _FormStep._Password && 'Sign up'}
 						</Button>
@@ -147,11 +148,13 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 						key="discord-login"
 						type="text"
 						href={process.env.NEXT_PUBLIC_DISCORD_AUTH_URL}
-						className={styles.oauthButton}>
+						className={styles.oauthButton}
+					>
 						<SiDiscord /> Sign up with Discord
 					</Button>
 				</Space>,
-			]}>
+			]}
+		>
 			<h2 className={styles.title}>Get Connect to the Skillkit</h2>
 			<p className={styles.subtitle}>
 				{state.step === _FormStep._Register && <>Fill this form and let&apos;s go!</>}
@@ -174,7 +177,8 @@ const SignUpModal: FC<SignUpModalArgs> = ({ visible, onClose }) => {
 					name="form_in_modal"
 					initialValues={{ modifier: 'public' }}
 					requiredMark={false}
-					onKeyUp={handleKeyUpForm}>
+					onKeyUp={handleKeyUpForm}
+				>
 					{state.step === _FormStep._Register && (
 						<>
 							<Row gutter={16}>
