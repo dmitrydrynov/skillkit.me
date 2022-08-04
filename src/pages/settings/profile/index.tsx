@@ -157,8 +157,7 @@ const ProfilePage: NextPageWithLayout = () => {
 							requiredMark={false}
 							autoComplete="off"
 							autoCorrect="off"
-							spellCheck="false"
-						>
+							spellCheck="false">
 							<Form.Item name="avatar" label="Photo" valuePropName="fileList" getValueFromEvent={normUploadFile}>
 								<Upload
 									listType="picture-card"
@@ -166,8 +165,7 @@ const ProfilePage: NextPageWithLayout = () => {
 									onChange={handleAvatarChange}
 									showUploadList={{ showPreviewIcon: false }}
 									onRemove={() => setShowUploadBtn(true)}
-									maxCount={1}
-								>
+									maxCount={1}>
 									{showUploadBtn && uploadButton}
 								</Upload>
 							</Form.Item>
@@ -181,8 +179,7 @@ const ProfilePage: NextPageWithLayout = () => {
 												required: true,
 												message: 'Please input the first name!',
 											},
-										]}
-									>
+										]}>
 										<Input placeholder="First name" />
 									</Form.Item>
 								</Col>
@@ -195,8 +192,7 @@ const ProfilePage: NextPageWithLayout = () => {
 												required: true,
 												message: 'Please input the last name!',
 											},
-										]}
-									>
+										]}>
 										<Input placeholder="Last name" />
 									</Form.Item>
 								</Col>
@@ -205,8 +201,7 @@ const ProfilePage: NextPageWithLayout = () => {
 							<Form.Item
 								name="email"
 								label="Email"
-								rules={[{ type: 'email', required: true, message: 'Please input the email!' }]}
-							>
+								rules={[{ type: 'email', required: true, message: 'Please input the email!' }]}>
 								<Input placeholder="Email" />
 							</Form.Item>
 
@@ -214,8 +209,7 @@ const ProfilePage: NextPageWithLayout = () => {
 								<AutoComplete
 									allowClear
 									placeholder="Country"
-									filterOption={(inputValue, option) => option!.title.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1}
-								>
+									filterOption={(inputValue, option) => option!.title.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1}>
 									{countries.map(({ value, label }: any) => (
 										<AutoComplete.Option key={value} value={label} title={label}>
 											{countryFlag(value)} {label}
@@ -227,8 +221,7 @@ const ProfilePage: NextPageWithLayout = () => {
 							<Form.Item
 								name="birthdayDate"
 								label="Date of birth"
-								rules={[{ required: true, message: 'Please input the email!' }]}
-							>
+								rules={[{ required: true, message: 'Please input the email!' }]}>
 								<DatePicker placeholder="Birthday date" format="MM/DD/YYYY" />
 							</Form.Item>
 

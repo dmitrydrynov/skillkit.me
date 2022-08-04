@@ -159,8 +159,7 @@ const EditUserFileModal = ({ onSave, onCancel, record = null, visible = false }:
 			maskClosable={false}
 			className={styles.modal}
 			destroyOnClose={true}
-			confirmLoading={submitting}
-		>
+			confirmLoading={submitting}>
 			<Spin spinning={submitting || fetching}>
 				<Form form={form} layout="vertical" name="edit_user_file_form" requiredMark={false} className={styles.form}>
 					{record.type == _UserFileType.LINK && (
@@ -179,8 +178,7 @@ const EditUserFileModal = ({ onSave, onCancel, record = null, visible = false }:
 										type: 'url',
 										message: 'This field must be a valid url.',
 									},
-								]}
-							>
+								]}>
 								<Input />
 							</Form.Item>
 
@@ -208,8 +206,7 @@ const EditUserFileModal = ({ onSave, onCancel, record = null, visible = false }:
 								label="Upload file"
 								rules={[{ required: true, message: 'Please input the field!' }]}
 								valuePropName="fileList"
-								getValueFromEvent={normUploadFile}
-							>
+								getValueFromEvent={normUploadFile}>
 								<Upload
 									listType="picture"
 									className={styles.uploader}
@@ -217,8 +214,7 @@ const EditUserFileModal = ({ onSave, onCancel, record = null, visible = false }:
 									onPreview={handleFilePreview}
 									onRemove={() => setShowUploadBtn(true)}
 									style={{ maxWidth: '200px' }}
-									maxCount={1}
-								>
+									maxCount={1}>
 									{showUploadBtn && (
 										<Button type="ghost">{fileLoading ? <LoadingOutlined /> : <PlusOutlined />} Select file</Button>
 									)}
@@ -230,8 +226,7 @@ const EditUserFileModal = ({ onSave, onCancel, record = null, visible = false }:
 								visible={previewState.visible}
 								title={previewState.title}
 								footer={null}
-								onCancel={() => setPreviewState({ visible: false, title: 'Unknown name' })}
-							>
+								onCancel={() => setPreviewState({ visible: false, title: 'Unknown name' })}>
 								<img alt={selectedFile?.name} style={{ maxWidth: '100%' }} src={selectedFile?.url} />
 							</Modal>
 

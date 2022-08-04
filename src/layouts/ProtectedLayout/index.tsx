@@ -80,8 +80,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({
 					onClick={() => {
 						setSiderCollapsed(true);
 					}}
-					style={siderCollapsed ? { opacity: 0, display: 'none' } : { opacity: 1, display: 'block' }}
-				></div>
+					style={siderCollapsed ? { opacity: 0, display: 'none' } : { opacity: 1, display: 'block' }}></div>
 				<Sider
 					ref={siderRef}
 					className={styles.sider}
@@ -93,8 +92,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({
 						if (type === 'clickTrigger') {
 							setSiderCollapsed(collapsed);
 						}
-					}}
-				>
+					}}>
 					<div className={styles.logo}>
 						<Image src={skillKitLogo} layout="intrinsic" alt="gdhub logo" />
 					</div>

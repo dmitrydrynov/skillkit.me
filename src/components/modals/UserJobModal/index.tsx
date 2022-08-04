@@ -115,8 +115,7 @@ const UserJobModal = ({ onSave, onCancel, userSkillId, recordId = null, visible 
 			centered
 			maskClosable={false}
 			className={styles.modal}
-			destroyOnClose={true}
-		>
+			destroyOnClose={true}>
 			<Spin spinning={fetching && !data}>
 				<Form className={styles.form} form={form} layout="vertical" name="add_job_form" requiredMark={true}>
 					<Form.Item name="id" hidden={true} />

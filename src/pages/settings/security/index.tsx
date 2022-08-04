@@ -76,15 +76,13 @@ const SecurityPage: NextPageWithLayout = () => {
 						initialValues={{ useOTP: userUseOTP }}
 						layout="vertical"
 						onFinish={handleFinish}
-						requiredMark={false}
-					>
+						requiredMark={false}>
 						<Form.Item
 							name="useOTP"
 							style={{ flexDirection: 'row-reverse', alignItems: 'center' }}
 							labelCol={{ span: 20 }}
 							label="Use one time password (OTP)"
-							valuePropName="checked"
-						>
+							valuePropName="checked">
 							<Switch style={{ flex: 'unset' }} onChange={(value) => setIsOTP(value)} />
 						</Form.Item>
 						{!isOTP && (

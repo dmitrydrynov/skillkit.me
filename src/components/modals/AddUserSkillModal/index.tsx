@@ -108,12 +108,10 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, onClose, onFinish }) => 
 					key="submitWithRedirect"
 					type="primary"
 					loading={addUserSkillResponse.fetching}
-					onClick={() => handleSave({ redirect: true })}
-				>
+					onClick={() => handleSave({ redirect: true })}>
 					Save & Add Details
 				</Button>,
-			]}
-		>
+			]}>
 			<AddUserSkillForm
 				form={form}
 				searchSkillData={searchSkillData}

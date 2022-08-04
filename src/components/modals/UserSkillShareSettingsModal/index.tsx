@@ -79,8 +79,7 @@ const UserSkillShareSettingsModal = ({
 			centered
 			maskClosable={false}
 			className={styles.modal}
-			destroyOnClose={true}
-		>
+			destroyOnClose={true}>
 			<Spin spinning={fetching && !data}>
 				In development
 				{/* <Form className={styles.form} form={form} layout="vertical" name="add_tool_form" requiredMark={true}>

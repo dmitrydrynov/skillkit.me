@@ -57,16 +57,14 @@ const ResetPasswordPage: NextPage = () => {
 					layout="vertical"
 					initialValues={{ modifier: 'public' }}
 					style={{ marginBottom: '40px' }}
-					onFinish={handleFormFinish}
-				>
+					onFinish={handleFormFinish}>
 					<Form.Item name="email" label="Email" rules={[{ required: true, message: 'Please input the email!' }]}>
 						<Input />
 					</Form.Item>
 					<Form.Item
 						name="password"
 						label="New password"
-						rules={[{ required: true, message: 'Please input the new password!' }]}
-					>
+						rules={[{ required: true, message: 'Please input the new password!' }]}>
 						<Input type="password" autoComplete="new-password" />
 					</Form.Item>
 				</Form>

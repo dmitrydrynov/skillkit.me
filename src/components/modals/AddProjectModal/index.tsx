@@ -82,20 +82,17 @@ const AddProjectModal: FC<AddProjectModalArgs> = ({ visible, onClose }) => {
 					size="large"
 					loading={createProjectResponse.fetching && !createProjectResponse.error}
 					onClick={handleOk}
-					className={styles.submitBtn}
-				>
+					className={styles.submitBtn}>
 					Save
 				</Button>,
-			]}
-		>
+			]}>
 			<Form
 				className={styles.form}
 				form={form}
 				layout="vertical"
 				name="addProjectForm"
 				initialValues={{ modifier: 'public' }}
-				requiredMark={false}
-			>
+				requiredMark={false}>
 				<Row align="middle">
 					<Col span={12}>
 						<Form.Item label="Title" name="title" rules={[{ required: true, message: 'Please input the field!' }]}>

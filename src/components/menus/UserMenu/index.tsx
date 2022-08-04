@@ -92,8 +92,7 @@ const UserMenu: FC = () => {
 			className={styles.userMenu}
 			defaultActiveFirst={false}
 			selectedKeys={activeUserMenu ? ['userMenu'] : []}
-			disabled={logginingIn}
-		>
+			disabled={logginingIn}>
 			<Dropdown
 				overlay={logginingIn ? null : userMenu}
 				trigger={['click']}
@@ -101,8 +100,7 @@ const UserMenu: FC = () => {
 					setActiveUserMenu(visible);
 				}}
 				placement="bottomRight"
-				arrow={false}
-			>
+				arrow={false}>
 				<Menu.Item key="userMenuItem">
 					{logginingIn ? (
 						<Space align="center">
