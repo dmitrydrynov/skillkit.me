@@ -60,11 +60,11 @@ export async function getStaticPaths() {
 	const client = ssrGraphqlClient();
 	const { data, error } = await client.query(postsDataQuery).toPromise();
 
-	if (error) {
+	if (error || !data.posts) {
 		return { notFound: true };
 	}
 
-	const paths = data.posts?.map((post) => ({
+	const paths = data.posts.map((post) => ({
 		params: { slug: post.slug },
 	}));
 
