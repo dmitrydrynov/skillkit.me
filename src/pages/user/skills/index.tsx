@@ -66,8 +66,7 @@ const ProfilePage: NextPageWithLayout = () => {
 				if (key === 'share' && recordId) {
 					// console.log('share skill', recordId);
 				}
-			}}
-		>
+			}}>
 			{screens.sm === false && (
 				<>
 					<Menu.Item key="edit">
@@ -139,8 +138,7 @@ const ProfilePage: NextPageWithLayout = () => {
 							icon={<PlusOutlined />}
 							onClick={() => {
 								setVisibleAddUserSkillModal(true);
-							}}
-						>
+							}}>
 							Add first skill
 						</Button>
 					</Space>
@@ -159,8 +157,7 @@ const ProfilePage: NextPageWithLayout = () => {
 								icon={<PlusOutlined />}
 								onClick={() => {
 									setVisibleAddUserSkillModal(true);
-								}}
-							>
+								}}>
 								Add skill
 							</Button>,
 						]}
@@ -172,8 +169,7 @@ const ProfilePage: NextPageWithLayout = () => {
 							dataSource={userSkills.data?.userSkills}
 							loading={userSkills.fetching}
 							pagination={false}
-							size="middle"
-						>
+							size="middle">
 							<Table.Column
 								title="I can"
 								dataIndex={['skill', 'name']}
@@ -239,8 +235,7 @@ const ProfilePage: NextPageWithLayout = () => {
 											type="text"
 											size="small"
 											icon={<EditTwoTone twoToneColor="#eb2f96" />}
-											onClick={() => router.push(`/user/skill/${record.id}/editor`)}
-										>
+											onClick={() => router.push(`/user/skill/${record.id}/editor`)}>
 											Details
 										</Button>
 									</>
@@ -258,8 +253,7 @@ const ProfilePage: NextPageWithLayout = () => {
 											onClick={(e) => {
 												e.preventDefault();
 												e.stopPropagation();
-											}}
-										>
+											}}>
 											<HiDotsVertical />
 										</Button>
 									</Dropdown>

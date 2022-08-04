@@ -8,9 +8,12 @@ import { NextPageWithLayout } from '@pages/_app';
 import { getPostQuery, removeImageMutation, uploadImageMutation } from '@services/graphql/queries/post';
 import { RootState } from '@store/configure-store';
 import { UserRole } from 'src/definitions/user';
-import { Input } from 'antd';
+import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Button, Input, message, Spin, Upload, UploadProps } from 'antd';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { BiImageAdd } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
@@ -22,6 +25,8 @@ const AdminPostEditPage: NextPageWithLayout = () => {
 	const router = useRouter();
 	const { loggedIn } = useSelector((state: RootState) => state.auth);
 	const [uploadedImages, setUploadedImages] = useState([]);
+	const [featureImage, setFeatureImage] = useState<{ url: string; width: number; height: number }>();
+	const [featureLoading, setFeatureLoading] = useState(false);
 	const [post, setPost] = useState({
 		id: null,
 		title: 'Unknown title',
@@ -29,6 +34,8 @@ const AdminPostEditPage: NextPageWithLayout = () => {
 		viewMode: PostViewModeEnum.ONLY_ME,
 		isDraft: true,
 		slug: null,
+		description: null,
+		featureImage: null,
 	});
 	const { setPageData } = useContext<any>(PageContext);
 	const editorInstance = useRef<any>();
@@ -48,6 +55,9 @@ const AdminPostEditPage: NextPageWithLayout = () => {
 			const uploadedImages = parsePostImages(content);
 			setPost({ ...queryResponse?.post, content });
 			setUploadedImages(uploadedImages);
+			if (queryResponse?.post.featureImage) {
+				setFeatureImage({ url: queryResponse?.post.featureImage, width: null, height: null });
+			}
 		}
 	}, [queryResponse]);
 
@@ -153,8 +163,78 @@ const AdminPostEditPage: NextPageWithLayout = () => {
 		// setUploadedImages(parsePostImages(queryResponse?.post));
 	};
 
+	const coverProps: UploadProps = {
+		name: 'featureImage',
+		accept: 'image/*',
+		multiple: false,
+		showUploadList: false,
+		async customRequest(options) {
+			const { onSuccess, onError, file } = options;
+
+			try {
+				const { data, error } = await uploadImage({ image: file });
+
+				if (error) {
+					onError(error);
+					return false;
+				}
+
+				setFeatureImage(data.uploadImage);
+				setPost({ ...post, featureImage: data.uploadImage.url });
+				console.log('uploadImage', data);
+				onSuccess('Ok');
+			} catch (error: any) {
+				onError(error);
+			}
+		},
+		onChange(info) {
+			const { status } = info.file;
+			if (status === 'uploading') {
+				setFeatureLoading(true);
+			}
+			if (status === 'done') {
+				setFeatureLoading(false);
+			} else if (status === 'error') {
+				message.error(`${info.file.name} file upload failed.`);
+				setFeatureLoading(false);
+			}
+		},
+	};
+
+	const handleFeatureImageRemove = async () => {
+		if (featureImage) {
+			await removeImage({ imageUrl: featureImage.url });
+			setPost({ ...post, featureImage: null });
+			setFeatureImage(null);
+		}
+	};
+
 	return (
 		<>
+			{featureImage ? (
+				<div className={styles.featureImage}>
+					<Image
+						layout="fill"
+						placeholder="empty"
+						objectFit="cover"
+						src={featureImage.url}
+						width={featureImage.width}
+						height={featureImage.height}
+						alt={`feature image for ${post.title}`}
+					/>
+					<Button shape="circle" size="small" className={styles.featureImageDelBtn} onClick={handleFeatureImageRemove}>
+						<DeleteOutlined />
+					</Button>
+				</div>
+			) : (
+				<Spin spinning={featureLoading} indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}>
+					<Upload {...coverProps} className={styles.coverUpload}>
+						<Button icon={<BiImageAdd size={24} />} type="text" style={{ width: '100%' }}>
+							Add cover
+						</Button>
+					</Upload>
+				</Spin>
+			)}
 			<InlineEdit
 				name="title"
 				initialValue={post.title}
@@ -196,8 +276,7 @@ AdminPostEditPage.getLayout = (page: ReactElement) => (
 		title="Post Editor"
 		can={{ roles: [UserRole.ADMIN] }}
 		siderMenu={<PostEditorMenu />}
-		beforeContent={<PostEditorBeforeContent />}
-	>
+		beforeContent={<PostEditorBeforeContent />}>
 		{page}
 	</ProtectedLayout>
 );

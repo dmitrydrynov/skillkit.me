@@ -392,8 +392,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 												notFoundContent={null}
 												onChange={handleChangeInlineInput}
 												onSelect={(value, option) => setSelectedSkillId(option.key as number)}
-												onSearch={(value: string) => setsSkillSearchQuery(value)}
-											>
+												onSearch={(value: string) => setsSkillSearchQuery(value)}>
 												{searchSkillData?.skills.map((d: any) => (
 													<AutoComplete.Option key={d.id} value={d.name}>
 														{d.name}
@@ -468,14 +467,12 @@ const SkillEditorPage: NextPageWithLayout = () => {
 															}}
 															okText="Yes"
 															cancelText="No"
-															icon={<WarningTwoTone />}
-														>
+															icon={<WarningTwoTone />}>
 															<Button key="editItemButtons" className="editItemButtons" size="small">
 																<DeleteOutlined />
 															</Button>
 														</Popconfirm>,
-													]}
-												>
+													]}>
 													<List.Item.Meta
 														avatar={
 															<Tooltip title={level.description}>
@@ -578,8 +575,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 																			onConfirm={() => handleDeleteUserTool(item)}
 																			okText="Yes"
 																			cancelText="No"
-																			icon={<WarningTwoTone />}
-																		>
+																			icon={<WarningTwoTone />}>
 																			<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
 																				Delete
 																			</Menu.Item>
@@ -589,8 +585,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 																onClick={() => {
 																	setEditableUserTool(item.id);
 																	setVisibleToolModal(true);
-																}}
-															>
+																}}>
 																<EditOutlined />
 															</Dropdown.Button>
 														</Space>
@@ -645,8 +640,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 																		onConfirm={() => handleDeleteUserSchool(item)}
 																		okText="Yes"
 																		cancelText="No"
-																		icon={<WarningTwoTone />}
-																	>
+																		icon={<WarningTwoTone />}>
 																		<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
 																			Delete
 																		</Menu.Item>
@@ -656,8 +650,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 															onClick={() => {
 																setEditableUserSchool(item.id);
 																setVisibleSchoolModal(true);
-															}}
-														>
+															}}>
 															<EditOutlined />
 														</Dropdown.Button>
 													</Space>
@@ -711,8 +704,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 																		onConfirm={() => handleDeleteUserJob(item)}
 																		okText="Yes"
 																		cancelText="No"
-																		icon={<WarningTwoTone />}
-																	>
+																		icon={<WarningTwoTone />}>
 																		<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
 																			Delete
 																		</Menu.Item>
@@ -722,8 +714,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 															onClick={() => {
 																setEditableUserJob(item.id);
 																setVisibleJobModal(true);
-															}}
-														>
+															}}>
 															<EditOutlined />
 														</Dropdown.Button>
 													</Space>

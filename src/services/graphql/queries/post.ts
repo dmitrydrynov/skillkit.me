@@ -68,6 +68,8 @@ mutation(
     updatedAt
     isDraft
     viewMode
+    featureImage
+    description
   }
 }
 `;
@@ -80,7 +82,7 @@ mutation($recordId: ID!) {
 
 export const uploadImageMutation = `
 mutation($image: Upload!) {
-  uploadImage(image: $image) { url }
+  uploadImage(image: $image) { url width height }
 }
 `;
 

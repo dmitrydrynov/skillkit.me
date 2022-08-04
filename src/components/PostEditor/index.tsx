@@ -1,5 +1,5 @@
 // yarn add @editorjs/warning @editorjs/simple-image @editorjs/raw @editorjs/quote @editorjs/marker @editorjs/inline-code @editorjs/header @editorjs/delimiter @editorjs/checklist editorjs-button editorjs-drag-drop
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import CheckList from '@editorjs/checklist';
 import Delimiter from '@editorjs/delimiter';
 import Embed from '@editorjs/embed';
@@ -24,14 +24,15 @@ type PostEditorParams = {
 	onUploadImage?: (data: any) => void;
 };
 
-const PostEditor = ({
+const EditorJS: any = createReactEditorJS();
+
+const PostEditor: FC<PostEditorParams> = ({
 	data,
 	handleInstance,
 	onUploadImage = () => {},
 	onChange = () => {},
 	onReady = () => {},
-}: PostEditorParams) => {
-	const EditorJS: any = createReactEditorJS();
+}) => {
 	const [editorJSTools] = useState({
 		embed: {
 			class: Embed,
