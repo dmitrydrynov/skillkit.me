@@ -1,4 +1,3 @@
-import { getSinglePost, getPosts } from '@services/ghost/posts';
 import { Col, Row } from 'antd';
 import moment from 'moment';
 import Head from 'next/head';
@@ -48,24 +47,26 @@ const PostPage = ({ post }) => {
 	);
 };
 
-export async function getStaticPaths() {
-	const posts = await getPosts();
+// export async function getStaticPaths() {
+// 	const posts = await getPosts();
 
-	const paths = posts.map((post) => ({
-		params: { slug: post.slug },
-	}));
+// 	const paths = posts.map((post) => ({
+// 		params: { slug: post.slug },
+// 	}));
 
-	return { paths, fallback: false };
-}
+// 	return { paths, fallback: false };
+// }
 
 export async function getStaticProps(context) {
-	const post = await getSinglePost(context.params.slug);
+	// const post = await getSinglePost(context.params.slug);
 
-	if (!post) {
-		return {
-			notFound: true,
-		};
-	}
+	// if (!post) {
+	// 	return {
+	// 		notFound: true,
+	// 	};
+	// }
+
+	const post = null;
 
 	return {
 		props: { post },

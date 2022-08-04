@@ -118,9 +118,9 @@ const PostEditorBeforeContent = () => {
 		<>
 			<PostSettingsModal
 				visible={showPostConfigModal}
+				post={postData}
 				onCancel={() => setShowPostConfigModal(false)}
 				onSave={() => handleSettingsSave()}
-				postId={postData?.id}
 			/>
 			<div className="site-page-header-ghost-wrapper">
 				<PageHeader
@@ -133,9 +133,13 @@ const PostEditorBeforeContent = () => {
 							: null
 					}
 					extra={[
-						<Button key="ConfigKey" type="ghost" size="small" onClick={() => setShowPostConfigModal(true)}>
-							<GoGear size={18} />
-						</Button>,
+						<>
+							{postData?.id && (
+								<Button key="ConfigKey" type="ghost" size="small" onClick={() => setShowPostConfigModal(true)}>
+									<GoGear size={18} />
+								</Button>
+							)}
+						</>,
 						<div key="viewModeKey">
 							{isPublished && (
 								<Space>

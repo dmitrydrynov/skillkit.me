@@ -9,8 +9,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 		{
 			loc: process.env.NEXT_PUBLIC_APP_URL, // Absolute url
 			lastmod: new Date().toISOString(),
-			// changefreq
-			// priority
 		},
 	];
 
@@ -23,6 +21,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 		.toPromise();
 
 	if (data) {
+		fields.push({
+			loc: process.env.NEXT_PUBLIC_APP_URL + '/blog',
+			lastmod: data.posts[data.posts.length - 1].updatedAt,
+		});
+
 		data.posts.map((post) => {
 			fields.push({
 				loc: process.env.NEXT_PUBLIC_APP_URL + '/blog/' + post.slug,

@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
-import { createUserToolMutation, getUserToolQuery, updateUserToolMutation } from '@services/graphql/queries/userTool';
-import { Modal, Spin } from 'antd';
-import { useMutation, useQuery } from 'urql';
+import { getErrorMessage } from '@helpers/errors';
+import { updatePostMutation } from '@services/graphql/queries/post';
+import { Button, Form, Input, message, Modal, Tooltip } from 'antd';
+import { BiCopy } from 'react-icons/bi';
+import { useMutation } from 'urql';
 import styles from './style.module.less';
 
 type _ModalParams = {
@@ -9,65 +11,61 @@ type _ModalParams = {
 	onCancel(): void;
 	visible?: boolean;
 	recordId?: number;
-	postId: number | string;
+	post: any;
 };
 
 type _FormData = {
-	title: string;
+	slug: string;
 	description: string;
 };
 
-const PostSettingsModal = ({ onSave, onCancel, postId, recordId = null, visible = false }: _ModalParams) => {
-	// const [form] = Form.useForm();
-	const [, createUserTool] = useMutation(createUserToolMutation);
-	const [, updateUserTool] = useMutation(updateUserToolMutation);
-	const [{ data, fetching }] = useQuery({
-		query: getUserToolQuery,
-		variables: { id: recordId },
-		requestPolicy: 'network-only',
-		pause: !recordId,
-	});
+const PostSettingsModal = ({ onSave, onCancel, post, recordId = null, visible = false }: _ModalParams) => {
+	const [form] = Form.useForm();
+	const [, updatePost] = useMutation(updatePostMutation);
 
 	useEffect(() => {
-		if (visible === false) {
-			// form.resetFields();
+		if (visible) {
+			form.setFieldsValue({
+				slug: post.slug,
+				description: post.description,
+			});
 		}
 	}, [visible]);
 
-	useEffect(() => {
-		if (data) {
-			// form.setFieldsValue({
-			// 	title: data.userTool.title,
-			// 	description: data.userTool.description,
-			// });
-		}
-	}, [data]);
+	const handleSave = async () => {
+		const { slug, description }: _FormData = await form.validateFields();
+		try {
+			const { data, error } = await updatePost({
+				recordId: post.id,
+				data: { slug, description },
+			});
 
-	const handleUpdate = async () => {
-		// const { description }: _FormData = await form.validateFields();
-		// try {
-		// 	const { data, error } = await updateUserTool({
-		// 		recordId,
-		// 		data: {
-		// 			description: description ? description : null,
-		// 		},
-		// 	});
-		// 	if (error) {
-		// 		message.error(getErrorMessage(error));
-		// 		return;
-		// 	}
-		// 	onSave(data);
-		// 	form.resetFields();
-		// } catch (error: any) {
-		// 	message.error(error.message);
-		// }
+			if (error) {
+				message.error(getErrorMessage(error));
+				return;
+			}
+
+			onSave(data);
+			form.resetFields();
+		} catch (error: any) {
+			message.error(error.message);
+		}
+	};
+
+	const handleCopyLink = () => {
+		if (navigator.clipboard && window.isSecureContext) {
+			navigator.clipboard?.writeText(process.env.NEXT_PUBLIC_APP_URL + '/blog/' + post.slug);
+			message.success('The post link copied to clipboard');
+		} else {
+			message.warning('Copy link doesnt work. There isnt SecureContext');
+		}
 	};
 
 	return (
 		<Modal
 			title="Settings"
 			visible={visible}
-			onOk={onSave}
+			onOk={handleSave}
 			onCancel={onCancel}
 			width={650}
 			centered
@@ -75,28 +73,35 @@ const PostSettingsModal = ({ onSave, onCancel, postId, recordId = null, visible 
 			className={styles.modal}
 			destroyOnClose={true}
 		>
-			<Spin spinning={fetching && !data}>
-				In development
-				{/* <Form className={styles.form} form={form} layout="vertical" name="add_tool_form" requiredMark={true}>
-					<Form.Item name="id" hidden={true} />
+			<Form className={styles.form} form={form} layout="vertical" name="post_meta_form" requiredMark={true}>
+				<Form.Item name="id" hidden={true} />
 
-					{!recordId && (
-						<Form.Item name="title" label="Title" rules={[{ required: true, message: 'Please input the field!' }]}>
-							<Input />
-						</Form.Item>
-					)}
-
-					<Form.Item name="description" label="Details about using one for current skill (optional)">
-						<Input.TextArea
-							autoSize={{ minRows: 4, maxRows: 12 }}
-							style={{ width: '100%', height: 'auto' }}
-							showCount
-							maxLength={250}
-							placeholder="Start typing"
+				{!recordId && (
+					<Form.Item name="slug" label="Slug" rules={[{ required: true, message: 'Please input the field!' }]}>
+						<Input
+							className={styles.slugInput}
+							prefix={process.env.NEXT_PUBLIC_APP_URL + '/blog/'}
+							suffix={
+								<Tooltip title="Copy the link">
+									<Button type="text" shape="circle" size="small" onClick={handleCopyLink}>
+										<BiCopy />
+									</Button>
+								</Tooltip>
+							}
 						/>
 					</Form.Item>
-				</Form> */}
-			</Spin>
+				)}
+
+				<Form.Item name="description" label="Short description">
+					<Input.TextArea
+						autoSize={{ minRows: 4, maxRows: 12 }}
+						style={{ width: '100%', height: 'auto' }}
+						showCount
+						maxLength={250}
+						placeholder="Start typing"
+					/>
+				</Form.Item>
+			</Form>
 		</Modal>
 	);
 };

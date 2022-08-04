@@ -4,7 +4,9 @@ query($where: PostWhereInput) {
     id
     slug
     title
+    description
     content
+    featureImage
     createdAt
     updatedAt
     isDraft
@@ -24,7 +26,9 @@ query($where: PostWhereInput!) {
     id
     slug
     title
+    description
     content
+    featureImage
     createdAt
     updatedAt
     isDraft
