@@ -1,72 +1,94 @@
-import { Col, Row } from 'antd';
+import { ssrGraphqlClient } from '@services/graphql/client';
+import { getPostQuery, postsDataQuery } from '@services/graphql/queries/post';
+import { Breadcrumb, Col, Row } from 'antd';
+import Blocks from 'editorjs-blocks-react-renderer';
 import moment from 'moment';
 import Head from 'next/head';
+import Link from 'next/link';
 import styles from './style.module.less';
 
 const PostPage = ({ post }) => {
-	const postImage = `${process.env.NEXT_PUBLIC_APP_URL}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fvolunteer-illustration.ff9f1da2.png&w=1080&q=75`;
+	const postImage = process.env.NEXT_PUBLIC_DEFAULT_POST_IMAGE;
 	const postUrl = `${process.env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`;
 
 	return (
 		<>
 			<Head>
 				<title>{post.title}</title>
-				<meta name="description" content={post.custom_excerpt || post.excerpt} />
+				<meta name="description" content={post.description} />
 				<meta property="og:title" content={post.title} />
-				<meta property="og:description" content={post.custom_excerpt || post.excerpt} />
+				<meta property="og:description" content={post.description} />
 				<meta property="og:url" content={postUrl} />
 				<meta property="og:article:author" content="aaa" />
 				<meta property="og:type" content="article" />
-				<meta property="og:section" content={post.primary_tag.name} />
-				<meta property="og:image" content={post.feature_image || postImage} />
-				<meta name="twitter:images" content={post.feature_image || postImage} />
+				<meta property="og:section" content={post.category.name} />
+				<meta property="og:image" content={post.featureImage || postImage} />
+				<meta name="twitter:images" content={post.featureImage || postImage} />
 				<meta name="twitter:title" content={post.title} />
-				<meta name="twitter:description" content={post.custom_excerpt || post.excerpt} />
+				<meta name="twitter:description" content={post.description} />
 			</Head>
+			<Breadcrumb>
+				<Breadcrumb.Item>
+					<Link href="/blog">
+						<a>Blog</a>
+					</Link>
+				</Breadcrumb.Item>
+				<Breadcrumb.Item>{post.category.name}</Breadcrumb.Item>
+			</Breadcrumb>
 			<Row className={styles.postHeader} align="middle">
-				{post.feature_image !== null && (
-					<Col className={styles.featureImage} sm={{ span: 24, order: 0, offset: 0 }} md={{ span: 8, order: 1, offset: 1 }}>
-						<img src={post.feature_image} alt={post.title} />
-					</Col>
-				)}
+				<Col className={styles.featureImage} sm={{ span: 24, order: 0, offset: 0 }} md={{ span: 8, order: 1, offset: 1 }}>
+					<img src={post.featureImage || postImage} alt={post.title} />
+				</Col>
 				<Col xs={{ span: 24, order: 1 }} md={{ span: 15, order: 0 }}>
 					<h1>{post.title}</h1>
 					<div className={styles.postInfo}>
-						{post.primary_tag.name}
+						Published at {moment(post.publishedAt).format('ll')} by {post.author?.fullName}
 						<span className={styles.sep} />
-						published at {moment(post.published_at).format('ll')} by {post.primary_author?.name}
-						<span className={styles.sep} />
-						{post.reading_time} min read
+						{post.readingTime} min read
 					</div>
 				</Col>
 			</Row>
 			<article className={styles.article}>
-				<div dangerouslySetInnerHTML={{ __html: post.html }} />
+				{/* <div dangerouslySetInnerHTML={{ __html: post.content }} /> */}
+				<Blocks data={post.content} />
 			</article>
 		</>
 	);
 };
 
-// export async function getStaticPaths() {
-// 	const posts = await getPosts();
+export async function getStaticPaths() {
+	const client = ssrGraphqlClient();
+	const { data, error } = await client.query(postsDataQuery).toPromise();
 
-// 	const paths = posts.map((post) => ({
-// 		params: { slug: post.slug },
-// 	}));
+	if (error) {
+		return { notFound: true };
+	}
 
-// 	return { paths, fallback: false };
-// }
+	const paths = data.posts?.map((post) => ({
+		params: { slug: post.slug },
+	}));
+
+	return { paths, fallback: false };
+}
 
 export async function getStaticProps(context) {
-	// const post = await getSinglePost(context.params.slug);
+	const client = ssrGraphqlClient();
+	const { data, error } = await client
+		.query(getPostQuery, { where: { slug: { equals: context.params.slug } } })
+		.toPromise();
 
-	// if (!post) {
-	// 	return {
-	// 		notFound: true,
-	// 	};
-	// }
+	if (error) {
+		return { notFound: true };
+	}
 
-	const post = null;
+	if (!data) {
+		return {
+			notFound: true,
+		};
+	}
+
+	const post = data?.post;
+	post.content = JSON.parse(post.content);
 
 	return {
 		props: { post },

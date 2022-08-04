@@ -11,31 +11,22 @@ const PostsPage: FC = (props: any) => (
 		<Row gutter={16}>
 			{props.posts?.map((post) => (
 				<Col xs={{ span: 24 }} md={{ span: 12 }} lg={{ span: 8 }} key={post.id}>
-					<Card
-						className={styles.postCard}
-						bordered={true}
-						hoverable={true}
-						cover={
-							<img
-								src={
-									post.featureImage
-										? post.featureImage
-										: 'https://cdn.sanity.io/images/n0lpvrpe/skillkit/304987139456267f67485058af6dd9d0da201b25-640x360.jpg'
-								}
-								alt={post.title}
-								className={styles.featureImage}
-							/>
-						}
-					>
-						<Card.Meta
-							title={
-								<Link href={`${process.env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`}>
-									<a>{post.title}</a>
-								</Link>
+					<Link href={`${process.env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`} passHref>
+						<Card
+							className={styles.postCard}
+							bordered={true}
+							hoverable={true}
+							cover={
+								<img
+									src={post.featureImage ? post.featureImage : process.env.NEXT_PUBLIC_DEFAULT_POST_IMAGE}
+									alt={post.title}
+									className={styles.featureImage}
+								/>
 							}
-							description={post.description}
-						/>
-					</Card>
+						>
+							<Card.Meta title={post.title} description={post.description} />
+						</Card>
+					</Link>
 				</Col>
 			))}
 		</Row>
@@ -44,7 +35,6 @@ const PostsPage: FC = (props: any) => (
 
 export async function getStaticProps(context) {
 	const client = ssrGraphqlClient();
-
 	const { data, error } = await client.query(postsDataQuery).toPromise();
 
 	if (error) {

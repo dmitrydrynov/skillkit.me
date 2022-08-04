@@ -18,6 +18,17 @@ query($where: PostWhereInput) {
 }
 `;
 
+export const postCategoriesQuery = `
+query($where: PostCategoryWhereInput) {
+  postCategories(where: $where) {
+    id
+    slug
+    name
+    description
+  }
+}
+`;
+
 export const getPostQuery = `
 query($where: PostWhereInput!) {
   post(

@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getErrorMessage } from '@helpers/errors';
-import { updatePostMutation } from '@services/graphql/queries/post';
-import { Button, Form, Input, message, Modal, Tooltip } from 'antd';
+import { postCategoriesQuery, updatePostMutation } from '@services/graphql/queries/post';
+import { Button, Form, Input, message, Modal, Select, Tooltip } from 'antd';
 import { BiCopy } from 'react-icons/bi';
-import { useMutation } from 'urql';
+import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
 type _ModalParams = {
@@ -17,10 +17,15 @@ type _ModalParams = {
 type _FormData = {
 	slug: string;
 	description: string;
+	categoryId: number;
 };
 
 const PostSettingsModal = ({ onSave, onCancel, post, recordId = null, visible = false }: _ModalParams) => {
 	const [form] = Form.useForm();
+	const [categories, setCategories] = useState([]);
+	const [{ data: postCategoriesResponse }] = useQuery({
+		query: postCategoriesQuery,
+	});
 	const [, updatePost] = useMutation(updatePostMutation);
 
 	useEffect(() => {
@@ -28,16 +33,23 @@ const PostSettingsModal = ({ onSave, onCancel, post, recordId = null, visible = 
 			form.setFieldsValue({
 				slug: post.slug,
 				description: post.description,
+				categoryId: post.category.id || categories[0].id,
 			});
 		}
 	}, [visible]);
 
+	useEffect(() => {
+		if (postCategoriesResponse?.postCategories) {
+			setCategories(postCategoriesResponse?.postCategories);
+		}
+	}, [postCategoriesResponse]);
+
 	const handleSave = async () => {
-		const { slug, description }: _FormData = await form.validateFields();
+		const { slug, description, categoryId }: _FormData = await form.validateFields();
 		try {
 			const { data, error } = await updatePost({
 				recordId: post.id,
-				data: { slug, description },
+				data: { slug, description, categoryId },
 			});
 
 			if (error) {
@@ -75,6 +87,19 @@ const PostSettingsModal = ({ onSave, onCancel, post, recordId = null, visible = 
 		>
 			<Form className={styles.form} form={form} layout="vertical" name="post_meta_form" requiredMark={true}>
 				<Form.Item name="id" hidden={true} />
+
+				<Form.Item name="categoryId" label="Category">
+					<Select
+						placeholder="Select category"
+						defaultActiveFirstOption={true}
+						options={categories.map((category) => {
+							return {
+								value: category.id,
+								label: category.name,
+							};
+						})}
+					/>
+				</Form.Item>
 
 				{!recordId && (
 					<Form.Item name="slug" label="Slug" rules={[{ required: true, message: 'Please input the field!' }]}>
