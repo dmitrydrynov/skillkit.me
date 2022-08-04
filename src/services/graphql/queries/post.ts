@@ -91,6 +91,12 @@ mutation($recordId: ID!) {
 }
 `;
 
+export const deletePostMutation = `
+mutation ($where: WhereUniqueInput!) {
+  deletePost(where: $where)
+}
+`;
+
 export const uploadImageMutation = `
 mutation($image: Upload!) {
   uploadImage(image: $image) { url width height }
