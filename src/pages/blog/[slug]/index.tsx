@@ -61,12 +61,15 @@ export async function getStaticPaths() {
 	const { data, error } = await client.query(postsDataQuery).toPromise();
 
 	if (error || !data.posts) {
+		console.log('/blog/{slug} -> getStaticPaths', error);
 		return { notFound: true };
 	}
 
 	const paths = data.posts.map((post) => ({
 		params: { slug: post.slug },
 	}));
+
+	console.log(paths);
 
 	return { paths, fallback: false };
 }
