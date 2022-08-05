@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getErrorMessage } from '@helpers/errors';
+import { searchUserCompaniesQuery } from '@services/graphql/queries/userCompany';
 import { createUserJobMutation, getUserJobQuery, updateUserJobMutation } from '@services/graphql/queries/userJob';
-import { Col, DatePicker, Form, Input, message, Modal, Row, Spin } from 'antd';
+import { AutoComplete, Col, DatePicker, Form, Input, message, Modal, Row, Spin } from 'antd';
 import moment from 'moment';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
@@ -15,7 +16,7 @@ type _ModalParams = {
 };
 
 type _FormData = {
-	title: string;
+	companyName: string;
 	position: string;
 	description: string;
 	startedAt: Date;
@@ -24,8 +25,17 @@ type _FormData = {
 
 const UserJobModal = ({ onSave, onCancel, userSkillId, recordId = null, visible = false }: _ModalParams) => {
 	const [form] = Form.useForm();
+	const [userCompanySearchQuery, setUserCompanySearchQuery] = useState(null);
+	/** Mutations */
 	const [, createUserJob] = useMutation(createUserJobMutation);
 	const [, updateUserJob] = useMutation(updateUserJobMutation);
+	/** Queries */
+	let [{ data: searchUserCompanyData }, searchUserCompanies] = useQuery({
+		query: searchUserCompaniesQuery,
+		variables: { search: userCompanySearchQuery },
+		pause: !userCompanySearchQuery || userCompanySearchQuery.length <= 2,
+		requestPolicy: 'network-only',
+	});
 	const [{ data, fetching }] = useQuery({
 		query: getUserJobQuery,
 		variables: { id: recordId },
@@ -40,9 +50,10 @@ const UserJobModal = ({ onSave, onCancel, userSkillId, recordId = null, visible 
 	}, [visible]);
 
 	useEffect(() => {
+		setUserCompanySearchQuery(null);
 		if (data) {
 			form.setFieldsValue({
-				title: data.userJob.title,
+				companyName: data.userJob.userCompany.name,
 				position: data.userJob.position,
 				description: data.userJob.description,
 				startedAt: data.userJob.startedAt ? moment(data.userJob.startedAt) : null,
@@ -52,13 +63,13 @@ const UserJobModal = ({ onSave, onCancel, userSkillId, recordId = null, visible 
 	}, [data]);
 
 	const handleCreate = async () => {
-		const { title, position, description, startedAt, finishedAt }: _FormData = await form.validateFields();
+		const { companyName, position, description, startedAt, finishedAt }: _FormData = await form.validateFields();
 
 		try {
 			const { data, error } = await createUserJob({
 				data: {
 					userSkillId,
-					title,
+					companyName,
 					position,
 					description: description ? description : null,
 					startedAt,
@@ -79,13 +90,13 @@ const UserJobModal = ({ onSave, onCancel, userSkillId, recordId = null, visible 
 	};
 
 	const handleUpdate = async () => {
-		const { title, position, description, startedAt, finishedAt }: _FormData = await form.validateFields();
+		const { companyName, position, description, startedAt, finishedAt }: _FormData = await form.validateFields();
 
 		try {
 			const { data, error } = await updateUserJob({
 				recordId,
 				data: {
-					title,
+					companyName,
 					position,
 					description: description ? description : null,
 					startedAt,
@@ -121,8 +132,34 @@ const UserJobModal = ({ onSave, onCancel, userSkillId, recordId = null, visible 
 				<Form className={styles.form} form={form} layout="vertical" name="add_job_form" requiredMark={true}>
 					<Form.Item name="id" hidden={true} />
 
-					<Form.Item name="title" label="Title" rules={[{ required: true, message: 'Please input the field!' }]}>
-						<Input />
+					<Form.Item
+						name="companyName"
+						label="Where did you work?"
+						rules={[
+							{
+								required: true,
+								message: 'Please input the field!',
+							},
+						]}
+					>
+						<AutoComplete
+							showSearch
+							allowClear
+							defaultActiveFirstOption={false}
+							showArrow={false}
+							filterOption={false}
+							placeholder="Company LLC"
+							notFoundContent={null}
+							onSearch={(value) => setUserCompanySearchQuery(value)}
+						>
+							{userCompanySearchQuery?.length > 2 &&
+								searchUserCompanyData?.userCompanies?.length > 0 &&
+								searchUserCompanyData.userCompanies.map((d: any) => (
+									<AutoComplete.Option key={d.id} value={d.name}>
+										{d.name}
+									</AutoComplete.Option>
+								))}
+						</AutoComplete>
 					</Form.Item>
 
 					<Form.Item name="position" label="Position" rules={[{ required: true, message: 'Please input the field!' }]}>
