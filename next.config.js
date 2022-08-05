@@ -23,11 +23,14 @@ const plugins = [
 
 /** Main Next.js configuration */
 const mainConfig = {
-	output: 'standalone',
+	// output: 'standalone',
 	reactStrictMode: false,
 	swcMinify: true,
 	images: {
 		domains: ['cdn.discordapp.com'],
+	},
+	experimental: {
+		outputStandalone: true,
 	},
 	webpack: (config) => {
 		config.watchOptions = {
