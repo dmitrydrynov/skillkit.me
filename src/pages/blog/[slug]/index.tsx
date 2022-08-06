@@ -60,15 +60,16 @@ export async function getStaticPaths() {
 	const client = ssrGraphqlClient();
 	const { data, error } = await client.query(postsDataQuery).toPromise();
 
-	if (error || !data.posts) {
-		return { notFound: true };
+	if (error) {
+		console.log('/blog/{slug} -> getStaticPaths', error);
+		return { paths: [], fallback: 'blocking' };
 	}
 
 	const paths = data.posts.map((post) => ({
 		params: { slug: post.slug },
 	}));
 
-	return { paths, fallback: false };
+	return { paths, fallback: 'blocking' };
 }
 
 export async function getStaticProps(context) {
@@ -92,6 +93,7 @@ export async function getStaticProps(context) {
 
 	return {
 		props: { post },
+		revalidate: 10,
 	};
 }
 

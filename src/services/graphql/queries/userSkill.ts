@@ -284,7 +284,9 @@ query($hash: String!) {
         finishedAt
       }
       jobs {
-        title
+        userCompany {
+          name
+        }
         position
         description
         startedAt

@@ -281,7 +281,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 			if (deletedItems) {
 				message.success(
 					<>
-						The user job <strong>{item.title}</strong> deleted
+						The user job <strong>{item.userCompany.name}</strong> deleted
 					</>,
 				);
 				refreshUserJobs();
@@ -696,7 +696,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 																	(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
 															</div>
 															<div className={styles.userJobTitle}>
-																{item.title} — {item.position}
+																{item.userCompany.name} — {item.position}
 															</div>
 															{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
 														</div>
