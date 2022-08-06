@@ -57,44 +57,56 @@ const PostPage = ({ post }) => {
 };
 
 export async function getStaticPaths() {
-	const client = ssrGraphqlClient();
-	const { data, error } = await client.query(postsDataQuery).toPromise();
+	try {
+		const client = ssrGraphqlClient();
+		const { data, error } = await client.query(postsDataQuery).toPromise();
 
-	if (error) {
-		console.info('/blog/{slug} -> getStaticPaths', error);
-		return { paths: [], fallback: 'blocking' };
+		if (error) {
+			console.info('/blog/{slug} -> getStaticPaths', error);
+			return { paths: [], fallback: false };
+		}
+
+		const paths = data.posts.map((post) => ({
+			params: { slug: post.slug },
+		}));
+
+		return { paths, fallback: false };
+	} catch (error) {
+		throw new Error(error);
 	}
-
-	const paths = data.posts.map((post) => ({
-		params: { slug: post.slug },
-	}));
-
-	return { paths, fallback: 'blocking' };
 }
 
 export async function getStaticProps(context) {
-	const client = ssrGraphqlClient();
-	const { data, error } = await client
-		.query(getPostQuery, { where: { slug: { equals: context.params.slug } } })
-		.toPromise();
+	try {
+		const client = ssrGraphqlClient();
+		const { data, error } = await client
+			.query(getPostQuery, { where: { slug: { equals: context.params.slug } } })
+			.toPromise();
 
-	if (error) {
-		return { notFound: true };
-	}
+		if (error) {
+			console.error('GraphQLError', error);
+			return { notFound: true };
+		}
 
-	if (!data) {
+		if (!data) {
+			return {
+				notFound: true,
+			};
+		}
+
+		const post = data?.post;
+		post.content = JSON.parse(post.content);
+
+		return {
+			props: { post },
+			revalidate: 10,
+		};
+	} catch (error) {
+		console.error('GraphQLError', error);
 		return {
 			notFound: true,
 		};
 	}
-
-	const post = data?.post;
-	post.content = JSON.parse(post.content);
-
-	return {
-		props: { post },
-		revalidate: 10,
-	};
 }
 
 export default PostPage;
