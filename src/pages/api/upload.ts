@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { withSentry } from '@sentry/nextjs';
 import formidable from 'formidable';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -40,7 +41,7 @@ const removeFile = async (filePath: string) => {
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default (req: NextApiRequest, res: NextApiResponse) => {
+const handler = (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== 'POST') {
 		return res.status(404).send('');
 	}
@@ -62,3 +63,5 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
 		}
 	});
 };
+
+export default withSentry(handler);

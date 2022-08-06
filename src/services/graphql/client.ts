@@ -4,10 +4,8 @@ import { cacheExchange, createClient, dedupExchange, ssrExchange } from 'urql';
 
 declare const window: any;
 
-const API_URL = process.env.BACKEND_URL;
-
 export const graphqlClient = createClient({
-	url: process.env.NEXT_PUBLIC_BACKEND_URL || '',
+	url: process.env.NEXT_PUBLIC_BACKEND_URL,
 	exchanges: [dedupExchange, cacheExchange, multipartFetchExchange],
 	fetchOptions: () => {
 		const token = getCookie(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME);

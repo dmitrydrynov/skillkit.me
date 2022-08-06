@@ -34,25 +34,29 @@ const PostsPage: FC = (props: any) => (
 );
 
 export async function getStaticProps(context) {
-	const client = ssrGraphqlClient();
-	const { data, error } = await client.query(postsDataQuery).toPromise();
+	try {
+		const client = ssrGraphqlClient();
+		const { data, error } = await client.query(postsDataQuery).toPromise();
 
-	if (error) {
-		return { notFound: true };
-	}
+		if (error) {
+			return { notFound: true };
+		}
 
-	if (!data) {
+		if (!data) {
+			return {
+				notFound: true,
+			};
+		}
+
+		const posts = data?.posts;
+
 		return {
-			notFound: true,
+			props: { posts: posts || null },
+			revalidate: 10,
 		};
+	} catch (error) {
+		throw new Error(error);
 	}
-
-	const posts = data?.posts;
-
-	return {
-		props: { posts: posts || null },
-		revalidate: 10,
-	};
 }
 
 export default PostsPage;

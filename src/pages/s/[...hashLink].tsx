@@ -422,32 +422,37 @@ const UserSkillSharePage: NextPageWithLayout = ({
 UserSkillSharePage.getLayout = (page: ReactElement) => <ShareLayout>{page}</ShareLayout>;
 
 export async function getServerSideProps(context) {
-	const { hashLink } = context.query;
-	let props: any = {};
+	try {
+		const { hashLink } = context.query;
+		let props: any = {};
 
-	if (hashLink.length > 0) {
-		const client = ssrGraphqlClient(context.req.cookies[process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME]);
+		if (hashLink.length > 0) {
+			const client = ssrGraphqlClient(context.req.cookies[process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME]);
 
-		const { data, error } = await client
-			.query(getUserSkillForShareQuery, {
-				hash: hashLink[hashLink.length - 1],
-			})
-			.toPromise();
+			const { data, error } = await client
+				.query(getUserSkillForShareQuery, {
+					hash: hashLink[hashLink.length - 1],
+				})
+				.toPromise();
 
-		if (error) {
-			return { notFound: true };
+			if (error) {
+				throw new Error(error.message);
+				return { notFound: true };
+			}
+
+			props = data?.userSkillForShare;
+
+			if (props.viewer !== 'me') {
+				props.skill.subSkills = props.skill.subSkills.filter(
+					(subSkill: any) => subSkill.viewMode !== UserSkillViewModeEnum.ONLY_ME,
+				);
+			}
 		}
 
-		props = data?.userSkillForShare;
-
-		if (props.viewer !== 'me') {
-			props.skill.subSkills = props.skill.subSkills.filter(
-				(subSkill: any) => subSkill.viewMode !== UserSkillViewModeEnum.ONLY_ME,
-			);
-		}
+		return { props: { ...props, path: context.req.url, hashLink } };
+	} catch (error) {
+		throw new Error(error);
 	}
-
-	return { props: { ...props, path: context.req.url, hashLink } };
 }
 
 export default UserSkillSharePage;

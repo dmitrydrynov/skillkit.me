@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 require('dotenv').config();
 const path = require('path');
+const { withSentryConfig } = require('@sentry/nextjs');
 const withPlugins = require('next-compose-plugins');
 const withLess = require('next-with-less');
 
@@ -40,6 +41,7 @@ const mainConfig = {
 		};
 		return config;
 	},
+	sentry: {},
 };
 
 /** Image hosts */
@@ -48,4 +50,8 @@ if (process.env.NEXT_PUBLIC_STORAGE_HOST) {
 	console.log('Allowed images hostnames', mainConfig.images.domains);
 }
 
-module.exports = withPlugins(plugins, mainConfig);
+const sentryWebpackPluginOptions = {
+	silent: true,
+};
+
+module.exports = withSentryConfig(withPlugins(plugins, mainConfig), sentryWebpackPluginOptions);
