@@ -63,14 +63,14 @@ export async function getStaticPaths() {
 
 		if (error) {
 			console.info('/blog/{slug} -> getStaticPaths', error);
-			return { paths: [], fallback: false };
+			return { paths: [], fallback: 'blocking' };
 		}
 
 		const paths = data.posts.map((post) => ({
 			params: { slug: post.slug },
 		}));
 
-		return { paths, fallback: false };
+		return { paths, fallback: 'blocking' };
 	} catch (error) {
 		throw new Error(error);
 	}
