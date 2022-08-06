@@ -25,6 +25,7 @@ const plugins = [
 const mainConfig = {
 	output: 'standalone',
 	reactStrictMode: false,
+	staticPageGenerationTimeout: 1000,
 	swcMinify: true,
 	images: {
 		domains: ['cdn.discordapp.com'],
