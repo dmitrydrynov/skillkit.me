@@ -14,11 +14,7 @@ export const graphqlClient = createClient({
 
 		return {
 			credentials: 'include',
-			headers: token
-				? {
-						Authorization: token || '',
-				  }
-				: null,
+			headers: token ? { Authorization: token } : null,
 		};
 	},
 });
@@ -31,18 +27,17 @@ export const ssrGraphqlClient = (token: string = null) => {
 		initialState: !isServerSide ? window.__URQL_DATA__ : undefined,
 	});
 
+	const fetchOptionsResponse: RequestInit = {
+		credentials: 'include',
+	};
+
+	if (token) {
+		fetchOptionsResponse.headers = { Authorization: token };
+	}
+
 	return createClient({
-		url: process.env.BACKEND_URL || '',
+		url: process.env.BACKEND_URL,
 		exchanges: [dedupExchange, cacheExchange, ssr, multipartFetchExchange],
-		fetchOptions: () => {
-			return {
-				credentials: 'include',
-				headers: token
-					? {
-							Authorization: token || '',
-					  }
-					: null,
-			};
-		},
+		fetchOptions: () => fetchOptionsResponse,
 	});
 };
