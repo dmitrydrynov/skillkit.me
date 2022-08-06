@@ -33,7 +33,7 @@ const PostsPage: FC = (props: any) => (
 	</>
 );
 
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
 	const client = ssrGraphqlClient();
 	const { data, error } = await client.query(postsDataQuery).toPromise();
 

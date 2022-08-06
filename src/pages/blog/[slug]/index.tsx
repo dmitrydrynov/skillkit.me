@@ -56,23 +56,23 @@ const PostPage = ({ post }) => {
 	);
 };
 
-export async function getStaticPaths() {
-	const client = ssrGraphqlClient();
-	const { data, error } = await client.query(postsDataQuery).toPromise();
+// export async function getStaticPaths() {
+// 	const client = ssrGraphqlClient();
+// 	const { data, error } = await client.query(postsDataQuery).toPromise();
 
-	if (error) {
-		console.log('/blog/{slug} -> getStaticPaths', error);
-		return { paths: [], fallback: 'blocking' };
-	}
+// 	if (error) {
+// 		console.log('/blog/{slug} -> getStaticPaths', error);
+// 		return { paths: [], fallback: 'blocking' };
+// 	}
 
-	const paths = data.posts.map((post) => ({
-		params: { slug: post.slug },
-	}));
+// 	const paths = data.posts.map((post) => ({
+// 		params: { slug: post.slug },
+// 	}));
 
-	return { paths, fallback: 'blocking' };
-}
+// 	return { paths, fallback: 'blocking' };
+// }
 
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
 	const client = ssrGraphqlClient();
 	const { data, error } = await client
 		.query(getPostQuery, { where: { slug: { equals: context.params.slug } } })
