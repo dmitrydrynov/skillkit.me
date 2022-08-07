@@ -2993,7 +2993,7 @@ next-compose-plugins@^2.2.1:
   resolved "https://registry.yarnpkg.com/next-compose-plugins/-/next-compose-plugins-2.2.1.tgz#020fc53f275a7e719d62521bef4300fbb6fde5ab"
   integrity sha512-OjJ+fV15FXO2uQXQagLD4C0abYErBjyjE0I0FHpOEIB8upw0hg1ldFP6cqHTJBH1cZqy96OeR3u1dJ+Ez2D4Bg==
 
-next-sitemap@^3.0.5:
+next-sitemap@^3.1.16:
   version "3.1.16"
   resolved "https://registry.yarnpkg.com/next-sitemap/-/next-sitemap-3.1.16.tgz#3227ab842a14ebf2b9e2435d98850538e49f53a6"
   integrity sha512-kczTKLB1ifqi44mMImv/sLRsqxy/O4DXJ4mx/1l23vyx6QFWqeuHxS0duEL/EsChcVJUMWV4FNg2pIiX31xxmg==
@@ -3008,7 +3008,7 @@ next-with-less@^2.0.5:
   dependencies:
     clone-deep "^4.0.1"
 
-next@^12.1.0:
+next@^12.2.4:
   version "12.2.4"
   resolved "https://registry.yarnpkg.com/next/-/next-12.2.4.tgz#88f7a7a4cd76063704cda28b3b07c4217b8928b0"
   integrity sha512-b1xlxEozmAWokAXzXsi5vlmU/IfJcFNIJA8dpU5UdkFbyDPio8wwb8mAQ/Y7rGtfTgG/t/u49BiyEA+xAgFvow==
