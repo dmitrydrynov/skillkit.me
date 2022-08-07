@@ -1,3 +1,4 @@
+import { fetchPost, fetchPosts } from '@models/post';
 import { ssrGraphqlClient } from '@services/graphql/client';
 import { getPostQuery, postsDataQuery } from '@services/graphql/queries/post';
 import { Breadcrumb, Col, Row } from 'antd';
@@ -58,15 +59,18 @@ const PostPage = ({ post }) => {
 
 export async function getStaticPaths() {
 	try {
-		const client = ssrGraphqlClient();
-		const { data, error } = await client.query(postsDataQuery).toPromise();
+		const { posts, error } = await fetchPosts();
 
 		if (error) {
-			console.info('/blog/{slug} -> getStaticPaths', error);
+			console.error(error);
 			return { paths: [], fallback: 'blocking' };
 		}
 
-		const paths = data.posts.map((post) => ({
+		if (!posts) {
+			return { paths: [], fallback: 'blocking' };
+		}
+
+		const paths = posts.map((post) => ({
 			params: { slug: post.slug },
 		}));
 
@@ -78,31 +82,19 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context) {
 	try {
-		const client = ssrGraphqlClient();
-		const { data, error } = await client
-			.query(getPostQuery, { where: { slug: { equals: context.params.slug } } })
-			.toPromise();
+		const { post, error } = await fetchPost({ slug: context.params.slug });
 
 		if (error) {
-			console.error('GraphQLError', error);
+			console.error(error);
 			return { notFound: true };
 		}
 
-		if (!data) {
-			return {
-				notFound: true,
-			};
-		}
-
-		const post = data?.post;
-		post.content = JSON.parse(post.content);
-
 		return {
-			props: { post },
+			props: { post: { ...post, content: JSON.parse(post.content) } },
 			revalidate: 10,
 		};
 	} catch (error) {
-		console.error('GraphQLError', error);
+		console.error(error);
 		return {
 			notFound: true,
 		};

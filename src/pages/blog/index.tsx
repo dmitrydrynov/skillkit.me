@@ -1,6 +1,5 @@
 import { FC } from 'react';
-import { ssrGraphqlClient } from '@services/graphql/client';
-import { postsDataQuery } from '@services/graphql/queries/post';
+import { fetchPosts } from '@models/post';
 import { Card, Col, Row } from 'antd';
 import Link from 'next/link';
 import styles from './style.module.less';
@@ -33,25 +32,23 @@ const PostsPage: FC = (props: any) => (
 	</>
 );
 
-export async function getStaticProps(context) {
+export async function getStaticProps() {
 	try {
-		const client = ssrGraphqlClient();
-		const { data, error } = await client.query(postsDataQuery).toPromise();
+		const { posts, error } = await fetchPosts();
 
 		if (error) {
+			console.error(error);
 			return { notFound: true };
 		}
 
-		if (!data) {
+		if (!posts) {
 			return {
 				notFound: true,
 			};
 		}
 
-		const posts = data?.posts;
-
 		return {
-			props: { posts: posts || null },
+			props: { posts },
 			revalidate: 10,
 		};
 	} catch (error) {
