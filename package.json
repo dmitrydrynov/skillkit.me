@@ -32,7 +32,6 @@
     "@editorjs/table": "^2.0.2",
     "@editorjs/warning": "^1.2.0",
     "@heroicons/react": "^1.0.4",
-    "@sentry/nextjs": "^7.9.0",
     "@tryghost/content-api": "^1.11.0",
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@urql/exchange-auth": "^0.1.7",

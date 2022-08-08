@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { withSentry } from '@sentry/nextjs';
 import formidable from 'formidable';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -64,4 +63,4 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
 	});
 };
 
-export default withSentry(handler);
+export default handler;
