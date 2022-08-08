@@ -7,6 +7,7 @@ query($where: PostWhereInput) {
     description
     content
     featureImage
+    readingTime
     createdAt
     updatedAt
     isDraft
@@ -39,6 +40,7 @@ query($where: PostWhereInput!) {
     title
     description
     content
+    readingTime
     featureImage
     createdAt
     updatedAt

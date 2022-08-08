@@ -29,7 +29,7 @@ const PublicLayout: FC = ({ children }) => {
 		{
 			label: (
 				<Link href="/blog">
-					<a>Blog</a>
+					<a>Our Blog</a>
 				</Link>
 			),
 			key: '/blog',
@@ -67,6 +67,7 @@ const PublicLayout: FC = ({ children }) => {
 						<Col flex="auto">
 							<Menu triggerSubMenuAction="click" items={publicMenuItems} mode="horizontal" className={styles.publicMenu} />
 						</Col>
+						<Col span="1"></Col>
 						<Col>
 							{!loggedIn && !logginingIn ? (
 								<Space>

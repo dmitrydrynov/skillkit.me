@@ -216,6 +216,12 @@ a.ant-btn:not(.ant-btn-sm) {
 	box-shadow: none;
 }
 
+.ant-menu-horizontal > .ant-menu-item::after,
+.ant-menu-horizontal > .ant-menu-submenu::after {
+  border-bottom: none !important;
+  transition: none !important;
+}
+
 .ant-menu-inline:not(.ant-menu-horizontal) .ant-menu-item-selected,
 .ant-menu-inline:not(.ant-menu-horizontal) .ant-menu-item:active {
 	background-color: #ced2e5;

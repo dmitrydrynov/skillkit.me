@@ -13,7 +13,7 @@ export const fetchPosts = async () => {
 			};
 		}
 
-		return data.posts;
+		return { posts: data.posts };
 	} catch (error) {
 		return {
 			posts: null,
@@ -34,7 +34,7 @@ export const fetchPost = async ({ slug }: { slug: string }) => {
 			};
 		}
 
-		return data.post;
+		return { post: data.post };
 	} catch (error) {
 		return {
 			post: null,

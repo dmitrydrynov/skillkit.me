@@ -45,7 +45,7 @@ const PostPage = ({ post }) => {
 					<div className={styles.postInfo}>
 						Published at {moment(post.publishedAt).format('ll')} by {post.author?.fullName}
 						<span className={styles.sep} />
-						{post.readingTime} min read
+						{post.readingTime > 1 ? `${post.readingTime} min read` : 'Less than 1 min read'}
 					</div>
 				</Col>
 			</Row>

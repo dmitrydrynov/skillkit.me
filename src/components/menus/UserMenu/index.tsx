@@ -29,6 +29,7 @@ const UserMenu: FC = () => {
 	const [activeUserMenu, setActiveUserMenu] = useState(false);
 	// const [, endSession] = useMutation(endSessionMutation);
 	const { logginingIn } = useSelector((state: RootState) => state.auth);
+	// const logginingIn = true;
 	const authUser = useSelector((state: RootState) => state.user);
 
 	const userMenuItems: MenuItem[] = [
