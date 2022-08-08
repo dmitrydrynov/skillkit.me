@@ -21,7 +21,7 @@ interface DataType {
 
 const AdminSkillsPage: NextPageWithLayout = () => {
 	const { loggedIn } = useSelector((state: RootState) => state.auth);
-	const [{ data: responseSkillsData }] = useQuery({
+	const [{ data: responseSkillsData, fetching }] = useQuery({
 		query: skillsDataQuery,
 		pause: !loggedIn,
 		requestPolicy: 'network-only',
@@ -72,7 +72,7 @@ const AdminSkillsPage: NextPageWithLayout = () => {
 
 	return (
 		<>
-			<Table className={styles.skillsTable} columns={columns} dataSource={prepareData} />
+			<Table loading={fetching} className={styles.skillsTable} columns={columns} dataSource={prepareData} />
 		</>
 	);
 };

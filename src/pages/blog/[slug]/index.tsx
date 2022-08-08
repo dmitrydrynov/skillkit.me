@@ -1,6 +1,4 @@
 import { fetchPost, fetchPosts } from '@models/post';
-import { ssrGraphqlClient } from '@services/graphql/client';
-import { getPostQuery, postsDataQuery } from '@services/graphql/queries/post';
 import { Breadcrumb, Col, Row } from 'antd';
 import Blocks from 'editorjs-blocks-react-renderer';
 import moment from 'moment';

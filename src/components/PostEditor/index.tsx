@@ -88,6 +88,7 @@ const PostEditor: FC<PostEditorParams> = ({
 					placeholder={'Write from here...'}
 					onChange={onChange}
 					onReady={onReady}
+					className={styles.editorJS}
 				/>
 			)}
 		</div>

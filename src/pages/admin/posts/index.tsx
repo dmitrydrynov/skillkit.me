@@ -26,7 +26,7 @@ interface DataType {
 const AdminPostsPage: NextPageWithLayout = () => {
 	const router = useRouter();
 	const { loggedIn } = useSelector((state: RootState) => state.auth);
-	const [{ data: responsePostsData }, refreshPosts] = useQuery({
+	const [{ data: responsePostsData, fetching }, refreshPosts] = useQuery({
 		query: postsDataQuery,
 		pause: !loggedIn,
 		requestPolicy: 'network-only',
@@ -173,7 +173,7 @@ const AdminPostsPage: NextPageWithLayout = () => {
 					</Button>,
 				]}
 			/>
-			<Table className={styles.postsTable} columns={columns} dataSource={prepareData} />
+			<Table loading={fetching} className={styles.postsTable} columns={columns} dataSource={prepareData} />
 		</>
 	);
 };

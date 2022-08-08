@@ -215,12 +215,13 @@ const AdminPostEditPage: NextPageWithLayout = () => {
 				<div className={styles.featureImage}>
 					<Image
 						layout="fill"
-						placeholder="empty"
+						placeholder="blur"
 						objectFit="cover"
 						src={featureImage.url}
 						width={featureImage.width}
 						height={featureImage.height}
 						alt={`feature image for ${post.title}`}
+						blurDataURL={featureImage.url}
 					/>
 					<Button shape="circle" size="small" className={styles.featureImageDelBtn} onClick={handleFeatureImageRemove}>
 						<DeleteOutlined />

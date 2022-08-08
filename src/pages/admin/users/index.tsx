@@ -25,7 +25,7 @@ interface DataType {
 
 const AdminUsersPage: NextPageWithLayout = () => {
 	const { loggedIn } = useSelector((state: RootState) => state.auth);
-	const [{ data: responseUsersData }] = useQuery({
+	const [{ data: responseUsersData, fetching }] = useQuery({
 		query: usersDataQuery,
 		pause: !loggedIn,
 		requestPolicy: 'network-only',
@@ -109,7 +109,7 @@ const AdminUsersPage: NextPageWithLayout = () => {
 
 	return (
 		<>
-			<Table className={styles.usersTable} columns={columns} dataSource={prepareData} />
+			<Table loading={fetching} className={styles.usersTable} columns={columns} dataSource={prepareData} />
 		</>
 	);
 };
