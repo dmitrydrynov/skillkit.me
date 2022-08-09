@@ -80,7 +80,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context) {
 	try {
-		const { post, error } = await fetchPost({ slug: context.params.slug });
+		const { post, error } = await fetchPost({ where: { slug: { equals: context.params.slug } } });
 
 		if (error) {
 			console.error(error);

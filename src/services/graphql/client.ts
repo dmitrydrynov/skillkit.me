@@ -1,6 +1,7 @@
 import { getCookie } from '@helpers/cookie';
 import { multipartFetchExchange } from '@urql/exchange-multipart-fetch';
-import { cacheExchange, createClient, dedupExchange, ssrExchange } from 'urql';
+import { initUrqlClient } from 'next-urql';
+import { cacheExchange, createClient, dedupExchange, fetchExchange, ssrExchange } from 'urql';
 
 declare const window: any;
 
@@ -38,4 +39,23 @@ export const ssrGraphqlClient = (token: string = null) => {
 		exchanges: [dedupExchange, cacheExchange, ssr, multipartFetchExchange],
 		fetchOptions: () => fetchOptionsResponse,
 	});
+};
+
+export const urqlServerClient = (token?: string) => {
+	const fetchOptionsResponse: RequestInit = {
+		credentials: 'include',
+	};
+
+	if (token) {
+		fetchOptionsResponse.headers = { Authorization: token };
+	}
+
+	return initUrqlClient(
+		{
+			url: process.env.BACKEND_URL,
+			exchanges: [dedupExchange, cacheExchange, ssrExchange({ isClient: false }), fetchExchange],
+			fetchOptions: () => fetchOptionsResponse,
+		},
+		false,
+	);
 };

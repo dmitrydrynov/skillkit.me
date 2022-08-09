@@ -1,6 +1,5 @@
 import { PostViewModeEnum } from '@components/PostEditorBeforeContent';
-import { ssrGraphqlClient } from '@services/graphql/client';
-import { postsDataQuery } from '@services/graphql/queries/post';
+import { fetchPosts } from '@models/post';
 import { GetServerSideProps } from 'next';
 import { getServerSideSitemap } from 'next-sitemap';
 
@@ -12,21 +11,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 		},
 	];
 
-	const client = ssrGraphqlClient(ctx.req.cookies[process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME]);
+	const { posts, error } = await fetchPosts({
+		where: { viewMode: { equals: PostViewModeEnum.EVERYONE } },
+	});
 
-	const { data, error } = await client
-		.query(postsDataQuery, {
-			where: { viewMode: { equals: PostViewModeEnum.EVERYONE } },
-		})
-		.toPromise();
-
-	if (data) {
+	if (posts) {
 		fields.push({
 			loc: process.env.NEXT_PUBLIC_APP_URL + '/blog',
-			lastmod: data.posts[data.posts.length - 1].updatedAt,
+			lastmod: posts[posts.length - 1].updatedAt,
 		});
 
-		data.posts.map((post) => {
+		posts.map((post) => {
 			fields.push({
 				loc: process.env.NEXT_PUBLIC_APP_URL + '/blog/' + post.slug,
 				lastmod: post.updatedAt,

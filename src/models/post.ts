@@ -1,10 +1,19 @@
-import { ssrGraphqlClient } from '@services/graphql/client';
 import { getPostQuery, postsDataQuery } from '@services/graphql/queries/post';
+import { initUrqlClient } from 'next-urql';
+import { cacheExchange, dedupExchange, fetchExchange, ssrExchange } from 'urql';
 
-export const fetchPosts = async () => {
+export const urqlServerClient = () =>
+	initUrqlClient(
+		{
+			url: process.env.BACKEND_URL,
+			exchanges: [dedupExchange, cacheExchange, ssrExchange({ isClient: false }), fetchExchange],
+		},
+		false,
+	);
+
+export const fetchPosts = async (variables?: any) => {
 	try {
-		const client = ssrGraphqlClient();
-		const { data, error } = await client.query(postsDataQuery).toPromise();
+		const { data, error } = await urqlServerClient().query(postsDataQuery, variables).toPromise();
 
 		if (error) {
 			return {
@@ -22,10 +31,9 @@ export const fetchPosts = async () => {
 	}
 };
 
-export const fetchPost = async ({ slug }: { slug: string }) => {
+export const fetchPost = async (variables: any) => {
 	try {
-		const client = ssrGraphqlClient();
-		const { data, error } = await client.query(getPostQuery, { where: { slug: { equals: slug } } }).toPromise();
+		const { data, error } = await urqlServerClient().query(getPostQuery, variables).toPromise();
 
 		if (error) {
 			return {
