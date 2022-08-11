@@ -3,7 +3,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { CookieConsent } from '@components/CookieConsent';
 import LoadingScreen from '@components/loadingScreen';
 import PublicLayout from '@layouts/PublicLayout';
-// import { graphqlClient } from '@services/graphql/client';
+import { graphqlClient } from '@services/graphql/client';
 import { store } from '@store/configure-store';
 import { appConfig } from 'src/config/app';
 import { AuthProvider } from 'src/providers/auth-provider';
@@ -13,7 +13,7 @@ import type { AppProps } from 'next/app';
 import Router from 'next/router';
 import Script from 'next/script';
 import { Provider as StoreProvider } from 'react-redux';
-// import { Provider as UrqlProvider } from 'urql';
+import { Provider as UrqlProvider } from 'urql';
 import '@styles/globals.less';
 
 export type NextPageWithLayout = NextPage & {
@@ -62,12 +62,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				}}
 			/>
 			<StoreProvider store={store}>
-				{/* <UrqlProvider value={graphqlClient}> */}
+				<UrqlProvider value={graphqlClient}>
 				<AuthProvider>
 					{getLayout(<Component {...pageProps} style={{ opacity: loading ? 0 : 1 }} />)}
 					<CookieConsent />
 				</AuthProvider>
-				{/* </UrqlProvider> */}
+				</UrqlProvider>
 			</StoreProvider>
 			<LoadingScreen visible={loading} />
 		</>
