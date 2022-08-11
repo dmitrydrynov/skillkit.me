@@ -13,7 +13,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN yarn build
+RUN yarn build && yarn generate-sitemap
 # RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
 
 # 3. Production image, copy all the files and run next
@@ -32,9 +32,6 @@ COPY --from=builder /app/package.json ./package.json
 # Automatically leverage output traces to reduce image size 
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --chown=nextjs:nodejs --from=builder /app/public ./public/
-COPY --chown=nextjs:nodejs --from=builder /app/public/robots.txt ./public/robots.txt
-COPY --chown=nextjs:nodejs --from=builder /app/public/sitemap.xml ./public/sitemap.xml
-COPY --chown=nextjs:nodejs --from=builder /app/public/sitemap-0.xml ./public/sitemap-0.xml
 COPY --chown=nextjs:nodejs --from=builder /app/.next/standalone ./
 COPY --chown=nextjs:nodejs --from=builder /app/.next/static ./.next/static
 
