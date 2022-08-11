@@ -7,3 +7,4 @@ Host: http://skillkit.loc:3000
 
 # Sitemaps
 Sitemap: http://skillkit.loc:3000/sitemap.xml
+Sitemap: http://skillkit.loc:3000/server-sitemap.xml

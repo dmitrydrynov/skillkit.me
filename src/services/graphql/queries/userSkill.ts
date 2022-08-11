@@ -308,6 +308,18 @@ query($hash: String!) {
 }
 `;
 
+export const getUserSkillsForShareQuery = `
+query {
+  userSkillsForShare {
+    url
+    skillName
+    level
+    userName
+    updatedAt
+  }
+}
+`;
+
 export const sendEmailByHashMutation = `
 mutation(
   $name: String!,

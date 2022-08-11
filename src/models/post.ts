@@ -1,15 +1,5 @@
+import { urqlServerClient } from '@services/graphql/client';
 import { getPostQuery, postsDataQuery } from '@services/graphql/queries/post';
-import { initUrqlClient } from 'next-urql';
-import { cacheExchange, dedupExchange, fetchExchange, ssrExchange } from 'urql';
-
-export const urqlServerClient = () =>
-	initUrqlClient(
-		{
-			url: process.env.BACKEND_URL,
-			exchanges: [dedupExchange, cacheExchange, ssrExchange({ isClient: false }), fetchExchange],
-		},
-		false,
-	);
 
 export const fetchPosts = async (variables?: any) => {
 	try {

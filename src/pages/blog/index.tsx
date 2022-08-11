@@ -32,7 +32,7 @@ const PostsPage: FC = (props: any) => (
 	</>
 );
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
 	try {
 		const { posts, error } = await fetchPosts();
 
@@ -42,14 +42,11 @@ export async function getStaticProps() {
 		}
 
 		if (!posts) {
-			return {
-				notFound: true,
-			};
+			return { notFound: true };
 		}
 
 		return {
 			props: { posts },
-			revalidate: 10,
 		};
 	} catch (error) {
 		throw new Error(error);
