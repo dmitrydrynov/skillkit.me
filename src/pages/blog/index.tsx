@@ -13,7 +13,7 @@ const PostsPage: FC = (props: any) => (
 				name="description"
 				content="Welcome to the Skillkit.me Blog! Here you&#39;ll find the best information about resume and cover letter writing, job search and career advice. Read our blog articles to help you build a successful career."
 			/>
-			<meta property="og:title" content="killkit.me Blog - The best tips, insights and career advice" />
+			<meta property="og:title" content="Skillkit.me Blog - The best tips, insights and career advice" />
 			<meta
 				property="og:description"
 				content="Welcome to the Skillkit.me Blog! Here you&#39;ll find the best information about resume and cover letter writing, job search and career advice. Read our blog articles to help you build a successful career."
@@ -29,7 +29,7 @@ const PostsPage: FC = (props: any) => (
 				name="twitter:images"
 				content="https://cdn.sanity.io/images/n0lpvrpe/prod/c3b822ec8b441294d8e1835406f367e795d6dbfc-634x521.png"
 			/>
-			<meta name="twitter:title" content="killkit.me Blog - The best tips, insights and career advice" />
+			<meta name="twitter:title" content="Skillkit.me Blog - The best tips, insights and career advice" />
 			<meta
 				name="twitter:description"
 				content="Welcome to the Skillkit.me Blog! Here you&#39;ll find the best information about resume and cover letter writing, job search and career advice. Read our blog articles to help you build a successful career."
