@@ -34,3 +34,5 @@ yarn-error.log*
 .vercel
 /.env
 /public/images/
+/public/sitemap*
+/public/robots.txt
