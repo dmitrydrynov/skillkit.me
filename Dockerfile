@@ -10,8 +10,8 @@ RUN yarn install --frozen-lockfile
 # 2. Rebuild the source code only when needed
 FROM node:16-alpine AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+COPY --from=deps /app/node_modules ./node_modules
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN yarn build && yarn generate-sitemap
 # RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
@@ -33,7 +33,7 @@ COPY --from=builder /app/package.json ./package.json
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --chown=nextjs:nodejs --from=builder /app/.next/standalone ./
 COPY --chown=nextjs:nodejs --from=builder /app/.next/static ./.next/static
-COPY --chown=nextjs:nodejs --from=builder /app/public ./public
+COPY --chown=nextjs:nodejs --from=builder --link /app/public ./public
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
