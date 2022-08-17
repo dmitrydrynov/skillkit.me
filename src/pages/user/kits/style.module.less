@@ -1,0 +1,53 @@
+.pageHeader {
+	padding: 16px 0;
+}
+
+.item {
+	cursor: pointer;
+	border-radius: @border-radius-base;
+	border: unset !important;
+	padding: 16px;
+	margin-bottom: 8px;
+
+	&:hover {
+		background: @gray-2;
+	}
+}
+
+.skillTable {
+	:global {
+		.ant-table-thead > tr > th {
+			background-color: unset;
+
+			&::before {
+				display: none;
+			}
+		}
+		.ant-table-tbody > tr > td {
+			border: unset;
+		}
+		.ant-table table {
+			border-spacing: 0 4px;
+		}
+	}
+}
+
+.emptySkillsSection {
+	text-align: center;
+	margin: 16px;
+
+	& p {
+		font-size: 16px;
+	}
+}
+
+.isDraftText {
+  color: #adadad;
+  font-weight: normal;
+}
+
+@media screen and (max-width: 600px) {
+	.pageHeader {
+		padding: 16px;
+	}
+}

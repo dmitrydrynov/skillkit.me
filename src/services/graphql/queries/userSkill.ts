@@ -336,3 +336,22 @@ mutation(
     result
   }
 }`;
+
+export const searchUserSkillsQuery = `
+query($search: String) {
+  userSkills(
+    where: {
+      skill: {
+        name: {contains: $search, mode: insensitive}
+      }
+    },
+    take: 5
+  ) {
+    id
+    skill {
+      id
+      name
+    }
+  }
+}
+`;

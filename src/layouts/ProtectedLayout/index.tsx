@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { AiOutlineClose, AiOutlineMenu } from 'react-icons/ai';
 import { useSelector } from 'react-redux';
 import styles from './ProtectedLayout.module.less';
+import DefaultMenu from '@components/menus/DefaultMenu';
 
 const { Header, Content, Sider } = Layout;
 const { useBreakpoint } = Grid;
@@ -56,19 +57,6 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({
 		await router.push('/403');
 	};
 
-	const handleMenuClick = ({ key }) => {
-		router.push(key);
-		setSiderCollapsed(true);
-	};
-
-	const defaultSiderMenu = (
-		<Menu mode="inline" selectedKeys={[router.route]} onClick={handleMenuClick}>
-			<Menu.Item key="/user/skills" icon={<ProfileOutlined />}>
-				My skills
-			</Menu.Item>
-		</Menu>
-	);
-
 	return (
 		<>
 			<Head>
@@ -98,7 +86,7 @@ const ProtectedLayout: FC<ProtectedLayoutParams> = ({
 					<div className={styles.logo}>
 						<Image src={skillKitLogo} layout="intrinsic" alt="gdhub logo" />
 					</div>
-					{siderMenu ? siderMenu : defaultSiderMenu}
+					{siderMenu ? siderMenu : <DefaultMenu />}
 				</Sider>
 				<Layout className="site-layout">
 					<Header className={styles.header}>

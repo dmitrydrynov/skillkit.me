@@ -1,0 +1,107 @@
+.form {
+	flex: 1;
+
+	:global {
+		.ant-form-item-label {
+			& > label {
+				width: 100%;
+			}
+			.ant-btn {
+				padding: 0;
+				height: inherit;
+			}
+		}
+	}
+}
+
+.title {
+	color: #222222;
+	text-align: center;
+	margin: 0 60px;
+	font-size: 28px;
+	line-height: 37px;
+}
+
+.subtitle {
+	color: @gray-8;
+	margin: 24px 60px;
+	text-align: center;
+	font-size: 16px;
+	line-height: 22px;
+}
+
+.imageContainer {
+	padding: 50px 70px !important;
+}
+
+.modal {
+	:global {
+		.ant-modal-body {
+			padding: 24px 48px;
+		}
+		.ant-modal-title {
+			h3 {
+				margin: 0;
+			}
+		}
+		.ant-modal-footer {
+			padding: 24px 48px;
+			text-align: center;
+			border: 0;
+		}
+	}
+}
+
+.section {
+	margin-bottom: 16px;
+
+	> p {
+		color: @gray-6;
+	}
+}
+
+.textEditor {
+	border: 1px solid @gray-5;
+	width: 100%;
+}
+
+.textEditorContent {
+	height: 150px;
+}
+
+.addMoreMenu {
+	:global {
+		.ant-dropdown-menu-item {
+			&-disabled {
+				svg > path {
+					stroke: @gray-5;
+				}
+			}
+
+			&-icon {
+				width: 24px;
+				height: auto;
+				margin-right: 16px;
+
+				path {
+					stroke: @primary-color;
+				}
+			}
+
+			.title {
+				font-weight: bold;
+			}
+			.extra {
+				color: @gray-6;
+				font-size: small;
+			}
+		}
+	}
+}
+
+@import './styles/xs.less'; // screen < 576px
+@import './styles/sm.less'; // screen ≥ 576px
+@import './styles/md.less'; // screen ≥ 768px
+@import './styles/lg.less'; // screen ≥ 992px
+@import './styles/xl.less'; // screen ≥ 1200px
+@import './styles/xxl.less'; // screen ≥ 1600px

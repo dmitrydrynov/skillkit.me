@@ -34,12 +34,12 @@ import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
 const { useBreakpoint } = Grid;
-const AddUserSkillModal = dynamic(() => import('@components/modals/AddUserSkillModal'), { ssr: false });
+const AddUserKitModal = dynamic(() => import('@components/modals/AddUserKitModal'), { ssr: false });
 
-const UserSkillsPage: NextPageWithLayout = () => {
+const UserKitsPage: NextPageWithLayout = () => {
 	const router = useRouter();
 	const screens = useBreakpoint();
-	const [visibleAddUserSkillModal, setVisibleAddUserSkillModal] = useState(false);
+	const [visibleAddUserKitModal, setVisibleAddUserKitModal] = useState(false);
 	const userId = useSelector((state: RootState) => state.user.id);
 	const [userSkills, refreshUserSkills] = useQuery({
 		query: userSkillsQuery,
@@ -48,8 +48,8 @@ const UserSkillsPage: NextPageWithLayout = () => {
 	});
 	const [, deleteUserSkill] = useMutation(deleteUserSkillMutation);
 
-	const handleAddUserSkill = async () => {
-		setVisibleAddUserSkillModal(false);
+	const handleAddUserKit = async () => {
+		setVisibleAddUserKitModal(false);
 		await refreshUserSkills();
 	};
 
@@ -113,35 +113,35 @@ const UserSkillsPage: NextPageWithLayout = () => {
 
 	const customizeRenderEmpty = () => (
 		<div style={{ textAlign: 'left' }}>
-			<p>You haven&apos;t listed any skills yet. You can add a new one.</p>
+			<p>You haven&apos;t listed any skill kits yet. You can add a new one.</p>
 		</div>
 	);
 
 	return (
 		<>
 			<Head>
-				<title>My Skills - SkillKit</title>
+				<title>My skillkits - Skillkit</title>
 			</Head>
-			<AddUserSkillModal
-				visible={visibleAddUserSkillModal}
-				onClose={() => setVisibleAddUserSkillModal(false)}
-				onFinish={handleAddUserSkill}
+			<AddUserKitModal
+				visible={visibleAddUserKitModal}
+				onClose={() => setVisibleAddUserKitModal(false)}
+				onFinish={handleAddUserKit}
 			/>
 			{!userSkills.data && <Skeleton active />}
 			{userSkills.data?.userSkills.length === 0 && !userSkills.fetching && (
 				<div className={styles.emptySkillsSection}>
 					<Space direction="vertical" align="center" size="middle">
 						<Image src={EmptySkills} alt="not found any skills" />
-						<p className="text-center">You haven&apos;t listed any skills yet. You can add a new one.</p>
+						<p className="text-center">You haven&apos;t listed any skill kits yet. You can add a new one.</p>
 						<Button
 							type="primary"
 							key="add-language-button"
 							icon={<PlusOutlined />}
 							onClick={() => {
-								setVisibleAddUserSkillModal(true);
+								setVisibleAddUserKitModal(true);
 							}}
 						>
-							Add first skill
+							Add first kit
 						</Button>
 					</Space>
 				</div>
@@ -150,7 +150,7 @@ const UserSkillsPage: NextPageWithLayout = () => {
 				<>
 					<PageHeader
 						className={styles.pageHeader}
-						title="Skills"
+						title="My kits"
 						backIcon={false}
 						extra={[
 							<Button
@@ -158,10 +158,10 @@ const UserSkillsPage: NextPageWithLayout = () => {
 								key="add-language-button"
 								icon={<PlusOutlined />}
 								onClick={() => {
-									setVisibleAddUserSkillModal(true);
+									setVisibleAddUserKitModal(true);
 								}}
 							>
-								Add skill
+								Add kit
 							</Button>,
 						]}
 					/>
@@ -175,7 +175,7 @@ const UserSkillsPage: NextPageWithLayout = () => {
 							size="middle"
 						>
 							<Table.Column
-								title="I can"
+								title="I am"
 								dataIndex={['skill', 'name']}
 								key="skillName"
 								ellipsis={true}
@@ -273,6 +273,6 @@ const UserSkillsPage: NextPageWithLayout = () => {
 	);
 };
 
-UserSkillsPage.getLayout = (page: ReactElement) => <ProtectedLayout title="Skills">{page}</ProtectedLayout>;
+UserKitsPage.getLayout = (page: ReactElement) => <ProtectedLayout title="Skills">{page}</ProtectedLayout>;
 
-export default UserSkillsPage;
+export default UserKitsPage;
