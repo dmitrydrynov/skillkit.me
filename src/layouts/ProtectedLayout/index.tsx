@@ -1,10 +1,10 @@
 import React, { createContext, createRef, FC, ReactElement, ReactNode, useEffect, useState } from 'react';
 import skillKitLogo from '@assets/images/skillkit-alpha-logo.svg';
+import DefaultMenu from '@components/menus/DefaultMenu';
 import UserMenu from '@components/menus/UserMenu';
 import withAuth from '@helpers/withAuth';
 import { RootState } from '@store/configure-store';
 import { UserRole } from 'src/definitions/user';
-import { ProfileOutlined } from '@ant-design/icons';
 import { Col, Grid, Layout, Menu, Row } from 'antd';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -12,7 +12,6 @@ import { useRouter } from 'next/router';
 import { AiOutlineClose, AiOutlineMenu } from 'react-icons/ai';
 import { useSelector } from 'react-redux';
 import styles from './ProtectedLayout.module.less';
-import DefaultMenu from '@components/menus/DefaultMenu';
 
 const { Header, Content, Sider } = Layout;
 const { useBreakpoint } = Grid;
