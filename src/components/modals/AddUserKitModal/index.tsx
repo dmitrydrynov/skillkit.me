@@ -3,9 +3,9 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import { gtmEvent } from '@helpers/gtm';
-import { searchKitsQuery } from '@services/graphql/queries/kit';
+import { searchProfessionsQuery } from '@services/graphql/queries/profession';
 import { createUserKitMutation } from '@services/graphql/queries/userKit';
-import { Button, Form, Modal, message } from 'antd';
+import { Button, Form, message, Modal } from 'antd';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from 'urql';
 import { AddUserKitForm } from './AddUserKitForm';
@@ -16,54 +16,53 @@ const AddUserKitModal: FC<AddKitArgs> = ({ visible, onClose, onFinish }) => {
 	const router = useRouter();
 	const [form] = Form.useForm();
 	/** Local state */
-	const [selectedKitId, setSelectedKitId] = useState<number>();
-	let [kitSearchQuery, setKitSearchQuery] = useState(null);
+	const [selectedProfessionId, setSelectedProfessionId] = useState<number>();
+	let [professionSearchQuery, setProfessionSearchQuery] = useState(null);
 
 	/** Queries */
-	let [{ data: searchKitData }, searchKits] = useQuery({
-		query: searchKitsQuery,
-		variables: { search: kitSearchQuery },
-		pause: kitSearchQuery === null,
+	let [{ data: searchProfessionData }, searchProfessions] = useQuery({
+		query: searchProfessionsQuery,
+		variables: { search: professionSearchQuery },
 		requestPolicy: 'network-only',
 	});
 
 	/** Mutations */
-	const [addUserKitResponse, addUserKit] = useMutation(createUserKitMutation);
+	let [{ fetching: addUserKitFetching }, addUserKit] = useMutation(createUserKitMutation);
 
 	useEffect(() => {
 		form.resetFields();
-		setSelectedKitId(null);
-		setKitSearchQuery(null);
-		addUserKitResponse.fetching = false;
+		setSelectedProfessionId(null);
+		setProfessionSearchQuery(null);
+		addUserKitFetching = false;
 	}, [visible]);
 
 	useEffect(() => {
-		if (!kitSearchQuery) return;
+		if (!professionSearchQuery) return;
 
 		(async () => {
-			await searchKits();
+			await searchProfessions();
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [kitSearchQuery]);
+	}, [professionSearchQuery]);
 
 	const handleSave = (params: { redirect?: boolean } = { redirect: false }) => {
 		form.validateFields().then(async (formData: UserKit) => {
-			let { kitName, level } = formData;
-
+			const { professionName, userSkills } = formData;
 			const resultOperation = await addUserKit({
-				kitId: selectedKitId,
-				kitName: kitName.trim().toLowerCase(),
+				professionId: selectedProfessionId,
+				professionName: professionName.trim().toLowerCase(),
+				userSkills: userSkills?.map((record) => record.id),
 			});
 
 			if (resultOperation?.error) {
-				setSelectedKitId(null);
-				setKitSearchQuery(null);
-				addUserKitResponse.fetching = false;
+				setSelectedProfessionId(null);
+				setProfessionSearchQuery(null);
+				addUserKitFetching = false;
 
 				const err = resultOperation.error.message?.split(']');
 				form.setFields([
 					{
-						name: 'kitName',
+						name: 'professionName',
 						errors: [err[1].trim()],
 					},
 				]);
@@ -71,11 +70,11 @@ const AddUserKitModal: FC<AddKitArgs> = ({ visible, onClose, onFinish }) => {
 				return Promise.resolve();
 			}
 
-			gtmEvent('NewUserKitEvent', { kitName, kitLevel: level });
+			gtmEvent('NewSkillKitEvent', { professionName });
 
-			message.success('New user kit added!');
-			setKitSearchQuery(null);
-			setSelectedKitId(null);
+			message.success('New skillkit added!');
+			setProfessionSearchQuery(null);
+			setSelectedProfessionId(null);
 
 			if (params.redirect && resultOperation?.data) {
 				await router.push(`/user/kit/${resultOperation?.data?.createUserKit.id}/editor/`);
@@ -92,7 +91,7 @@ const AddUserKitModal: FC<AddKitArgs> = ({ visible, onClose, onFinish }) => {
 
 	return (
 		<Modal
-			title={<h3>Add skills kit</h3>}
+			title={<h3>Add Skillkit</h3>}
 			visible={visible}
 			onCancel={handleCancel}
 			width={650}
@@ -100,13 +99,13 @@ const AddUserKitModal: FC<AddKitArgs> = ({ visible, onClose, onFinish }) => {
 			maskClosable={false}
 			className={styles.modal}
 			footer={[
-				<Button key="submit" type="default" loading={addUserKitResponse.fetching} onClick={() => handleSave()}>
+				<Button key="submit" type="default" loading={addUserKitFetching} onClick={() => handleSave()}>
 					Save
 				</Button>,
 				<Button
 					key="submitWithRedirect"
 					type="primary"
-					loading={addUserKitResponse.fetching}
+					loading={addUserKitFetching}
 					onClick={() => handleSave({ redirect: true })}
 				>
 					Save & Add Details
@@ -114,11 +113,15 @@ const AddUserKitModal: FC<AddKitArgs> = ({ visible, onClose, onFinish }) => {
 			]}
 		>
 			<AddUserKitForm
+				visible={visible}
 				form={form}
-				searchKitData={searchKitData}
-				onSelectKit={(value, option) => setSelectedKitId(option.key as number)}
-				onSearchKit={(value: string) => setKitSearchQuery(value)}
-				onChangeKit={() => setSelectedKitId(null)}
+				searchProfessionData={searchProfessionData}
+				onSelectProfession={(value, option) => {
+					setSelectedProfessionId(option.key as number);
+					setProfessionSearchQuery(value);
+				}}
+				onSearchProfession={(value: string) => setProfessionSearchQuery(value)}
+				onChangeProfession={() => setSelectedProfessionId(null)}
 			/>
 		</Modal>
 	);

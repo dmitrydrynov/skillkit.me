@@ -40,7 +40,7 @@ const UserMenu: FC = () => {
 		},
 		{
 			link: '/user/skills',
-			title: 'My skills',
+			title: 'Dashboard',
 		},
 		{
 			link: '/settings/profile',

@@ -352,6 +352,17 @@ query($search: String) {
       id
       name
     }
+    isComplexSkill
+    level
+    isDraft
+    experience {
+      years
+      months
+    }
+    publishedAt
+    createdAt
+    updatedAt
+    shareLink
   }
 }
 `;

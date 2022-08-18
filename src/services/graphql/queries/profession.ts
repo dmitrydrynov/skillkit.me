@@ -1,6 +1,6 @@
-export const searchKitsQuery = `
+export const searchProfessionsQuery = `
 query($search: String) {
-  kits(
+  professions(
     where: {
       name: {contains: $search, mode: insensitive}
     },
@@ -8,23 +8,26 @@ query($search: String) {
   ) {
     id
     name
+    createdAt
+    updatedAt
   }
 }
 `;
 
-export const kitsDataQuery = `
+export const professionsDataQuery = `
 query {
-  kits {
+  professions {
     id
     name
     createdAt
+    updatedAt
   }
 }
 `;
 
-export const createKitMutation = `
+export const createProfessionMutation = `
 mutation($name: String!) {
-  createKit(name: $name) {
+  createProfession(name: $name) {
     id
     name
   }

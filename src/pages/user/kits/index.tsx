@@ -1,11 +1,11 @@
 import React, { ReactElement, useState } from 'react';
 import EmptySkills from '@assets/images/skills/empty-skills.svg';
-import { capitalizedText, experienceAsText } from '@helpers/text';
+import { capitalizedText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
-import { deleteUserSkillMutation, userSkillsQuery } from '@services/graphql/queries/userSkill';
+import { userKitsQuery } from '@services/graphql/queries/userKit';
+import { deleteUserKitMutation } from '@services/graphql/queries/userKit';
 import { RootState } from '@store/configure-store';
-import { getSkillLevel } from 'src/definitions/skill';
 import { DeleteOutlined, EditOutlined, EditTwoTone, PlusOutlined } from '@ant-design/icons';
 import {
 	Button,
@@ -15,11 +15,9 @@ import {
 	Menu,
 	message,
 	PageHeader,
-	Progress,
 	Skeleton,
 	Space,
 	Table,
-	Tooltip,
 	Typography,
 } from 'antd';
 import moment from 'moment';
@@ -28,7 +26,6 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { HiDotsVertical } from 'react-icons/hi';
-import { TbArrowsJoin } from 'react-icons/tb';
 import { useSelector } from 'react-redux';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
@@ -41,30 +38,27 @@ const UserKitsPage: NextPageWithLayout = () => {
 	const screens = useBreakpoint();
 	const [visibleAddUserKitModal, setVisibleAddUserKitModal] = useState(false);
 	const userId = useSelector((state: RootState) => state.user.id);
-	const [userSkills, refreshUserSkills] = useQuery({
-		query: userSkillsQuery,
+	const [userKits, refreshUserKits] = useQuery({
+		query: userKitsQuery,
 		pause: !userId,
 		requestPolicy: 'network-only',
 	});
-	const [, deleteUserSkill] = useMutation(deleteUserSkillMutation);
+	const [, deleteUserKit] = useMutation(deleteUserKitMutation);
 
 	const handleAddUserKit = async () => {
 		setVisibleAddUserKitModal(false);
-		await refreshUserSkills();
+		await refreshUserKits();
 	};
 
-	const userSkillItemMenu = (recordId?: string) => (
+	const userKitItemMenu = (recordId?: string) => (
 		<Menu
 			onClick={({ key, domEvent }) => {
 				domEvent.stopPropagation();
 				if (key === 'delete' && recordId) {
-					handleDeleteUserSkill(recordId);
+					handleDeleteUserKit(recordId);
 				}
 				if (key === 'edit' && recordId) {
-					router.push(`/user/skill/${recordId}/editor`);
-				}
-				if (key === 'share' && recordId) {
-					// console.log('share skill', recordId);
+					router.push(`/user/kit/${recordId}/editor`);
 				}
 			}}
 		>
@@ -81,28 +75,28 @@ const UserKitsPage: NextPageWithLayout = () => {
 		</Menu>
 	);
 
-	const handleDeleteUserSkill = async (recordId?: string) => {
+	const handleDeleteUserKit = async (recordId?: string) => {
 		try {
 			if (recordId) {
-				const userSkillData = userSkills.data.userSkills.find((d) => d.id === recordId);
-				const { data, error } = await deleteUserSkill({ where: { id: recordId } });
+				const userKitData = userKits.data.userKits.find((d) => d.id === recordId);
+				const { data, error } = await deleteUserKit({ where: { id: recordId } });
 
 				if (error) {
 					message.error(error.message);
 					return Promise.resolve(false);
 				}
 
-				if (!data.deleteUserSkill) {
-					message.error("We can't delete this user skill");
+				if (!data.deleteUserKit) {
+					message.error("We can't delete this skill kit");
 					return Promise.resolve(false);
 				}
 
 				message.success(
 					<>
-						The user skill <strong>{userSkillData.skill.name}</strong> deleted successfully
+						The skill kit <strong>{userKitData.profession.name}</strong> deleted successfully
 					</>,
 				);
-				await refreshUserSkills();
+				await refreshUserKits();
 
 				return Promise.resolve(true);
 			}
@@ -113,26 +107,26 @@ const UserKitsPage: NextPageWithLayout = () => {
 
 	const customizeRenderEmpty = () => (
 		<div style={{ textAlign: 'left' }}>
-			<p>You haven&apos;t listed any skill kits yet. You can add a new one.</p>
+			<p>You haven&apos;t listed any kit kits yet. You can add a new one.</p>
 		</div>
 	);
 
 	return (
 		<>
 			<Head>
-				<title>My skillkits - Skillkit</title>
+				<title>My Skill Kits - Skillkit</title>
 			</Head>
 			<AddUserKitModal
 				visible={visibleAddUserKitModal}
 				onClose={() => setVisibleAddUserKitModal(false)}
 				onFinish={handleAddUserKit}
 			/>
-			{!userSkills.data && <Skeleton active />}
-			{userSkills.data?.userSkills.length === 0 && !userSkills.fetching && (
-				<div className={styles.emptySkillsSection}>
+			{!userKits.data && <Skeleton active />}
+			{userKits.data?.userKits.length === 0 && !userKits.fetching && (
+				<div className={styles.emptySection}>
 					<Space direction="vertical" align="center" size="middle">
-						<Image src={EmptySkills} alt="not found any skills" />
-						<p className="text-center">You haven&apos;t listed any skill kits yet. You can add a new one.</p>
+						<Image src={EmptySkills} alt="not found any kits" />
+						<p className="text-center">You haven&apos;t listed any kit kits yet. You can add a new one.</p>
 						<Button
 							type="primary"
 							key="add-language-button"
@@ -146,11 +140,11 @@ const UserKitsPage: NextPageWithLayout = () => {
 					</Space>
 				</div>
 			)}
-			{userSkills.data?.userSkills.length > 0 && (
+			{userKits.data?.userKits.length > 0 && (
 				<>
 					<PageHeader
 						className={styles.pageHeader}
-						title="My kits"
+						title="My skill kits"
 						backIcon={false}
 						extra={[
 							<Button
@@ -167,58 +161,27 @@ const UserKitsPage: NextPageWithLayout = () => {
 					/>
 					<ConfigProvider renderEmpty={customizeRenderEmpty}>
 						<Table
-							className={styles.skillTable}
-							rowClassName={styles.skillTableRow}
-							dataSource={userSkills.data?.userSkills}
-							loading={userSkills.fetching}
+							className={styles.table}
+							rowClassName={styles.tableRow}
+							dataSource={userKits.data?.userKits}
+							loading={userKits.fetching}
 							pagination={false}
 							size="middle"
 						>
 							<Table.Column
 								title="I am"
-								dataIndex={['skill', 'name']}
-								key="skillName"
+								dataIndex={['profession', 'name']}
+								key="professionName"
 								ellipsis={true}
 								render={(value: string, data: any) => {
-									const level = getSkillLevel(data.level);
-
 									return (
-										<Space>
-											<Progress
-												type="circle"
-												percent={level.index * 20}
-												width={24}
-												showInfo={false}
-												strokeColor={level.color}
-												strokeWidth={12}
-											/>
-											<div style={{ lineHeight: 'initial' }}>
-												<Space align="center">
-													{data.isComplexSkill && (
-														<Tooltip title="This is complex skill">
-															<TbArrowsJoin color="#adadad" style={{ display: 'block' }} />
-														</Tooltip>
-													)}
-													<Typography.Text strong>
-														{capitalizedText(value)}&nbsp;{data.isDraft && <span className={styles.isDraftText}>(draft)</span>}
-													</Typography.Text>
-												</Space>
-												<br />
-												<Typography.Text type="secondary" style={{ fontSize: 12 }}>
-													{capitalizedText(level.label)}
-												</Typography.Text>
-											</div>
+										<Space align="center">
+											<Typography.Text strong>
+												{capitalizedText(value)}&nbsp;{data.isDraft && <span className={styles.isDraftText}>(draft)</span>}
+											</Typography.Text>
 										</Space>
 									);
 								}}
-							/>
-							<Table.Column
-								title="Experience"
-								width="150px"
-								key="experience"
-								dataIndex="experience"
-								render={(data: unknown, record: any) => experienceAsText(record.experience)}
-								responsive={['lg']}
 							/>
 							<Table.Column
 								title="Last updated"
@@ -233,13 +196,13 @@ const UserKitsPage: NextPageWithLayout = () => {
 								key="preview"
 								align="right"
 								responsive={['sm']}
-								render={(value, record: UserSkill) => (
+								render={(value, record: UserKit) => (
 									<>
 										<Button
 											type="text"
 											size="small"
 											icon={<EditTwoTone twoToneColor="#eb2f96" />}
-											onClick={() => router.push(`/user/skill/${record.id}/editor`)}
+											onClick={() => router.push(`/user/kit/${record.id}/editor`)}
 										>
 											Details
 										</Button>
@@ -249,8 +212,8 @@ const UserKitsPage: NextPageWithLayout = () => {
 							<Table.Column
 								width="60px"
 								key="action"
-								render={(data: unknown, record: UserSkill) => (
-									<Dropdown overlay={userSkillItemMenu(record.id)} trigger={['click']}>
+								render={(data: unknown, record: UserKit) => (
+									<Dropdown overlay={userKitItemMenu(record.id)} trigger={['click']}>
 										<Button
 											type="text"
 											size="small"
