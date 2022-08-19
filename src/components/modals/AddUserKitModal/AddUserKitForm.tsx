@@ -62,7 +62,7 @@ export const AddUserKitForm = ({
 		>
 			<Form.Item
 				name="professionName"
-				label="I am (the kit name)"
+				label="I am"
 				rules={[
 					{
 						required: true,
@@ -230,7 +230,7 @@ export const AddUserKitForm = ({
 					<>
 						Skills kit is a set of your unique skills, using which in combination you perform some useful role.
 						<br />
-						The name of the kit should describe your type of activity, your role.
+						The name of the kit should describe your type of activity, your role (an example, your profession).
 						<br />
 						<br />
 						Examples:

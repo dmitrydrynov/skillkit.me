@@ -1,0 +1,160 @@
+.container {
+	width: 100%;
+}
+
+.title {
+	font-size: 30px;
+	line-height: normal;
+}
+
+.descriptionEmpty {
+	color: @gray-6;
+	font-style: italic;
+}
+
+.levelName {
+	font-size: 14px;
+}
+
+.progressBar {
+	:global {
+		.ant-progress-steps-item {
+			width: 24px !important;
+			height: 24px !important;
+
+			&:first-child {
+				border-radius: 4px 0 0 4px;
+			}
+
+			&:last-child {
+				border-radius: 0 4px 4px 0;
+			}
+		}
+	}
+}
+
+.headerContainer {
+	display: flex;
+	align-items: center;
+	margin-bottom: 20px;
+
+	h2,
+	h3 {
+		margin: 0 !important;
+	}
+
+	button {
+		margin-left: 10px;
+	}
+}
+
+.titleInput {
+	font-size: 30px;
+	font-weight: 500;
+	color: rgba(0, 0, 0, 0.85);
+	width: auto;
+
+	:global {
+		.ant-select-selection-search {
+			line-height: initial;
+		}
+	}
+}
+
+.list {
+	border: 1px solid @gray-4;
+	border-radius: @border-radius-base;
+	padding: 8px;
+}
+
+.listItem {
+	border: unset !important;
+	border-radius: @border-radius-base;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: @gray-2;
+
+		:global {
+			.editItemButtons {
+				opacity: 1;
+			}
+		}
+	}
+
+	:global {
+		.editItemButtons {
+			opacity: 0;
+			transition: opacity 0.2s;
+		}
+	}
+}
+
+.listItemMeta {
+	:global {
+		.ant-list-item-meta-content {
+			display: flex;
+		}
+
+		.ant-list-item-meta-title {
+			width: 40%;
+		}
+
+		.ant-list-item-meta-description {
+			width: 60%;
+
+			.ant-typography {
+				margin-bottom: 0;
+			}
+		}
+
+		.ant-space {
+			max-width: 85%;
+
+			.ant-space-item {
+				width: 100%;
+			}
+		}
+	}
+}
+
+.userSchoolRange,
+.userJobRange {
+	color: @gray-6;
+	font-size: @font-size-sm;
+}
+
+.userSchoolTitle,
+.userJobTitle {
+	font-size: @font-size-lg;
+}
+
+.userSchoolListItem,
+.userJobListItem {
+	border-radius: @border-radius-base;
+	padding: 8px 16px;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: @gray-2;
+
+		:global {
+			.editItemButtons {
+				opacity: 1;
+			}
+		}
+	}
+
+	:global {
+		.editItemButtons {
+			opacity: 0;
+			transition: opacity 0.2s;
+		}
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.container {
+		padding: 16px;
+	}
+}
