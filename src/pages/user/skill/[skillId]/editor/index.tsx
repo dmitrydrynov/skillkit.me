@@ -848,7 +848,8 @@ const SkillEditorPage: NextPageWithLayout = () => {
 				}}
 			/>
 			<AddUserFileModal
-				userSkillId={skillId as string}
+				attachTo="UserSkill"
+				attachId={skillId as string}
 				visible={visibleAddUserFile}
 				recordId={editableAddUserFile}
 				onSave={handleAddUserFile}

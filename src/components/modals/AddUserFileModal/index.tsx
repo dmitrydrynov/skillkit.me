@@ -12,7 +12,8 @@ type _ModalParams = {
 	onCancel(): void;
 	visible?: boolean;
 	recordId?: number;
-	userSkillId: number | string;
+	attachId: number | string;
+	attachTo: 'UserSkill' | 'UserKit';
 };
 
 type _FormData = {
@@ -27,7 +28,7 @@ enum _ActionEnum {
 	'UploadImage',
 }
 
-const AddUserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visible = false }: _ModalParams) => {
+const AddUserFileModal = ({ onSave, onCancel, attachId, attachTo, recordId = null, visible = false }: _ModalParams) => {
 	const [form] = Form.useForm();
 	const [selectedAction, setSelectedAction] = useState(_ActionEnum.AddLink);
 	const [fileLoading, setFileLoading] = useState(false);
@@ -49,8 +50,8 @@ const AddUserFileModal = ({ onSave, onCancel, userSkillId, recordId = null, visi
 		try {
 			let createData: any = {
 				data: {
-					attachTo: 'userSkill',
-					attachId: userSkillId,
+					attachTo,
+					attachId,
 					title,
 					description: description ? description : null,
 				},

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getErrorMessage } from '@helpers/errors';
 import { capitalizedText } from '@helpers/text';
 import { searchSkillsQuery } from '@services/graphql/queries/skill';
-import { addUserSkillsMutation, createUserKitMutation, userKitsQuery } from '@services/graphql/queries/userKit';
+import { addUserSkillsMutation, createUserKitMutation } from '@services/graphql/queries/userKit';
+import { createUserSkillMutation, userSkillsQuery } from '@services/graphql/queries/userSkill';
 import { Modal, Spin, Tabs, Form, message, TreeSelect } from 'antd';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
@@ -16,7 +17,7 @@ type _ModalParams = {
 };
 
 type _FormData = {
-	userSkills?: number[];
+	userSkillIds?: number[];
 	skillName?: string;
 	level?: string;
 };
@@ -34,7 +35,7 @@ const UserSkillForKitModal = ({ onSave, onCancel, userKit, visible = false }: _M
 	const [submitting, setSubmitting] = useState(false);
 	const [skillSearchQuery, setSkillSearchQuery] = useState(null);
 	const [selectedSkillId, setSelectedSkillId] = useState<number>();
-	const [userKitsList, setUserSkillsList] = useState([]);
+	const [userSkillList, setUserSkillList] = useState([]);
 	/** Queries */
 	let [{ data: searchSkillData }, searchSkills] = useQuery({
 		query: searchSkillsQuery,
@@ -42,11 +43,11 @@ const UserSkillForKitModal = ({ onSave, onCancel, userKit, visible = false }: _M
 		pause: skillSearchQuery === null,
 		requestPolicy: 'network-only',
 	});
-	const [userKits] = useQuery({
-		query: userKitsQuery,
+	const [userSkills] = useQuery({
+		query: userSkillsQuery,
 		variables: {
 			where: {
-				id: { notIn: [userKit?.id].concat(userKit?.userSkills?.map((r) => r.id)) },
+				id: { notIn: userKit?.userSkills?.map((r) => r.id) },
 				isDraft: false,
 			},
 		},
@@ -54,8 +55,8 @@ const UserSkillForKitModal = ({ onSave, onCancel, userKit, visible = false }: _M
 		requestPolicy: 'network-only',
 	});
 	/** Mutations */
-	const [addUserSkillResponse, addUserSkill] = useMutation(createUserKitMutation);
-	const [, addUserSkillsToKit] = useMutation(addUserSkillsMutation);
+	const [addUserSkillResponse, addUserSkill] = useMutation(createUserSkillMutation);
+	const [, addUserSkillsForKit] = useMutation(addUserSkillsMutation);
 
 	useEffect(() => {
 		form.resetFields();
@@ -74,10 +75,10 @@ const UserSkillForKitModal = ({ onSave, onCancel, userKit, visible = false }: _M
 	}, [skillSearchQuery]);
 
 	useEffect(() => {
-		if (userKits.data) {
-			setUserSkillsList(prepareUserSkillData(userKits.data.userKits));
+		if (userSkills) {
+			setUserSkillList(prepareUserSkillData(userSkills.data?.userSkills));
 		}
-	}, [userKits]);
+	}, [userSkills]);
 
 	const prepareUserSkillData = (_data: any[]) => {
 		if (_data)
@@ -97,10 +98,10 @@ const UserSkillForKitModal = ({ onSave, onCancel, userKit, visible = false }: _M
 			setSubmitting(true);
 
 			if (selectedAction == _ActionEnum.SelectFromList) {
-				const { userSkills }: _FormData = await form.validateFields();
-				const { data, error } = await addUserSkillsToKit({
-					userKitId: userKit.id,
-					userSkills,
+				const { userSkillIds }: _FormData = await form.validateFields();
+				const { data, error } = await addUserSkillsForKit({
+					recordId: userKit.id,
+					userSkills: userSkillIds,
 				});
 
 				if (error) {
@@ -140,9 +141,9 @@ const UserSkillForKitModal = ({ onSave, onCancel, userKit, visible = false }: _M
 					return;
 				}
 
-				const { data: _addUserSkillsData, error: _addUserSkillsError } = await addUserSkillsToKit({
-					userKitId: userKit.id,
-					userSkills: [_newUserSkillData.createUserKit.id],
+				const { data: _addUserSkillsData, error: _addUserSkillsError } = await addUserSkillsForKit({
+					recordId: userKit.id,
+					userSkills: [_newUserSkillData.createUserSkill.id],
 				});
 
 				if (_addUserSkillsError) {
@@ -181,7 +182,7 @@ const UserSkillForKitModal = ({ onSave, onCancel, userKit, visible = false }: _M
 			className={styles.modal}
 			destroyOnClose={true}
 			confirmLoading={submitting}
-			okButtonProps={{ disabled: selectedAction == _ActionEnum.SelectFromList && userKitsList.length === 0 }}
+			okButtonProps={{ disabled: selectedAction == _ActionEnum.SelectFromList && userSkillList.length === 0 }}
 		>
 			<Spin spinning={submitting}>
 				<Form form={form} layout="vertical" name="add_example_link_form" requiredMark={false}>
@@ -198,7 +199,7 @@ const UserSkillForKitModal = ({ onSave, onCancel, userKit, visible = false }: _M
 							{selectedAction == _ActionEnum.SelectFromList && (
 								<>
 									<Form.Item
-										name="subSkills"
+										name="userSkillIds"
 										label="Your skills"
 										rules={[
 											{
@@ -208,14 +209,14 @@ const UserSkillForKitModal = ({ onSave, onCancel, userKit, visible = false }: _M
 										]}
 									>
 										<TreeSelect
-											treeData={userKitsList}
-											disabled={userKitsList.length === 0}
+											treeData={userSkillList}
+											disabled={userSkillList.length === 0}
 											treeCheckable
 											allowClear
 											showSearch
 											placement="topLeft"
 											showArrow={false}
-											placeholder={userKitsList.length === 0 ? 'No skills available' : 'Please select'}
+											placeholder={userSkillList.length === 0 ? 'No skills available' : 'Please select'}
 											filterTreeNode={(search, item) => {
 												const title = item.title as string;
 												return title.toLowerCase().indexOf(search.toLowerCase()) >= 0;

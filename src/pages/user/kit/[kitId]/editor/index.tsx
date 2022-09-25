@@ -10,11 +10,11 @@ import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { searchProfessionsQuery } from '@services/graphql/queries/profession';
 import { deleteUserFileMutation, userFilesQuery } from '@services/graphql/queries/userFile';
-import { deleteUserJobMutation, userJobsQuery } from '@services/graphql/queries/userJob';
-import { getUserKitQuery } from '@services/graphql/queries/userKit';
-import { deleteUserSchoolMutation, userSchoolsQuery } from '@services/graphql/queries/userSchool';
-import { deleteSubSkillMutation, editUserSkillMutation } from '@services/graphql/queries/userSkill';
-import { deleteUserToolMutation, userToolsQuery } from '@services/graphql/queries/userTool';
+import { userJobsQuery } from '@services/graphql/queries/userJob';
+import { deleteUserSkillFromKitMutation, getUserKitQuery } from '@services/graphql/queries/userKit';
+import { userSchoolsQuery } from '@services/graphql/queries/userSchool';
+import { editUserSkillMutation } from '@services/graphql/queries/userSkill';
+import { userToolsQuery } from '@services/graphql/queries/userTool';
 import { getSkillLevel, UserSkillViewModeEnum } from 'src/definitions/skill';
 import { DeleteOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
 import {
@@ -42,9 +42,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { BiLinkAlt, BiWorld } from 'react-icons/bi';
-import { FiEyeOff } from 'react-icons/fi';
-import { IoMdHelpCircle } from 'react-icons/io';
-import { TbArrowsJoin } from 'react-icons/tb';
+import { FiEyeOff, FiHelpCircle } from 'react-icons/fi';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
@@ -56,7 +54,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	// State data
 	const [width, setWidth] = useState(25);
 	const [selectedSkillId, setSelectedSkillId] = useState<number | null>(null);
-	const [visibleSubSkillModal, setVisibleSubSkillModal] = useState(false);
+	const [visibleUserSkillModal, setVisibleUserSkillModal] = useState(false);
 	const [visibleAddUserFile, setVisibleAddUserFileModal] = useState(false);
 	const [editableAddUserFile, setEditableAddUserFile] = useState<number>(null);
 	const [visibleEditUserFileModal, setVisibleEditUserFileModal] = useState(false);
@@ -96,14 +94,14 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	});
 	const [{ data: userFilesData, fetching: userFilesFetching }, refreshUserFiles] = useQuery({
 		query: userFilesQuery,
-		variables: { attachType: 'UserSkill', attachId: kitId },
+		variables: { attachType: 'UserKit', attachId: kitId },
 		requestPolicy: 'network-only',
 		pause: !kitId,
 	});
 	// GraphQL mutations
 	const [, updateUserSkillData] = useMutation(editUserSkillMutation);
 	const [, deleteUserFile] = useMutation(deleteUserFileMutation);
-	const [, deleteSubSkill] = useMutation(deleteSubSkillMutation);
+	const [, deleteUserSkillFromKit] = useMutation(deleteUserSkillFromKitMutation);
 
 	useEffect(() => {
 		if (userKitError) {
@@ -180,12 +178,12 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const handleSaveUserFile = () => {
 		message.success('User file updated!');
 		setVisibleEditUserFileModal(false);
-		refreshUserJobs();
+		refreshUserFiles();
 	};
 
-	const handleSaveSubSkills = () => {
+	const handleSaveUserSkills = () => {
 		message.success('User skills updated!');
-		setVisibleSubSkillModal(false);
+		setVisibleUserSkillModal(false);
 	};
 
 	const handleDeleteUserFile = async (item) => {
@@ -204,9 +202,9 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		}
 	};
 
-	const handleDeleteSubSkill = async (item) => {
+	const handleDeleteUserSkill = async (item) => {
 		try {
-			const deletedItems = await deleteSubSkill({ userSkillId: userKitData?.userKit.id, subSkillId: item.id });
+			const deletedItems = await deleteUserSkillFromKit({ recordId: userKitData?.userKit.id, userSkillId: item.id });
 
 			if (deletedItems.error) {
 				throw Error(deletedItems.error.message);
@@ -215,7 +213,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 			if (deletedItems) {
 				message.success(
 					<>
-						The subskill <strong>{capitalizedText(item.name)}</strong> removed
+						The user skill <strong>{capitalizedText(item.name)}</strong> removed
 					</>,
 				);
 				// refreshUserSkills();
@@ -316,11 +314,11 @@ const SkillEditorPage: NextPageWithLayout = () => {
 										size="small"
 										icon={<PlusOutlined />}
 										onClick={() => {
-											setVisibleSubSkillModal(true);
+											setVisibleUserSkillModal(true);
 										}}
 									/>
 								</div>
-								{userKitData?.userKit.userSkills.length > 0 ? (
+								{userKitData?.userKit.userSkills.length > 0 && (
 									<List
 										className={styles.list}
 										size="small"
@@ -340,10 +338,10 @@ const SkillEditorPage: NextPageWithLayout = () => {
 													className={styles.listItem}
 													actions={[
 														<Popconfirm
-															key="delete-subskill"
-															title="Are you sure to delete this subskill?"
+															key="delete-userskill"
+															title="Are you sure to delete this user skill?"
 															onConfirm={() => {
-																handleDeleteSubSkill(item);
+																handleDeleteUserSkill(item);
 															}}
 															okText="Yes"
 															cancelText="No"
@@ -371,11 +369,6 @@ const SkillEditorPage: NextPageWithLayout = () => {
 														title={
 															<div style={{ lineHeight: 'initial' }}>
 																<Space align="center">
-																	{item.isComplexSkill && (
-																		<Tooltip title="This is complex skill">
-																			<TbArrowsJoin color="#adadad" style={{ display: 'block' }} />
-																		</Tooltip>
-																	)}
 																	<Typography.Text strong>{capitalizedText(item.skill.name)}</Typography.Text>
 																</Space>
 																<br />
@@ -410,8 +403,6 @@ const SkillEditorPage: NextPageWithLayout = () => {
 											);
 										}}
 									/>
-								) : (
-									emptyData(`This skill is not complex`)
 								)}
 							</div>
 							<div className={styles.toolsSection}>
@@ -419,7 +410,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 									<Space>
 										<h2>I use for this</h2>
 										<Tooltip title="This data is collected automatically from the selected user skills.">
-											<Badge count={<IoMdHelpCircle style={{ color: '#1890ff' }} />} offset={[0, -6]} />
+											<Badge count={<FiHelpCircle style={{ color: '#9f9f9f' }} size={16} />} offset={[0, -6]} />
 										</Tooltip>
 									</Space>
 								</div>
@@ -456,7 +447,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 									<Space>
 										<h2>I learned this skill in</h2>
 										<Tooltip title="This data is collected automatically from the selected user skills.">
-											<Badge count={<IoMdHelpCircle style={{ color: '#1890ff' }} />} offset={[0, -6]} />
+											<Badge count={<FiHelpCircle style={{ color: '#9f9f9f' }} size={16} />} offset={[0, -6]} />
 										</Tooltip>
 									</Space>
 								</div>
@@ -489,7 +480,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 									<Space>
 										<h2>I used this skill in the following jobs</h2>
 										<Tooltip title="This data is collected automatically from the selected user skills.">
-											<Badge count={<IoMdHelpCircle style={{ color: '#1890ff' }} />} offset={[0, -6]} />
+											<Badge count={<FiHelpCircle style={{ color: '#9f9f9f' }} size={16} />} offset={[0, -6]} />
 										</Tooltip>
 									</Space>
 								</div>
@@ -558,14 +549,15 @@ const SkillEditorPage: NextPageWithLayout = () => {
 			</div>
 			<UserSkillForKitModal
 				userKit={userKitData?.userKit}
-				visible={visibleSubSkillModal}
-				onSave={handleSaveSubSkills}
+				visible={visibleUserSkillModal}
+				onSave={handleSaveUserSkills}
 				onCancel={() => {
-					setVisibleSubSkillModal(false);
+					setVisibleUserSkillModal(false);
 				}}
 			/>
 			<AddUserFileModal
-				userSkillId={kitId as string}
+				attachTo="UserKit"
+				attachId={kitId as string}
 				visible={visibleAddUserFile}
 				recordId={editableAddUserFile}
 				onSave={handleAddUserFile}

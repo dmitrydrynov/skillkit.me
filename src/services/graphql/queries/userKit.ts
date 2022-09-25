@@ -76,7 +76,33 @@ query($id: ID!) {
 }
 `;
 
-export const addUserSkillsMutation = ``;
+export const addUserSkillsMutation = `
+mutation(
+  $recordId: ID!
+  $userSkills: [ID!]!
+) {
+  addUserSkillsToKit(
+    where: {
+      id: $recordId
+    }
+    userSkills: $userSkills
+  ) { id }
+}
+`;
+
+export const deleteUserSkillFromKitMutation = `
+mutation(
+  $recordId: ID!
+  $userSkillId: ID!
+) {
+  deleteUserSkillFromKit(
+    where: {
+      id: $recordId
+    }
+    userSkillId: $userSkillId
+  ) { id }
+}
+`;
 
 export const editUserKitMutation = `
 mutation(
