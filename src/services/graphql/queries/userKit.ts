@@ -117,3 +117,33 @@ mutation(
   ) { id }
 }
 `;
+
+export const publishUserKitMutation = `
+mutation($recordId: ID!, $host: String!) {
+  publishUserKit(id: $recordId, host: $host) { id shareLink }
+}
+`;
+
+export const getUserKitOptionsQuery = `
+query($id: ID!) {
+  userKit(
+    where: {
+      id: $id
+    }
+  ) {
+    id
+    isDraft
+    viewMode
+    updatedAt
+    shareLink
+    profession {
+      name
+    }
+    userSkills {
+      id
+      skill { id name }
+      isDraft
+    }
+  }
+}
+`;

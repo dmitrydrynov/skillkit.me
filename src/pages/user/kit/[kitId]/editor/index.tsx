@@ -1,7 +1,8 @@
 import React, { useState, useEffect, ReactElement } from 'react';
 import FileGallery from '@components/FileGallery';
 import { InlineEdit } from '@components/InlineEdit';
-import SkillEditorMenu from '@components/menus/SkillEditorMenu';
+import KitEditorBeforeContent from '@components/KitEditorBeforeContent';
+import SkillKitEditorMenu from '@components/menus/KitEditorMenu';
 import AddUserFileModal from '@components/modals/AddUserFileModal';
 import EditUserFileModal from '@components/modals/EditUserFileModal';
 import UserSkillForKitModal from '@components/modals/UserSkillForKitModal';
@@ -17,7 +18,6 @@ import {
 	getUserKitQuery,
 } from '@services/graphql/queries/userKit';
 import { userSchoolsQuery } from '@services/graphql/queries/userSchool';
-import { editUserSkillMutation } from '@services/graphql/queries/userSkill';
 import { userToolsQuery } from '@services/graphql/queries/userTool';
 import { getSkillLevel, UserSkillViewModeEnum } from 'src/definitions/skill';
 import { DeleteOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
@@ -54,10 +54,10 @@ const SkillEditorBeforeContent = dynamic(() => import('@components/SkillEditorBe
 
 const SkillEditorPage: NextPageWithLayout = () => {
 	const router = useRouter();
-	const { kitId } = router.query;
+	const { kitId }: any = router.query;
 	// State data
 	const [width, setWidth] = useState(25);
-	const [selectedSkillId, setSelectedSkillId] = useState<number | null>(null);
+	const [selectedKitId, setSelectedKitId] = useState<number | null>();
 	const [visibleUserSkillModal, setVisibleUserSkillModal] = useState(false);
 	const [visibleAddUserFile, setVisibleAddUserFileModal] = useState(false);
 	const [editableAddUserFile, setEditableAddUserFile] = useState<number>(null);
@@ -132,7 +132,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const handleChangeInlineInput = (value) => {
 		const minWidth = 20;
 		setWidth(value?.length > minWidth ? value?.length + 1 : minWidth);
-		setSelectedSkillId(null);
+		setSelectedKitId(null);
 	};
 
 	const handleSaveUserKit = async (values: any) => {
@@ -140,16 +140,16 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		let _needReturn = false;
 
 		Object.entries(values).map(([key]) => {
-			if (key === 'kitId') {
-				if (!selectedSkillId && !professionSearchQuery) {
+			if (key === 'professionId') {
+				if (!selectedKitId && !professionSearchQuery) {
 					_needReturn = true;
 					return;
 				}
 
-				formatedValues[key] = selectedSkillId ? +selectedSkillId : null;
+				formatedValues[key] = selectedKitId ? +selectedKitId : null;
 
-				if (!selectedSkillId) {
-					formatedValues['skillName'] = professionSearchQuery.trim().toLowerCase();
+				if (!selectedKitId) {
+					formatedValues['professionName'] = professionSearchQuery.trim().toLowerCase();
 				}
 
 				setProfessionSearchQuery(null);
@@ -252,7 +252,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 									<Skeleton.Button style={{ width: 'auto', height: '30px', marginBottom: '0.5em' }} active={true} />
 								) : (
 									<InlineEdit
-										name="kitId"
+										name="professionId"
 										initialValue={capitalizedText(userKitData?.userKit.profession.name)}
 										onSave={handleSaveUserKit}
 										viewMode={<h2 className={styles.title}>{capitalizedText(userKitData?.userKit.profession.name)}</h2>}
@@ -268,7 +268,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 												placeholder="To do something ..."
 												notFoundContent={null}
 												onChange={handleChangeInlineInput}
-												onSelect={(value, option) => setSelectedSkillId(option.key as number)}
+												onSelect={(value, option) => setSelectedKitId(option.key as number)}
 												onSearch={(value: string) => setProfessionSearchQuery(value)}
 											>
 												{searchProfessionData?.professions.map((d: any) => (
@@ -582,7 +582,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 };
 
 SkillEditorPage.getLayout = (page: ReactElement) => (
-	<ProtectedLayout title="Skill Editor" siderMenu={<SkillEditorMenu />} beforeContent={<SkillEditorBeforeContent />}>
+	<ProtectedLayout title="Skill Editor" siderMenu={<SkillKitEditorMenu />} beforeContent={<KitEditorBeforeContent />}>
 		{page}
 	</ProtectedLayout>
 );
