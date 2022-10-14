@@ -56,6 +56,7 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 	const router = useRouter();
 	const { kitId }: any = router.query;
 	// State data
+	const [loading, setLoading] = useState(true);
 	const [width, setWidth] = useState(25);
 	const [selectedKitId, setSelectedKitId] = useState<number | null>();
 	const [visibleUserSkillModal, setVisibleUserSkillModal] = useState(false);
@@ -67,7 +68,7 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 	let [professionSearchQuery, setProfessionSearchQuery] = useState(null);
 
 	// GraphQL queries
-	const [{ data: userKitData, fetching: userKitFetching, error: userKitError }] = useQuery({
+	const [{ data: userKitData, fetching: userKitFetching, error: userKitError }, refetchUserKit] = useQuery({
 		query: getUserKitQuery,
 		variables: { id: kitId },
 		pause: !kitId,
@@ -119,6 +120,7 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 		}
 
 		handleChangeInlineInput(userKitData.userKit.title);
+		setLoading(false);
 	}, [userKitData, userKitError]);
 
 	useEffect(() => {
@@ -229,336 +231,338 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 			<Head>
 				<title>Skill Kit Editor</title>
 			</Head>
-			<div className={styles.container}>
-				<Alert
-					style={{ marginBottom: '24px' }}
-					message={
-						<>
-							You can change your name, age, city and other personal information in your{' '}
-							<Link href="/settings/profile">
-								<a target="_blank" rel="noreferrer">
-									profile settings
-								</a>
-							</Link>
-						</>
-					}
-					banner
-				/>
-				<Row>
-					<Col xs={{ span: 24 }} lg={{ span: 16 }}>
-						<Space direction="vertical" size={40} style={{ width: '100%' }}>
-							<div className={styles.titleSection}>
-								<div>I am</div>
-								{userKitFetching ? (
-									<Skeleton.Button style={{ width: 'auto', height: '30px', marginBottom: '0.5em' }} active={true} />
-								) : (
+			<Spin spinning={loading}>
+				<div className={styles.container}>
+					<Alert
+						style={{ marginBottom: '24px' }}
+						message={
+							<>
+								You can change your name, age, city and other personal information in your{' '}
+								<Link href="/settings/profile">
+									<a target="_blank" rel="noreferrer">
+										profile settings
+									</a>
+								</Link>
+							</>
+						}
+						banner
+					/>
+					<Row>
+						<Col xs={{ span: 24 }} lg={{ span: 16 }}>
+							<Space direction="vertical" size={40} style={{ width: '100%' }}>
+								<div className={styles.titleSection}>
+									<div>I am</div>
+									{userKitFetching ? (
+										<Skeleton.Button style={{ width: 'auto', height: '30px', marginBottom: '0.5em' }} active={true} />
+									) : (
+										<InlineEdit
+											name="professionId"
+											initialValue={capitalizedText(userKitData?.userKit.profession.name)}
+											onSave={handleSaveUserKit}
+											viewMode={<h2 className={styles.title}>{capitalizedText(userKitData?.userKit.profession.name)}</h2>}
+											editMode={
+												<AutoComplete
+													showSearch
+													allowClear
+													className={styles.titleInput}
+													style={{ width: width + 'ch' }}
+													defaultActiveFirstOption={false}
+													showArrow={false}
+													filterOption={false}
+													placeholder="To do something ..."
+													notFoundContent={null}
+													onChange={handleChangeInlineInput}
+													onSelect={(value, option) => setSelectedKitId(option.key as number)}
+													onSearch={(value: string) => setProfessionSearchQuery(value)}
+												>
+													{searchProfessionData?.professions.map((d: any) => (
+														<AutoComplete.Option key={d.id} value={d.name}>
+															{d.name}
+														</AutoComplete.Option>
+													))}
+												</AutoComplete>
+											}
+										/>
+									)}
+								</div>
+								<div className={styles.descriptionSection}>
 									<InlineEdit
-										name="professionId"
-										initialValue={capitalizedText(userKitData?.userKit.profession.name)}
+										name="description"
+										alignItems="flex-start"
+										initialValue={userKitData?.userKit.description}
 										onSave={handleSaveUserKit}
-										viewMode={<h2 className={styles.title}>{capitalizedText(userKitData?.userKit.profession.name)}</h2>}
+										viewMode={
+											<p className={styles.description}>
+												{userKitData?.userKit.description
+													? readyText(userKitData?.userKit.description)
+													: emptyData('No description')}
+											</p>
+										}
 										editMode={
-											<AutoComplete
-												showSearch
-												allowClear
-												className={styles.titleInput}
-												style={{ width: width + 'ch' }}
-												defaultActiveFirstOption={false}
-												showArrow={false}
-												filterOption={false}
-												placeholder="To do something ..."
-												notFoundContent={null}
-												onChange={handleChangeInlineInput}
-												onSelect={(value, option) => setSelectedKitId(option.key as number)}
-												onSearch={(value: string) => setProfessionSearchQuery(value)}
-											>
-												{searchProfessionData?.professions.map((d: any) => (
-													<AutoComplete.Option key={d.id} value={d.name}>
-														{d.name}
-													</AutoComplete.Option>
-												))}
-											</AutoComplete>
+											<Input.TextArea
+												autoSize={{ minRows: 4, maxRows: 12 }}
+												className={styles.descriptionEditor}
+												showCount
+												maxLength={500}
+												placeholder="Start typing"
+												defaultValue={userKitData?.userKit.description}
+											/>
 										}
 									/>
-								)}
-							</div>
-							<div className={styles.descriptionSection}>
-								<InlineEdit
-									name="description"
-									alignItems="flex-start"
-									initialValue={userKitData?.userKit.description}
-									onSave={handleSaveUserKit}
-									viewMode={
-										<p className={styles.description}>
-											{userKitData?.userKit.description
-												? readyText(userKitData?.userKit.description)
-												: emptyData('No description')}
-										</p>
-									}
-									editMode={
-										<Input.TextArea
-											autoSize={{ minRows: 4, maxRows: 12 }}
-											className={styles.descriptionEditor}
-											showCount
-											maxLength={500}
-											placeholder="Start typing"
-											defaultValue={userKitData?.userKit.description}
-										/>
-									}
-								/>
-							</div>
-							<div className={styles.subSkillsSection}>
-								<div className={styles.headerContainer}>
-									<h2>This kit includes my following skills</h2>
-									<Button
-										type="ghost"
-										shape="circle"
-										size="small"
-										icon={<PlusOutlined />}
-										onClick={() => {
-											setVisibleUserSkillModal(true);
-										}}
-									/>
 								</div>
-								{userKitData?.userKit.userSkills.length > 0 && (
-									<List
-										className={styles.list}
-										size="small"
-										itemLayout="horizontal"
-										dataSource={userKitData?.userKit.userSkills.sort((a, b) => {
-											const aLevel = getSkillLevel(a.level);
-											const bLevel = getSkillLevel(b.level);
+								<div className={styles.subSkillsSection}>
+									<div className={styles.headerContainer}>
+										<h2>This kit includes my following skills</h2>
+										<Button
+											type="ghost"
+											shape="circle"
+											size="small"
+											icon={<PlusOutlined />}
+											onClick={() => {
+												setVisibleUserSkillModal(true);
+											}}
+										/>
+									</div>
+									{userKitData?.userKit.userSkills.length > 0 && (
+										<List
+											className={styles.list}
+											size="small"
+											itemLayout="horizontal"
+											dataSource={userKitData?.userKit.userSkills.sort((a, b) => {
+												const aLevel = getSkillLevel(a.level);
+												const bLevel = getSkillLevel(b.level);
 
-											return bLevel.index - aLevel.index;
-										})}
-										loading={userKitFetching}
-										renderItem={(item: any) => {
-											const level = getSkillLevel(item.level);
+												return bLevel.index - aLevel.index;
+											})}
+											loading={userKitFetching}
+											renderItem={(item: any) => {
+												const level = getSkillLevel(item.level);
 
-											return (
-												<List.Item
-													className={styles.listItem}
-													actions={[
-														<Button
-															key="edit-userskill"
-															className="editItemButtons"
-															size="small"
-															type="primary"
-															onClick={() => showEditSkillModal({ visible: true, recordId: item.id })}
-														>
-															<EditOutlined /> Edit
-														</Button>,
-														<Popconfirm
-															key="delete-userskill"
-															title="Are you sure to delete this user skill?"
-															onConfirm={() => {
-																handleDeleteUserSkill(item);
-															}}
-															okText="Yes"
-															cancelText="No"
-															icon={<WarningTwoTone />}
-														>
-															<Button className="editItemButtons" size="small" danger>
-																<DeleteOutlined />
-															</Button>
-														</Popconfirm>,
-													]}
-												>
+												return (
+													<List.Item
+														className={styles.listItem}
+														actions={[
+															<Button
+																key="edit-userskill"
+																className="editItemButtons"
+																size="small"
+																type="primary"
+																onClick={() => showEditSkillModal({ visible: true, recordId: item.id })}
+															>
+																<EditOutlined /> Edit
+															</Button>,
+															<Popconfirm
+																key="delete-userskill"
+																title="Are you sure to delete this user skill?"
+																onConfirm={() => {
+																	handleDeleteUserSkill(item);
+																}}
+																okText="Yes"
+																cancelText="No"
+																icon={<WarningTwoTone />}
+															>
+																<Button className="editItemButtons" size="small" danger>
+																	<DeleteOutlined />
+																</Button>
+															</Popconfirm>,
+														]}
+													>
+														<List.Item.Meta
+															avatar={
+																<Tooltip title={level.description}>
+																	<Progress
+																		type="circle"
+																		percent={level.index * 20}
+																		width={24}
+																		showInfo={false}
+																		strokeColor={level.color}
+																		strokeWidth={12}
+																	/>
+																</Tooltip>
+															}
+															title={
+																<div style={{ lineHeight: 'initial' }}>
+																	<Space align="center">
+																		<Typography.Text strong>{capitalizedText(item.skill.name)}</Typography.Text>
+																	</Space>
+																	<br />
+																	<Typography.Text type="secondary" style={{ fontSize: 12 }}>
+																		{experienceAsText(item.experience)}
+																	</Typography.Text>
+																</div>
+															}
+														/>
+														<div>
+															{
+																<>
+																	{item.viewMode === UserSkillViewModeEnum.ONLY_ME && (
+																		<Tooltip title="View mode: only me">
+																			<FiEyeOff />
+																		</Tooltip>
+																	)}
+																	{item.viewMode === UserSkillViewModeEnum.BY_LINK && (
+																		<Tooltip title="View mode: by link">
+																			<BiLinkAlt />
+																		</Tooltip>
+																	)}
+																	{item.viewMode === UserSkillViewModeEnum.EVERYONE && (
+																		<Tooltip title="View mode: everyone">
+																			<BiWorld />
+																		</Tooltip>
+																	)}
+																</>
+															}
+														</div>
+													</List.Item>
+												);
+											}}
+										/>
+									)}
+								</div>
+								<div className={styles.toolsSection}>
+									<div className={styles.headerContainer}>
+										<Space>
+											<h2>I use for this</h2>
+											<Tooltip title="This data is collected automatically from the selected user skills.">
+												<Badge count={<FiHelpCircle style={{ color: '#9f9f9f' }} size={16} />} offset={[0, -6]} />
+											</Tooltip>
+										</Space>
+									</div>
+									{userToolsData?.userTools.length ? (
+										<List
+											className={styles.list}
+											size="small"
+											dataSource={userToolsData.userTools}
+											loading={userToolFetching}
+											renderItem={(item: any) => (
+												<List.Item className={styles.listItem}>
 													<List.Item.Meta
-														avatar={
-															<Tooltip title={level.description}>
-																<Progress
-																	type="circle"
-																	percent={level.index * 20}
-																	width={24}
-																	showInfo={false}
-																	strokeColor={level.color}
-																	strokeWidth={12}
-																/>
-															</Tooltip>
-														}
-														title={
-															<div style={{ lineHeight: 'initial' }}>
-																<Space align="center">
-																	<Typography.Text strong>{capitalizedText(item.skill.name)}</Typography.Text>
-																</Space>
-																<br />
-																<Typography.Text type="secondary" style={{ fontSize: 12 }}>
-																	{experienceAsText(item.experience)}
-																</Typography.Text>
-															</div>
+														className={styles.listItemMeta}
+														title={item.title}
+														description={
+															<Space direction="horizontal">
+																{item.description && (
+																	<Typography.Paragraph ellipsis={{ tooltip: item.description }}>
+																		{readyText(item.description)}
+																	</Typography.Paragraph>
+																)}
+															</Space>
 														}
 													/>
-													<div>
-														{
-															<>
-																{item.viewMode === UserSkillViewModeEnum.ONLY_ME && (
-																	<Tooltip title="View mode: only me">
-																		<FiEyeOff />
-																	</Tooltip>
-																)}
-																{item.viewMode === UserSkillViewModeEnum.BY_LINK && (
-																	<Tooltip title="View mode: by link">
-																		<BiLinkAlt />
-																	</Tooltip>
-																)}
-																{item.viewMode === UserSkillViewModeEnum.EVERYONE && (
-																	<Tooltip title="View mode: everyone">
-																		<BiWorld />
-																	</Tooltip>
-																)}
-															</>
-														}
-													</div>
 												</List.Item>
-											);
-										}}
-									/>
-								)}
-							</div>
-							<div className={styles.toolsSection}>
-								<div className={styles.headerContainer}>
-									<Space>
-										<h2>I use for this</h2>
-										<Tooltip title="This data is collected automatically from the selected user skills.">
-											<Badge count={<FiHelpCircle style={{ color: '#9f9f9f' }} size={16} />} offset={[0, -6]} />
-										</Tooltip>
-									</Space>
+											)}
+										/>
+									) : (
+										emptyData('No data about tools. You can add ones in skill settings')
+									)}
 								</div>
-								{userToolsData?.userTools.length ? (
-									<List
-										className={styles.list}
-										size="small"
-										dataSource={userToolsData.userTools}
-										loading={userToolFetching}
-										renderItem={(item: any) => (
-											<List.Item className={styles.listItem}>
-												<List.Item.Meta
-													className={styles.listItemMeta}
-													title={item.title}
-													description={
-														<Space direction="horizontal">
-															{item.description && (
-																<Typography.Paragraph ellipsis={{ tooltip: item.description }}>
-																	{readyText(item.description)}
-																</Typography.Paragraph>
-															)}
+								<div className={styles.schoolsSection}>
+									<div className={styles.headerContainer}>
+										<Space>
+											<h2>I learned this skill in</h2>
+											<Tooltip title="This data is collected automatically from the selected user skills.">
+												<Badge count={<FiHelpCircle style={{ color: '#9f9f9f' }} size={16} />} offset={[0, -6]} />
+											</Tooltip>
+										</Space>
+									</div>
+									{userSchoolsData?.userSchools.length ? (
+										<Spin spinning={userSchoolFetching}>
+											<Timeline mode="left">
+												{userSchoolsData?.userSchools.map((item: any, indx: number) => (
+													<Timeline.Item key={indx}>
+														<Space size="large" className={styles.userSchoolListItem}>
+															<div className={styles.userSchoolInfo}>
+																<div className={styles.userSchoolRange}>
+																	{moment(item.startedAt).format('MMM, YYYY') +
+																		' — ' +
+																		(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
+																</div>
+																<div className={styles.userSchoolTitle}>{item.title}</div>
+																{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
+															</div>
 														</Space>
-													}
-												/>
-											</List.Item>
-										)}
-									/>
-								) : (
-									emptyData('No data about tools. You can add ones in skill settings')
-								)}
-							</div>
-							<div className={styles.schoolsSection}>
+													</Timeline.Item>
+												))}
+											</Timeline>
+										</Spin>
+									) : (
+										emptyData('No data about schools. You can add ones in skill settings')
+									)}
+								</div>
+								<div className={styles.jobsSection}>
+									<div className={styles.headerContainer}>
+										<Space>
+											<h2>I used this skill in the following jobs</h2>
+											<Tooltip title="This data is collected automatically from the selected user skills.">
+												<Badge count={<FiHelpCircle style={{ color: '#9f9f9f' }} size={16} />} offset={[0, -6]} />
+											</Tooltip>
+										</Space>
+									</div>
+									{userJobsData?.userJobs.length ? (
+										<Spin spinning={userJobFetching}>
+											<Timeline mode="left">
+												{userJobsData?.userJobs.map((item: any, indx: number) => (
+													<Timeline.Item key={indx}>
+														<Space size="large" className={styles.userJobListItem}>
+															<div className={styles.userJobInfo}>
+																<div className={styles.userJobRange}>
+																	{moment(item.startedAt).format('MMM, YYYY') +
+																		' — ' +
+																		(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
+																</div>
+																<div className={styles.userJobTitle}>
+																	{item.userCompany.name} — {item.position}
+																</div>
+																{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
+															</div>
+														</Space>
+													</Timeline.Item>
+												))}
+											</Timeline>
+										</Spin>
+									) : (
+										emptyData('No data about jobs. You can add ones in skill settings')
+									)}
+								</div>
+							</Space>
+						</Col>
+					</Row>
+					<Row style={{ marginTop: '40px' }}>
+						<Col flex={1}>
+							<div className={styles.worksSection}>
 								<div className={styles.headerContainer}>
 									<Space>
-										<h2>I learned this skill in</h2>
-										<Tooltip title="This data is collected automatically from the selected user skills.">
-											<Badge count={<FiHelpCircle style={{ color: '#9f9f9f' }} size={16} />} offset={[0, -6]} />
-										</Tooltip>
+										<h2>Work examples</h2>
+										<Button
+											type="ghost"
+											shape="circle"
+											size="small"
+											icon={<PlusOutlined />}
+											onClick={() => {
+												setVisibleAddUserFileModal(true);
+												setEditableAddUserFile(null);
+											}}
+										/>
 									</Space>
 								</div>
-								{userSchoolsData?.userSchools.length ? (
-									<Spin spinning={userSchoolFetching}>
-										<Timeline mode="left">
-											{userSchoolsData?.userSchools.map((item: any, indx: number) => (
-												<Timeline.Item key={indx}>
-													<Space size="large" className={styles.userSchoolListItem}>
-														<div className={styles.userSchoolInfo}>
-															<div className={styles.userSchoolRange}>
-																{moment(item.startedAt).format('MMM, YYYY') +
-																	' — ' +
-																	(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
-															</div>
-															<div className={styles.userSchoolTitle}>{item.title}</div>
-															{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
-														</div>
-													</Space>
-												</Timeline.Item>
-											))}
-										</Timeline>
-									</Spin>
-								) : (
-									emptyData('No data about schools. You can add ones in skill settings')
-								)}
-							</div>
-							<div className={styles.jobsSection}>
-								<div className={styles.headerContainer}>
-									<Space>
-										<h2>I used this skill in the following jobs</h2>
-										<Tooltip title="This data is collected automatically from the selected user skills.">
-											<Badge count={<FiHelpCircle style={{ color: '#9f9f9f' }} size={16} />} offset={[0, -6]} />
-										</Tooltip>
-									</Space>
-								</div>
-								{userJobsData?.userJobs.length ? (
-									<Spin spinning={userJobFetching}>
-										<Timeline mode="left">
-											{userJobsData?.userJobs.map((item: any, indx: number) => (
-												<Timeline.Item key={indx}>
-													<Space size="large" className={styles.userJobListItem}>
-														<div className={styles.userJobInfo}>
-															<div className={styles.userJobRange}>
-																{moment(item.startedAt).format('MMM, YYYY') +
-																	' — ' +
-																	(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
-															</div>
-															<div className={styles.userJobTitle}>
-																{item.userCompany.name} — {item.position}
-															</div>
-															{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
-														</div>
-													</Space>
-												</Timeline.Item>
-											))}
-										</Timeline>
-									</Spin>
-								) : (
-									emptyData('No data about jobs. You can add ones in skill settings')
-								)}
-							</div>
-						</Space>
-					</Col>
-				</Row>
-				<Row style={{ marginTop: '40px' }}>
-					<Col flex={1}>
-						<div className={styles.worksSection}>
-							<div className={styles.headerContainer}>
-								<Space>
-									<h2>Work examples</h2>
-									<Button
-										type="ghost"
-										shape="circle"
-										size="small"
-										icon={<PlusOutlined />}
-										onClick={() => {
-											setVisibleAddUserFileModal(true);
-											setEditableAddUserFile(null);
+								{userFilesData?.userFiles.length > 0 ? (
+									<FileGallery
+										fileList={userFilesData.userFiles}
+										onDelete={handleDeleteUserFile}
+										onEdit={(record) => {
+											setVisibleEditUserFileModal(true);
+											setEditableEditUserFile(record);
 										}}
 									/>
-								</Space>
+								) : (
+									emptyData('No any examples')
+								)}
 							</div>
-							{userFilesData?.userFiles.length > 0 ? (
-								<FileGallery
-									fileList={userFilesData.userFiles}
-									onDelete={handleDeleteUserFile}
-									onEdit={(record) => {
-										setVisibleEditUserFileModal(true);
-										setEditableEditUserFile(record);
-									}}
-								/>
-							) : (
-								emptyData('No any examples')
-							)}
-						</div>
-					</Col>
-				</Row>
-				<Row style={{ marginTop: '40px' }}>* An empty section will not be displayed in the public version</Row>
-			</div>
+						</Col>
+					</Row>
+					<Row style={{ marginTop: '40px' }}>* An empty section will not be displayed in the public version</Row>
+				</div>
+			</Spin>
 			<UserSkillForKitModal
 				userKit={userKitData?.userKit}
 				visible={visibleUserSkillModal}
@@ -591,8 +595,9 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 				visible={visibleEditSkillModal.visible}
 				recordId={visibleEditSkillModal.recordId}
 				onSave={() => {}}
-				onCancel={() => {
+				onCancel={async () => {
 					showEditSkillModal({ visible: false, recordId: null });
+					await refetchUserKit();
 				}}
 			/>
 		</>
