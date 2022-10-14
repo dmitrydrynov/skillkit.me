@@ -16,6 +16,7 @@ import {
 	deleteUserSkillFromKitMutation,
 	editUserKitMutation,
 	getUserKitQuery,
+	userToolsForKitQuery,
 } from '@services/graphql/queries/userKit';
 import { userSchoolsQuery } from '@services/graphql/queries/userSchool';
 import { userToolsQuery } from '@services/graphql/queries/userTool';
@@ -81,8 +82,8 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 		requestPolicy: 'network-only',
 	});
 	const [{ data: userToolsData, fetching: userToolFetching }, refreshUserTools] = useQuery({
-		query: userToolsQuery,
-		variables: { userSkillId: kitId },
+		query: userToolsForKitQuery,
+		variables: { id: kitId },
 		requestPolicy: 'network-only',
 		pause: !kitId,
 	});
@@ -428,11 +429,11 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 											</Tooltip>
 										</Space>
 									</div>
-									{userToolsData?.userTools.length ? (
+									{userToolsData?.getUserToolsForKit.length ? (
 										<List
 											className={styles.list}
 											size="small"
-											dataSource={userToolsData.userTools}
+											dataSource={userToolsData.getUserToolsForKit}
 											loading={userToolFetching}
 											renderItem={(item: any) => (
 												<List.Item className={styles.listItem}>
@@ -598,6 +599,7 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 				onCancel={async () => {
 					showEditSkillModal({ visible: false, recordId: null });
 					await refetchUserKit();
+					await refreshUserTools();
 				}}
 			/>
 		</>

@@ -147,3 +147,17 @@ query($id: ID!) {
   }
 }
 `;
+
+export const userToolsForKitQuery = `
+query($id: ID!) {
+  getUserToolsForKit(
+    where: {
+      id: $id
+    }
+  ) {
+    id
+    title
+    description
+  }
+}
+`;
