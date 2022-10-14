@@ -7,20 +7,14 @@ import SubSkillModal from '@components/modals/SubSkillModal';
 import UserJobModal from '@components/modals/UserJobModal';
 import UserSchoolModal from '@components/modals/UserSchoolModal';
 import UserToolModal from '@components/modals/UserToolModal';
-import { capitalizedText, experienceAsText, readyText } from '@helpers/text';
+import { capitalizedText, readyText } from '@helpers/text';
 import { searchSkillsQuery } from '@services/graphql/queries/skill';
 import { deleteUserFileMutation, userFilesQuery } from '@services/graphql/queries/userFile';
 import { deleteUserJobMutation, userJobsQuery } from '@services/graphql/queries/userJob';
 import { deleteUserSchoolMutation, userSchoolsQuery } from '@services/graphql/queries/userSchool';
 import { deleteSubSkillMutation, editUserSkillMutation, getUserSkillQuery } from '@services/graphql/queries/userSkill';
 import { deleteUserToolMutation, userToolsQuery } from '@services/graphql/queries/userTool';
-import {
-	checkSkillLevel,
-	getSkillLevel,
-	SkillLevel,
-	skillLevelsList,
-	UserSkillViewModeEnum,
-} from 'src/definitions/skill';
+import { checkSkillLevel, getSkillLevel, SkillLevel, skillLevelsList } from 'src/definitions/skill';
 import { DeleteOutlined, EditOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
 import {
 	Alert,
@@ -47,14 +41,12 @@ import moment from 'moment';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BiLinkAlt, BiWorld } from 'react-icons/bi';
-import { FiEyeOff } from 'react-icons/fi';
-import { TbArrowsJoin } from 'react-icons/tb';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
 const UserSkillEditor = ({ userSkillId }: any) => {
 	// State data
+	const [loading, setLoading] = useState(true);
 	const [experience, setExperience] = useState(0);
 	const [level, setLevel] = useState<SkillLevel>(skillLevelsList[0]);
 	const [width, setWidth] = useState(25);
@@ -127,6 +119,7 @@ const UserSkillEditor = ({ userSkillId }: any) => {
 			return;
 		}
 
+		setLoading(false);
 		setLevel(getSkillLevel(userSkillData.userSkill.level));
 		handleChangeInlineInput(userSkillData.userSkill.title);
 	}, [userSkillData, userSkillError]);
@@ -342,232 +335,179 @@ const UserSkillEditor = ({ userSkillId }: any) => {
 			<Head>
 				<title>Skill Editor - SkillKit</title>
 			</Head>
-			<div className={styles.container}>
-				<Alert
-					style={{ marginBottom: '24px' }}
-					message={
-						<>
-							You can change your name, age, city and other personal information in your{' '}
-							<Link href="/settings/profile">
-								<a target="_blank" rel="noreferrer">
-									profile settings
-								</a>
-							</Link>
-						</>
-					}
-					banner
-				/>
-				<Row>
-					<Col xs={{ span: 24 }} lg={{ span: 16 }}>
-						<Space direction="vertical" size={40} style={{ width: '100%' }}>
-							<div className={styles.titleSection}>
-								<div>I can</div>
-								{userSkillFetching ? (
-									<Skeleton.Button style={{ width: 'auto', height: '30px', marginBottom: '0.5em' }} active={true} />
-								) : (
+			<Spin spinning={loading}>
+				<div className={styles.container}>
+					<Row>
+						<Col xs={{ span: 24 }} lg={{ span: 16 }}>
+							<Space direction="vertical" size={40} style={{ width: '100%' }}>
+								<div className={styles.titleSection}>
+									<div>I can</div>
+									{userSkillFetching ? (
+										<Skeleton.Button style={{ width: 'auto', height: '30px', marginBottom: '0.5em' }} active={true} />
+									) : (
+										<InlineEdit
+											name="skillId"
+											initialValue={capitalizedText(userSkillData?.userSkill.skill.name)}
+											onSave={handleSaveUserSkill}
+											viewMode={<h2 className={styles.title}>{capitalizedText(userSkillData?.userSkill.skill.name)}</h2>}
+											editMode={
+												<AutoComplete
+													showSearch
+													allowClear
+													className={styles.titleInput}
+													style={{ width: width + 'ch' }}
+													defaultActiveFirstOption={false}
+													showArrow={false}
+													filterOption={false}
+													placeholder="To do something ..."
+													notFoundContent={null}
+													onChange={handleChangeInlineInput}
+													onSelect={(value, option) => setSelectedSkillId(option.key as number)}
+													onSearch={(value: string) => setsSkillSearchQuery(value)}
+												>
+													{searchSkillData?.skills.map((d: any) => (
+														<AutoComplete.Option key={d.id} value={d.name}>
+															{d.name}
+														</AutoComplete.Option>
+													))}
+												</AutoComplete>
+											}
+										/>
+									)}
+								</div>
+								<div className={styles.descriptionSection}>
 									<InlineEdit
-										name="skillId"
-										initialValue={capitalizedText(userSkillData?.userSkill.skill.name)}
+										name="description"
+										initialValue={userSkillData?.userSkill.description}
 										onSave={handleSaveUserSkill}
-										viewMode={<h2 className={styles.title}>{capitalizedText(userSkillData?.userSkill.skill.name)}</h2>}
+										alignItems="flex-start"
+										viewMode={
+											<p className={styles.description}>
+												{userSkillData?.userSkill.description
+													? readyText(userSkillData?.userSkill.description)
+													: emptyData('No description')}
+											</p>
+										}
 										editMode={
-											<AutoComplete
-												showSearch
-												allowClear
-												className={styles.titleInput}
-												style={{ width: width + 'ch' }}
-												defaultActiveFirstOption={false}
-												showArrow={false}
-												filterOption={false}
-												placeholder="To do something ..."
-												notFoundContent={null}
-												onChange={handleChangeInlineInput}
-												onSelect={(value, option) => setSelectedSkillId(option.key as number)}
-												onSearch={(value: string) => setsSkillSearchQuery(value)}
-											>
-												{searchSkillData?.skills.map((d: any) => (
-													<AutoComplete.Option key={d.id} value={d.name}>
-														{d.name}
-													</AutoComplete.Option>
-												))}
-											</AutoComplete>
+											<Input.TextArea
+												autoSize={{ minRows: 4, maxRows: 12 }}
+												style={{ width: '100%', height: 'auto' }}
+												showCount
+												maxLength={500}
+												placeholder="Start typing"
+												defaultValue={userSkillData?.userSkill.description}
+											/>
 										}
 									/>
-								)}
-							</div>
-							<div className={styles.descriptionSection}>
-								<InlineEdit
-									name="description"
-									initialValue={userSkillData?.userSkill.description}
-									onSave={handleSaveUserSkill}
-									alignItems="flex-start"
-									viewMode={
-										<p className={styles.description}>
-											{userSkillData?.userSkill.description
-												? readyText(userSkillData?.userSkill.description)
-												: emptyData('No description')}
-										</p>
-									}
-									editMode={
-										<Input.TextArea
-											autoSize={{ minRows: 4, maxRows: 12 }}
-											style={{ width: '100%', height: 'auto' }}
-											showCount
-											maxLength={500}
-											placeholder="Start typing"
-											defaultValue={userSkillData?.userSkill.description}
-										/>
-									}
-								/>
-							</div>
-							<div className={styles.subSkillsSection}>
-								<div className={styles.headerContainer}>
-									<h2>This skill includes my following subskills</h2>
-									<Button
-										type="ghost"
-										shape="circle"
-										size="small"
-										icon={<PlusOutlined />}
-										onClick={() => {
-											setVisibleSubSkillModal(true);
-										}}
-									/>
 								</div>
-								{userSkillData?.userSkill.subSkills.length > 0 ? (
-									<List
-										className={styles.list}
-										size="small"
-										itemLayout="horizontal"
-										dataSource={userSkillData?.userSkill.subSkills.sort((a, b) => {
-											const aLevel = getSkillLevel(a.level);
-											const bLevel = getSkillLevel(b.level);
-
-											return bLevel.index - aLevel.index;
-										})}
-										loading={userSkillFetching}
-										renderItem={(item: any) => {
-											const level = getSkillLevel(item.level);
-
-											return (
-												<List.Item
-													className={styles.listItem}
-													actions={[
-														<Popconfirm
-															key="delete-subskill"
-															title="Are you sure to delete this subskill?"
-															onConfirm={() => {
-																handleDeleteSubSkill(item);
-															}}
-															okText="Yes"
-															cancelText="No"
-															icon={<WarningTwoTone />}
-														>
-															<Button key="editItemButtons" className="editItemButtons" size="small">
-																<DeleteOutlined />
-															</Button>
-														</Popconfirm>,
-													]}
-												>
+								<div className={styles.toolsSection}>
+									<div className={styles.headerContainer}>
+										<h2>I use for this</h2>
+										<Button
+											type="ghost"
+											shape="circle"
+											size="small"
+											icon={<PlusOutlined />}
+											onClick={() => {
+												setVisibleToolModal(true);
+												setEditableUserTool(null);
+											}}
+										/>
+									</div>
+									{userToolsData?.userTools.length ? (
+										<List
+											className={styles.list}
+											size="small"
+											dataSource={userToolsData.userTools}
+											loading={userToolFetching}
+											renderItem={(item: any) => (
+												<List.Item className={styles.listItem}>
 													<List.Item.Meta
-														avatar={
-															<Tooltip title={level.description}>
-																<Progress
-																	type="circle"
-																	percent={level.index * 20}
-																	width={24}
-																	showInfo={false}
-																	strokeColor={level.color}
-																	strokeWidth={12}
-																/>
-															</Tooltip>
-														}
-														title={
-															<div style={{ lineHeight: 'initial' }}>
-																<Space align="center">
-																	{item.isComplexSkill && (
-																		<Tooltip title="This is complex skill">
-																			<TbArrowsJoin color="#adadad" style={{ display: 'block' }} />
-																		</Tooltip>
-																	)}
-																	<Typography.Text strong>{capitalizedText(item.skill.name)}</Typography.Text>
-																</Space>
-																<br />
-																<Typography.Text type="secondary" style={{ fontSize: 12 }}>
-																	{experienceAsText(item.experience)}
-																</Typography.Text>
-															</div>
+														className={styles.listItemMeta}
+														title={item.title}
+														description={
+															<Space direction="horizontal">
+																{item.description && (
+																	<Typography.Paragraph ellipsis={{ tooltip: item.description }}>
+																		{readyText(item.description)}
+																	</Typography.Paragraph>
+																)}
+																<Dropdown.Button
+																	className="editItemButtons"
+																	size="small"
+																	overlay={
+																		<Menu>
+																			<Popconfirm
+																				key="delete-user-tool"
+																				title="Are you sure to delete this tool?"
+																				onConfirm={() => handleDeleteUserTool(item)}
+																				okText="Yes"
+																				cancelText="No"
+																				icon={<WarningTwoTone />}
+																			>
+																				<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
+																					Delete
+																				</Menu.Item>
+																			</Popconfirm>
+																		</Menu>
+																	}
+																	onClick={() => {
+																		setEditableUserTool(item.id);
+																		setVisibleToolModal(true);
+																	}}
+																>
+																	<EditOutlined />
+																</Dropdown.Button>
+															</Space>
 														}
 													/>
-													<div>
-														{
-															<>
-																{item.viewMode === UserSkillViewModeEnum.ONLY_ME && (
-																	<Tooltip title="View mode: only me">
-																		<FiEyeOff />
-																	</Tooltip>
-																)}
-																{item.viewMode === UserSkillViewModeEnum.BY_LINK && (
-																	<Tooltip title="View mode: by link">
-																		<BiLinkAlt />
-																	</Tooltip>
-																)}
-																{item.viewMode === UserSkillViewModeEnum.EVERYONE && (
-																	<Tooltip title="View mode: everyone">
-																		<BiWorld />
-																	</Tooltip>
-																)}
-															</>
-														}
-													</div>
 												</List.Item>
-											);
-										}}
-									/>
-								) : (
-									emptyData(`This skill is not complex`)
-								)}
-							</div>
-							<div className={styles.toolsSection}>
-								<div className={styles.headerContainer}>
-									<h2>I use for this</h2>
-									<Button
-										type="ghost"
-										shape="circle"
-										size="small"
-										icon={<PlusOutlined />}
-										onClick={() => {
-											setVisibleToolModal(true);
-											setEditableUserTool(null);
-										}}
-									/>
+											)}
+										/>
+									) : (
+										emptyData('No tools')
+									)}
 								</div>
-								{userToolsData?.userTools.length ? (
-									<List
-										className={styles.list}
-										size="small"
-										dataSource={userToolsData.userTools}
-										loading={userToolFetching}
-										renderItem={(item: any) => (
-											<List.Item className={styles.listItem}>
-												<List.Item.Meta
-													className={styles.listItemMeta}
-													title={item.title}
-													description={
-														<Space direction="horizontal">
-															{item.description && (
-																<Typography.Paragraph ellipsis={{ tooltip: item.description }}>
-																	{readyText(item.description)}
-																</Typography.Paragraph>
-															)}
+								<div className={styles.schoolsSection}>
+									<div className={styles.headerContainer}>
+										<Space style={{ display: 'flex' }}>
+											<h2>I learned this skill in</h2>
+											<Button
+												type="ghost"
+												shape="circle"
+												size="small"
+												icon={<PlusOutlined />}
+												onClick={() => {
+													setVisibleSchoolModal(true);
+													setEditableUserSchool(null);
+												}}
+											/>
+										</Space>
+									</div>
+									{userSchoolsData?.userSchools.length ? (
+										<Spin spinning={userSchoolFetching}>
+											<Timeline mode="left">
+												{userSchoolsData?.userSchools.map((item: any, indx: number) => (
+													<Timeline.Item key={indx}>
+														<Space size="large" className={styles.userSchoolListItem}>
+															<div className={styles.userSchoolInfo}>
+																<div className={styles.userSchoolRange}>
+																	{moment(item.startedAt).format('MMM, YYYY') +
+																		' — ' +
+																		(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
+																</div>
+																<div className={styles.userSchoolTitle}>{item.title}</div>
+																{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
+															</div>
 															<Dropdown.Button
 																className="editItemButtons"
 																size="small"
 																overlay={
 																	<Menu>
 																		<Popconfirm
-																			key="delete-user-tool"
-																			title="Are you sure to delete this tool?"
-																			onConfirm={() => handleDeleteUserTool(item)}
+																			key="delete-user-school"
+																			title="Are you sure to delete this school?"
+																			onConfirm={() => handleDeleteUserSchool(item)}
 																			okText="Yes"
 																			cancelText="No"
 																			icon={<WarningTwoTone />}
@@ -579,228 +519,162 @@ const UserSkillEditor = ({ userSkillId }: any) => {
 																	</Menu>
 																}
 																onClick={() => {
-																	setEditableUserTool(item.id);
-																	setVisibleToolModal(true);
+																	setEditableUserSchool(item.id);
+																	setVisibleSchoolModal(true);
 																}}
 															>
 																<EditOutlined />
 															</Dropdown.Button>
 														</Space>
-													}
-												/>
-											</List.Item>
-										)}
-									/>
-								) : (
-									emptyData('No tools')
-								)}
-							</div>
-							<div className={styles.schoolsSection}>
-								<div className={styles.headerContainer}>
-									<Space style={{ display: 'flex' }}>
-										<h2>I learned this skill in</h2>
+													</Timeline.Item>
+												))}
+											</Timeline>
+										</Spin>
+									) : (
+										emptyData('No data about schools')
+									)}
+								</div>
+								<div className={styles.jobsSection}>
+									<div className={styles.headerContainer}>
+										<h2>I used this skill in the following jobs</h2>
 										<Button
 											type="ghost"
 											shape="circle"
 											size="small"
 											icon={<PlusOutlined />}
 											onClick={() => {
-												setVisibleSchoolModal(true);
-												setEditableUserSchool(null);
+												setVisibleJobModal(true);
+												setEditableUserJob(null);
 											}}
 										/>
-									</Space>
-								</div>
-								{userSchoolsData?.userSchools.length ? (
-									<Spin spinning={userSchoolFetching}>
-										<Timeline mode="left">
-											{userSchoolsData?.userSchools.map((item: any, indx: number) => (
-												<Timeline.Item key={indx}>
-													<Space size="large" className={styles.userSchoolListItem}>
-														<div className={styles.userSchoolInfo}>
-															<div className={styles.userSchoolRange}>
-																{moment(item.startedAt).format('MMM, YYYY') +
-																	' — ' +
-																	(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
+									</div>
+									{userJobsData?.userJobs.length ? (
+										<Spin spinning={userJobFetching}>
+											<Timeline mode="left">
+												{userJobsData?.userJobs.map((item: any, indx: number) => (
+													<Timeline.Item key={indx}>
+														<Space size="large" className={styles.userJobListItem}>
+															<div className={styles.userJobInfo}>
+																<div className={styles.userJobRange}>
+																	{moment(item.startedAt).format('MMM, YYYY') +
+																		' — ' +
+																		(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
+																</div>
+																<div className={styles.userJobTitle}>
+																	{item.userCompany.name} — {item.position}
+																</div>
+																{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
 															</div>
-															<div className={styles.userSchoolTitle}>{item.title}</div>
-															{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
-														</div>
-														<Dropdown.Button
-															className="editItemButtons"
-															size="small"
-															overlay={
-																<Menu>
-																	<Popconfirm
-																		key="delete-user-school"
-																		title="Are you sure to delete this school?"
-																		onConfirm={() => handleDeleteUserSchool(item)}
-																		okText="Yes"
-																		cancelText="No"
-																		icon={<WarningTwoTone />}
-																	>
-																		<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
-																			Delete
-																		</Menu.Item>
-																	</Popconfirm>
-																</Menu>
-															}
-															onClick={() => {
-																setEditableUserSchool(item.id);
-																setVisibleSchoolModal(true);
-															}}
-														>
-															<EditOutlined />
-														</Dropdown.Button>
-													</Space>
-												</Timeline.Item>
-											))}
-										</Timeline>
-									</Spin>
-								) : (
-									emptyData('No data about schools')
-								)}
+															<Dropdown.Button
+																className="editItemButtons"
+																size="small"
+																overlay={
+																	<Menu>
+																		<Popconfirm
+																			key="delete-user-job"
+																			title="Are you sure to delete this job?"
+																			onConfirm={() => handleDeleteUserJob(item)}
+																			okText="Yes"
+																			cancelText="No"
+																			icon={<WarningTwoTone />}
+																		>
+																			<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
+																				Delete
+																			</Menu.Item>
+																		</Popconfirm>
+																	</Menu>
+																}
+																onClick={() => {
+																	setEditableUserJob(item.id);
+																	setVisibleJobModal(true);
+																}}
+															>
+																<EditOutlined />
+															</Dropdown.Button>
+														</Space>
+													</Timeline.Item>
+												))}
+											</Timeline>
+										</Spin>
+									) : (
+										emptyData('No data about jobs')
+									)}
+								</div>
+							</Space>
+						</Col>
+						<Col xs={{ span: 24 }} lg={{ span: 7, offset: 1 }}>
+							<div className={styles.levelName}>
+								<strong>{level.label}</strong> level
 							</div>
-							<div className={styles.jobsSection}>
+							<InlineEdit
+								name="level"
+								initialValue={level.label.toUpperCase()}
+								onSave={handleSaveUserSkill}
+								viewMode={
+									<Progress
+										className={styles.progressBar}
+										percent={level.index * 20}
+										steps={5}
+										status="active"
+										strokeColor={level.color}
+										showInfo={false}
+									/>
+								}
+								editMode={
+									<Select placeholder="Select" style={{ width: '150px' }}>
+										{skillLevelsList.map((item, indx) => (
+											<Select.Option key={indx.toString()} value={item.label.toUpperCase()}>
+												<Tooltip title={item.description} placement="right">
+													<Image src={item.icon} alt="" /> {item.label}
+												</Tooltip>
+											</Select.Option>
+										))}
+									</Select>
+								}
+							/>
+							{experience >= 12 && <p>Work experience more than {Math.floor(experience / 12)} year(s)</p>}
+							{experience == 0 && <p>I haven&apos;t any experience yet</p>}
+							{experience > 0 && experience < 12 && <p>Work experience a little less than a year</p>}
+							{!checkSkillLevel(level, experience) && (
+								<Alert message="Your experience does not match the selected level" type="warning" showIcon banner />
+							)}
+						</Col>
+					</Row>
+					<Row style={{ marginTop: '40px' }}>
+						<Col flex={1}>
+							<div className={styles.worksSection}>
 								<div className={styles.headerContainer}>
-									<h2>I used this skill in the following jobs</h2>
+									<h2>Work examples</h2>
+									{/* <Dropdown overlay={examplesMenu} trigger={['click']} placement="topCenter" arrow={{ pointAtCenter: true }}> */}
 									<Button
 										type="ghost"
 										shape="circle"
 										size="small"
 										icon={<PlusOutlined />}
 										onClick={() => {
-											setVisibleJobModal(true);
-											setEditableUserJob(null);
+											setVisibleAddUserFileModal(true);
+											setEditableAddUserFile(null);
 										}}
 									/>
+									{/* </Dropdown> */}
 								</div>
-								{userJobsData?.userJobs.length ? (
-									<Spin spinning={userJobFetching}>
-										<Timeline mode="left">
-											{userJobsData?.userJobs.map((item: any, indx: number) => (
-												<Timeline.Item key={indx}>
-													<Space size="large" className={styles.userJobListItem}>
-														<div className={styles.userJobInfo}>
-															<div className={styles.userJobRange}>
-																{moment(item.startedAt).format('MMM, YYYY') +
-																	' — ' +
-																	(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
-															</div>
-															<div className={styles.userJobTitle}>
-																{item.userCompany.name} — {item.position}
-															</div>
-															{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
-														</div>
-														<Dropdown.Button
-															className="editItemButtons"
-															size="small"
-															overlay={
-																<Menu>
-																	<Popconfirm
-																		key="delete-user-job"
-																		title="Are you sure to delete this job?"
-																		onConfirm={() => handleDeleteUserJob(item)}
-																		okText="Yes"
-																		cancelText="No"
-																		icon={<WarningTwoTone />}
-																	>
-																		<Menu.Item key="delete" icon={<DeleteOutlined />} danger>
-																			Delete
-																		</Menu.Item>
-																	</Popconfirm>
-																</Menu>
-															}
-															onClick={() => {
-																setEditableUserJob(item.id);
-																setVisibleJobModal(true);
-															}}
-														>
-															<EditOutlined />
-														</Dropdown.Button>
-													</Space>
-												</Timeline.Item>
-											))}
-										</Timeline>
-									</Spin>
+								{userFilesData?.userFiles.length > 0 ? (
+									<FileGallery
+										fileList={userFilesData.userFiles}
+										onDelete={handleDeleteUserFile}
+										onEdit={(record) => {
+											setVisibleEditUserFileModal(true);
+											setEditableEditUserFile(record);
+										}}
+									/>
 								) : (
-									emptyData('No data about jobs')
+									emptyData('No any examples')
 								)}
 							</div>
-						</Space>
-					</Col>
-					<Col xs={{ span: 24 }} lg={{ span: 7, offset: 1 }}>
-						<div className={styles.levelName}>
-							<strong>{level.label}</strong> level
-						</div>
-						<InlineEdit
-							name="level"
-							initialValue={level.label.toUpperCase()}
-							onSave={handleSaveUserSkill}
-							viewMode={
-								<Progress
-									className={styles.progressBar}
-									percent={level.index * 20}
-									steps={5}
-									status="active"
-									strokeColor={level.color}
-									showInfo={false}
-								/>
-							}
-							editMode={
-								<Select placeholder="Select" style={{ width: '150px' }}>
-									{skillLevelsList.map((item, indx) => (
-										<Select.Option key={indx.toString()} value={item.label.toUpperCase()}>
-											<Tooltip title={item.description} placement="right">
-												<Image src={item.icon} alt="" /> {item.label}
-											</Tooltip>
-										</Select.Option>
-									))}
-								</Select>
-							}
-						/>
-						{experience >= 12 && <p>Work experience more than {Math.floor(experience / 12)} year(s)</p>}
-						{experience == 0 && <p>I haven&apos;t any experience yet</p>}
-						{experience > 0 && experience < 12 && <p>Work experience a little less than a year</p>}
-						{!checkSkillLevel(level, experience) && (
-							<Alert message="Your experience does not match the selected level" type="warning" showIcon banner />
-						)}
-					</Col>
-				</Row>
-				<Row style={{ marginTop: '40px' }}>
-					<Col flex={1}>
-						<div className={styles.worksSection}>
-							<div className={styles.headerContainer}>
-								<h2>Work examples</h2>
-								{/* <Dropdown overlay={examplesMenu} trigger={['click']} placement="topCenter" arrow={{ pointAtCenter: true }}> */}
-								<Button
-									type="ghost"
-									shape="circle"
-									size="small"
-									icon={<PlusOutlined />}
-									onClick={() => {
-										setVisibleAddUserFileModal(true);
-										setEditableAddUserFile(null);
-									}}
-								/>
-								{/* </Dropdown> */}
-							</div>
-							{userFilesData?.userFiles.length > 0 ? (
-								<FileGallery
-									fileList={userFilesData.userFiles}
-									onDelete={handleDeleteUserFile}
-									onEdit={(record) => {
-										setVisibleEditUserFileModal(true);
-										setEditableEditUserFile(record);
-									}}
-								/>
-							) : (
-								emptyData('No any examples')
-							)}
-						</div>
-					</Col>
-				</Row>
-			</div>
+						</Col>
+					</Row>
+				</div>
+			</Spin>
 			<UserToolModal
 				userSkillId={userSkillId as string}
 				visible={visibleToolModal}

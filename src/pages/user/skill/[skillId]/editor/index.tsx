@@ -5,6 +5,8 @@ import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
+import { Alert } from 'antd';
+import Link from 'next/link';
 
 const SkillEditorBeforeContent = dynamic(() => import('@components/SkillEditorBeforeContent'), { ssr: false });
 
@@ -818,7 +820,25 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	// 	</>
 	// );
 
-	return <UserSkillEditor userSkillId={skillId} />;
+	return (
+		<>
+			<Alert
+				style={{ marginBottom: '24px' }}
+				message={
+					<>
+						You can change your name, age, city and other personal information in your{' '}
+						<Link href="/settings/profile">
+							<a target="_blank" rel="noreferrer">
+								profile settings
+							</a>
+						</Link>
+					</>
+				}
+				banner
+			/>
+			<UserSkillEditor userSkillId={skillId} />
+		</>
+	);
 };
 
 SkillEditorPage.getLayout = (page: ReactElement) => (
