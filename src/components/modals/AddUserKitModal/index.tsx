@@ -47,11 +47,10 @@ const AddUserKitModal: FC<AddKitArgs> = ({ visible, onClose, onFinish }) => {
 
 	const handleSave = (params: { redirect?: boolean } = { redirect: false }) => {
 		form.validateFields().then(async (formData: UserKit) => {
-			const { professionName, userSkills } = formData;
+			const { professionName } = formData;
 			const resultOperation = await addUserKit({
 				professionId: selectedProfessionId,
 				professionName: professionName.trim().toLowerCase(),
-				userSkills: userSkills?.map((record) => record.id),
 			});
 
 			if (resultOperation?.error) {
@@ -99,16 +98,13 @@ const AddUserKitModal: FC<AddKitArgs> = ({ visible, onClose, onFinish }) => {
 			maskClosable={false}
 			className={styles.modal}
 			footer={[
-				<Button key="submit" type="default" loading={addUserKitFetching} onClick={() => handleSave()}>
-					Save
-				</Button>,
 				<Button
 					key="submitWithRedirect"
 					type="primary"
 					loading={addUserKitFetching}
 					onClick={() => handleSave({ redirect: true })}
 				>
-					Save & Add Details
+					Next
 				</Button>,
 			]}
 		>

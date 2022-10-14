@@ -65,7 +65,7 @@ const UserKitsPage: NextPageWithLayout = () => {
 			{screens.sm === false && (
 				<>
 					<Menu.Item key="edit">
-						<EditOutlined /> Details
+						<EditOutlined /> Edit
 					</Menu.Item>
 				</>
 			)}
@@ -184,6 +184,13 @@ const UserKitsPage: NextPageWithLayout = () => {
 								}}
 							/>
 							<Table.Column
+								title="Skills count"
+								key="userSkills"
+								dataIndex="userSkills"
+								render={(data: any[]) => data?.length}
+								responsive={['lg']}
+							/>
+							<Table.Column
 								title="Last updated"
 								width="120px"
 								key="updatedAt"
@@ -204,7 +211,7 @@ const UserKitsPage: NextPageWithLayout = () => {
 											icon={<EditTwoTone twoToneColor="#eb2f96" />}
 											onClick={() => router.push(`/user/kit/${record.id}/editor`)}
 										>
-											Details
+											Edit
 										</Button>
 									</>
 								)}

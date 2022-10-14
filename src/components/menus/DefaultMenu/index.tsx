@@ -11,14 +11,14 @@ const DefaultMenu = ({ selectedItem = '/user/skills' }: AdminMenuParams) => {
 
 	const menu = [
 		{
-			key: '/user/skills',
-			icon: <SiBuffer />,
-			label: 'My skills',
-		},
-		{
 			key: '/user/kits',
 			icon: <SiGnubash />,
 			label: 'My kits',
+		},
+		{
+			key: '/user/skills',
+			icon: <SiBuffer />,
+			label: 'My skills',
 		},
 	];
 

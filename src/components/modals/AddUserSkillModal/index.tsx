@@ -101,16 +101,13 @@ const AddUserSkillModal: FC<AddSkillArgs> = ({ visible, onClose, onFinish }) => 
 			maskClosable={false}
 			className={styles.modal}
 			footer={[
-				<Button key="submit" type="default" loading={addUserSkillResponse.fetching} onClick={() => handleSave()}>
-					Save
-				</Button>,
 				<Button
 					key="submitWithRedirect"
 					type="primary"
 					loading={addUserSkillResponse.fetching}
 					onClick={() => handleSave({ redirect: true })}
 				>
-					Save & Add Details
+					Next
 				</Button>,
 			]}
 		>

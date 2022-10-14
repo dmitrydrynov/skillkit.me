@@ -71,7 +71,7 @@ const UserSkillsPage: NextPageWithLayout = () => {
 			{screens.sm === false && (
 				<>
 					<Menu.Item key="edit">
-						<EditOutlined /> Details
+						<EditOutlined /> Edit
 					</Menu.Item>
 				</>
 			)}
@@ -241,7 +241,7 @@ const UserSkillsPage: NextPageWithLayout = () => {
 											icon={<EditTwoTone twoToneColor="#eb2f96" />}
 											onClick={() => router.push(`/user/skill/${record.id}/editor`)}
 										>
-											Details
+											Edit
 										</Button>
 									</>
 								)}

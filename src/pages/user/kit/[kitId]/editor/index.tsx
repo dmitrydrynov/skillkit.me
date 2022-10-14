@@ -439,7 +439,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 										)}
 									/>
 								) : (
-									emptyData('No tools')
+									emptyData('You can add tools in skill settings')
 								)}
 							</div>
 							<div className={styles.schoolsSection}>
