@@ -128,7 +128,7 @@ const PostEditorBeforeContent = () => {
 				<PageHeader
 					className={styles.pageHeader}
 					ghost={false}
-					title={isPublished ? 'Published' : 'Draft'}
+					title={`Edit ${isPublished ? '' : 'draft'} post`}
 					subTitle={
 						screens.sm && postData?.updatedAt
 							? `Last update at ${moment(postData?.updatedAt).format('dddd, MMMM Do YYYY, h:mm:ss a')}`

@@ -112,7 +112,7 @@ const KitEditorBeforeContent = () => {
 				<PageHeader
 					className={styles.pageHeader}
 					ghost={false}
-					title={isPublished ? 'Published' : 'Draft'}
+					title={`Edit ${isPublished ? '' : 'draft'} skill kit`}
 					subTitle={
 						screens.sm
 							? `Last update at ${moment(userKitData?.userKit.updatedAt).format('dddd, MMMM Do YYYY, h:mm:ss a')}`

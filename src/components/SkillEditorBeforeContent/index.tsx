@@ -116,7 +116,7 @@ const SkillEditorBeforeContent = ({ userSkillId, showViewButton = true }: any) =
 				<PageHeader
 					className={styles.pageHeader}
 					ghost={false}
-					title={isPublished ? 'Published' : 'Draft'}
+					title={`Edit ${isPublished ? '' : 'draft'} user skill`}
 					subTitle={
 						screens.sm
 							? `Last update at ${moment(userSkillData?.userSkill.updatedAt).format('dddd, MMMM Do YYYY, h:mm:ss a')}`
