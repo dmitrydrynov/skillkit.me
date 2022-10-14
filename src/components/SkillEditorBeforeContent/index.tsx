@@ -22,10 +22,10 @@ export enum UserSkillViewModeEnum {
 	EVERYONE = 'everyone',
 }
 
-const SkillEditorBeforeContent = () => {
+const SkillEditorBeforeContent = ({ userSkillId, showViewButton = true }: any) => {
 	const screens = useBreakpoint();
 	const router = useRouter();
-	const { skillId } = router.query;
+	const skillId = userSkillId || router.query.skillId;
 
 	const [selectedViewMode, setSelectedViewMode] = useState(UserSkillViewModeEnum.BY_LINK);
 	const [isPublished, setIsPublished] = useState(false);
@@ -160,9 +160,13 @@ const SkillEditorBeforeContent = () => {
 									Publish
 								</Button>
 							) : (
-								<Button type="primary" onClick={handleViewUserSkill} style={{ display: 'inline-flex', alignItems: 'center' }}>
-									View <BiLinkExternal style={{ marginLeft: '8px' }} />
-								</Button>
+								<>
+									{showViewButton && (
+										<Button type="primary" onClick={handleViewUserSkill} style={{ display: 'inline-flex', alignItems: 'center' }}>
+											View <BiLinkExternal style={{ marginLeft: '8px' }} />
+										</Button>
+									)}
+								</>
 							)}
 						</div>,
 						<div key="copyPutton">

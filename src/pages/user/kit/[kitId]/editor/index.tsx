@@ -1,10 +1,10 @@
 import React, { useState, useEffect, ReactElement } from 'react';
 import FileGallery from '@components/FileGallery';
 import { InlineEdit } from '@components/InlineEdit';
-import KitEditorBeforeContent from '@components/KitEditorBeforeContent';
 import SkillKitEditorMenu from '@components/menus/KitEditorMenu';
 import AddUserFileModal from '@components/modals/AddUserFileModal';
 import EditUserFileModal from '@components/modals/EditUserFileModal';
+import UserSkillEditModal from '@components/modals/UserSkillEditModal';
 import UserSkillForKitModal from '@components/modals/UserSkillForKitModal';
 import { capitalizedText, experienceAsText, readyText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
@@ -20,7 +20,7 @@ import {
 import { userSchoolsQuery } from '@services/graphql/queries/userSchool';
 import { userToolsQuery } from '@services/graphql/queries/userTool';
 import { getSkillLevel, UserSkillViewModeEnum } from 'src/definitions/skill';
-import { DeleteOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
 import {
 	Alert,
 	AutoComplete,
@@ -50,9 +50,9 @@ import { FiEyeOff, FiHelpCircle } from 'react-icons/fi';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
-const SkillEditorBeforeContent = dynamic(() => import('@components/SkillEditorBeforeContent'), { ssr: false });
+const KitEditorBeforeContent = dynamic(() => import('@components/KitEditorBeforeContent'), { ssr: false });
 
-const SkillEditorPage: NextPageWithLayout = () => {
+const SkillKitEditorPage: NextPageWithLayout = () => {
 	const router = useRouter();
 	const { kitId }: any = router.query;
 	// State data
@@ -63,6 +63,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 	const [editableAddUserFile, setEditableAddUserFile] = useState<number>(null);
 	const [visibleEditUserFileModal, setVisibleEditUserFileModal] = useState(false);
 	const [editableEditUserFile, setEditableEditUserFile] = useState<any>(null);
+	const [visibleEditSkillModal, showEditSkillModal] = useState({ visible: false, recordId: null });
 	let [professionSearchQuery, setProfessionSearchQuery] = useState(null);
 
 	// GraphQL queries
@@ -338,6 +339,15 @@ const SkillEditorPage: NextPageWithLayout = () => {
 												<List.Item
 													className={styles.listItem}
 													actions={[
+														<Button
+															key="edit-userskill"
+															className="editItemButtons"
+															size="small"
+															type="primary"
+															onClick={() => showEditSkillModal({ visible: true, recordId: item.id })}
+														>
+															<EditOutlined /> Edit
+														</Button>,
 														<Popconfirm
 															key="delete-userskill"
 															title="Are you sure to delete this user skill?"
@@ -348,7 +358,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 															cancelText="No"
 															icon={<WarningTwoTone />}
 														>
-															<Button key="editItemButtons" className="editItemButtons" size="small">
+															<Button className="editItemButtons" size="small" danger>
 																<DeleteOutlined />
 															</Button>
 														</Popconfirm>,
@@ -577,14 +587,26 @@ const SkillEditorPage: NextPageWithLayout = () => {
 					setVisibleEditUserFileModal(false);
 				}}
 			/>
+			<UserSkillEditModal
+				visible={visibleEditSkillModal.visible}
+				recordId={visibleEditSkillModal.recordId}
+				onSave={() => {}}
+				onCancel={() => {
+					showEditSkillModal({ visible: false, recordId: null });
+				}}
+			/>
 		</>
 	);
 };
 
-SkillEditorPage.getLayout = (page: ReactElement) => (
-	<ProtectedLayout title="Skill Editor" siderMenu={<SkillKitEditorMenu />} beforeContent={<KitEditorBeforeContent />}>
+SkillKitEditorPage.getLayout = (page: ReactElement) => (
+	<ProtectedLayout
+		title="Skill Kit Editor"
+		siderMenu={<SkillKitEditorMenu />}
+		beforeContent={<KitEditorBeforeContent />}
+	>
 		{page}
 	</ProtectedLayout>
 );
 
-export default SkillEditorPage;
+export default SkillKitEditorPage;
