@@ -11,7 +11,11 @@ import { NextPageWithLayout } from '@pages/_app';
 import { searchProfessionsQuery } from '@services/graphql/queries/profession';
 import { deleteUserFileMutation, userFilesQuery } from '@services/graphql/queries/userFile';
 import { userJobsQuery } from '@services/graphql/queries/userJob';
-import { deleteUserSkillFromKitMutation, getUserKitQuery } from '@services/graphql/queries/userKit';
+import {
+	deleteUserSkillFromKitMutation,
+	editUserKitMutation,
+	getUserKitQuery,
+} from '@services/graphql/queries/userKit';
 import { userSchoolsQuery } from '@services/graphql/queries/userSchool';
 import { editUserSkillMutation } from '@services/graphql/queries/userSkill';
 import { userToolsQuery } from '@services/graphql/queries/userTool';
@@ -99,7 +103,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		pause: !kitId,
 	});
 	// GraphQL mutations
-	const [, updateUserSkillData] = useMutation(editUserSkillMutation);
+	const [, updateUserKitData] = useMutation(editUserKitMutation);
 	const [, deleteUserFile] = useMutation(deleteUserFileMutation);
 	const [, deleteUserSkillFromKit] = useMutation(deleteUserSkillFromKitMutation);
 
@@ -123,11 +127,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [professionSearchQuery]);
 
-	const emptyData = (dataName = 'data') => (
-		<span className={styles.descriptionEmpty}>
-			({dataName}. An empty section will not be displayed in the public version)
-		</span>
-	);
+	const emptyData = (dataName = 'data') => <span className={styles.descriptionEmpty}>{dataName} *</span>;
 
 	const handleChangeInlineInput = (value) => {
 		const minWidth = 20;
@@ -135,7 +135,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		setSelectedSkillId(null);
 	};
 
-	const handleSaveUserSkill = async (values: any) => {
+	const handleSaveUserKit = async (values: any) => {
 		let formatedValues = values;
 		let _needReturn = false;
 
@@ -158,7 +158,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 
 		if (_needReturn) return;
 
-		const reponse = await updateUserSkillData({ recordId: kitId, data: formatedValues });
+		const reponse = await updateUserKitData({ recordId: kitId, data: formatedValues });
 
 		if (reponse.error) {
 			message.error(reponse.error.message);
@@ -181,7 +181,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 		refreshUserFiles();
 	};
 
-	const handleSaveUserSkills = () => {
+	const handleSaveUserKits = () => {
 		message.success('User skills updated!');
 		setVisibleUserSkillModal(false);
 	};
@@ -254,7 +254,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 									<InlineEdit
 										name="kitId"
 										initialValue={capitalizedText(userKitData?.userKit.profession.name)}
-										onSave={handleSaveUserSkill}
+										onSave={handleSaveUserKit}
 										viewMode={<h2 className={styles.title}>{capitalizedText(userKitData?.userKit.profession.name)}</h2>}
 										editMode={
 											<AutoComplete
@@ -284,8 +284,9 @@ const SkillEditorPage: NextPageWithLayout = () => {
 							<div className={styles.descriptionSection}>
 								<InlineEdit
 									name="description"
+									alignItems="flex-start"
 									initialValue={userKitData?.userKit.description}
-									onSave={handleSaveUserSkill}
+									onSave={handleSaveUserKit}
 									viewMode={
 										<p className={styles.description}>
 											{userKitData?.userKit.description
@@ -296,7 +297,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 									editMode={
 										<Input.TextArea
 											autoSize={{ minRows: 4, maxRows: 12 }}
-											style={{ width: '100%', height: 'auto' }}
+											className={styles.descriptionEditor}
 											showCount
 											maxLength={500}
 											placeholder="Start typing"
@@ -439,7 +440,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 										)}
 									/>
 								) : (
-									emptyData('You can add tools in skill settings')
+									emptyData('No data about tools. You can add ones in skill settings')
 								)}
 							</div>
 							<div className={styles.schoolsSection}>
@@ -472,7 +473,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 										</Timeline>
 									</Spin>
 								) : (
-									emptyData('No data about schools')
+									emptyData('No data about schools. You can add ones in skill settings')
 								)}
 							</div>
 							<div className={styles.jobsSection}>
@@ -507,7 +508,7 @@ const SkillEditorPage: NextPageWithLayout = () => {
 										</Timeline>
 									</Spin>
 								) : (
-									emptyData('No data about jobs')
+									emptyData('No data about jobs. You can add ones in skill settings')
 								)}
 							</div>
 						</Space>
@@ -546,11 +547,12 @@ const SkillEditorPage: NextPageWithLayout = () => {
 						</div>
 					</Col>
 				</Row>
+				<Row style={{ marginTop: '40px' }}>* An empty section will not be displayed in the public version</Row>
 			</div>
 			<UserSkillForKitModal
 				userKit={userKitData?.userKit}
 				visible={visibleUserSkillModal}
-				onSave={handleSaveUserSkills}
+				onSave={handleSaveUserKits}
 				onCancel={() => {
 					setVisibleUserSkillModal(false);
 				}}

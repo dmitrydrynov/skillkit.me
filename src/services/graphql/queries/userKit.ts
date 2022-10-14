@@ -107,7 +107,7 @@ mutation(
 export const editUserKitMutation = `
 mutation(
   $recordId: ID!
-  $data: UserSkillUpdateInput!
+  $data: UserKitUpdateInput!
 ) {
   updateUserKit(
     where: {

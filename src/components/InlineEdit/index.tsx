@@ -8,6 +8,7 @@ export type InlineEditRequest = HTMLAttributes<ReactHTML> & {
 	initialValue?: any;
 	viewMode?: ReactElement;
 	editMode?: ReactElement;
+	alignItems?: 'center' | 'end' | 'flex-end' | 'flex-start' | 'self-end' | 'self-start' | 'start';
 	onSave(event: any): void;
 	onCancel?(): void;
 	onEdit?(): void;
@@ -19,6 +20,7 @@ export const InlineEdit = ({
 	viewMode,
 	editMode,
 	className = null,
+	alignItems = 'center',
 	onSave = () => {},
 	onCancel = () => {},
 	onEdit = () => {},
@@ -57,7 +59,7 @@ export const InlineEdit = ({
 				name="inlineForm"
 				onFinish={handleSaveBtn}
 				initialValues={{ [name]: initialValue }}
-				style={{ display: 'flex', alignItems: 'center', width: '100%' }}
+				style={{ display: 'flex', alignItems, width: '100%' }}
 			>
 				{editting ? (
 					<Form.Item name={name} noStyle>
