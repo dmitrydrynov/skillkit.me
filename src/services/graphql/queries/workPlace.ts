@@ -1,6 +1,6 @@
-export const searchUserCompaniesQuery = `
+export const searchWorkPlacesQuery = `
 query($search: String) {
-  userCompanies(
+  workPlaces(
     where: {
       name: {contains: $search, mode: insensitive}
     },
@@ -12,9 +12,9 @@ query($search: String) {
 }
 `;
 
-export const userCompaniesDataQuery = `
+export const workPlacesDataQuery = `
 query {
-  userCompanies {
+  workPlaces {
     id
     name
     createdAt
@@ -22,9 +22,9 @@ query {
 }
 `;
 
-export const createUserCompanyMutation = `
+export const createWorkPlaceMutation = `
 mutation($name: String!) {
-  createUserCompany(name: $name) {
+  createWorkPlace(name: $name) {
     id
     name
   }

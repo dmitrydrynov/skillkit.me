@@ -1,6 +1,8 @@
 import React from 'react';
 
 export const readyText = (text: string) => {
+	if (!text) return '';
+
 	return text.split('\n').map((item, key) => {
 		return (
 			<React.Fragment key={key}>

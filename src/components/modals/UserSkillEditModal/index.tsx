@@ -1,8 +1,8 @@
 import React from 'react';
 import UserSkillEditor from '@components/editors/UserSkillEditor';
+import SkillEditorBeforeContent from '@components/SkillEditorBeforeContent';
 import { Grid, Modal } from 'antd';
 import styles from './style.module.less';
-import SkillEditorBeforeContent from '@components/SkillEditorBeforeContent';
 
 const { useBreakpoint } = Grid;
 

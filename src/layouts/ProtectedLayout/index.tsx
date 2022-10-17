@@ -5,7 +5,7 @@ import UserMenu from '@components/menus/UserMenu';
 import withAuth from '@helpers/withAuth';
 import { RootState } from '@store/configure-store';
 import { UserRole } from 'src/definitions/user';
-import { Col, Grid, Layout, Menu, Row } from 'antd';
+import { Col, Grid, Layout, Row } from 'antd';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';

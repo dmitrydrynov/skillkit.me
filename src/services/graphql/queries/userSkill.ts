@@ -274,17 +274,21 @@ query($hash: String!) {
         }
       }
       tools {
-        title
+        workTool {
+          name
+        }
         description
       }
       schools {
-        title
+        school {
+          name
+        }
         description
         startedAt
         finishedAt
       }
       jobs {
-        userCompany {
+        workPlace {
           name
         }
         position

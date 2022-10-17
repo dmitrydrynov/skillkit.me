@@ -38,7 +38,7 @@ const UserToolModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 	useEffect(() => {
 		if (data) {
 			form.setFieldsValue({
-				title: data.userTool.title,
+				title: data.userTool.workTool.name,
 				description: data.userTool.description,
 			});
 		}
@@ -93,7 +93,7 @@ const UserToolModal = ({ onSave, onCancel, userSkillId, recordId = null, visible
 
 	return (
 		<Modal
-			title={recordId && data ? `Details for ${data.userTool.title}` : 'Add tool'}
+			title={recordId && data ? `Details for ${data.userTool.workTool.name}` : 'Add tool'}
 			visible={visible}
 			onOk={() => (recordId ? handleUpdate() : handleCreate())}
 			onCancel={onCancel}

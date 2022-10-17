@@ -2,7 +2,7 @@ export const userJobsQuery = `
 query($userSkillId: ID!) {
   userJobs(where: { userSkillId: { equals: $userSkillId } }, orderBy: {startedAt: desc, finishedAt: desc} ) {
     id
-    userCompany {
+    workPlace {
       id
       name
     }
@@ -26,7 +26,7 @@ query($id: ID!) {
     }
   ) {
     id
-    userCompany {
+    workPlace {
       id
       name
     }
@@ -46,7 +46,7 @@ mutation(
     data: $data
   ) {
     id
-    userCompany {
+    workPlace {
       id
       name
     }

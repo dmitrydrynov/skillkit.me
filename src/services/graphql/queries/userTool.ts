@@ -2,7 +2,10 @@ export const userToolsQuery = `
 query($userSkillId: ID!) {
   userTools(where: { userSkillId: { equals: $userSkillId } } ) {
     id
-    title
+    workTool {
+      id
+      name
+    }
     description
   }
 }
@@ -16,7 +19,10 @@ query($id: ID!) {
     }
   ) {
     id
-    title
+    workTool {
+      id
+      name
+    }
     description
   }
 }
@@ -30,7 +36,10 @@ mutation(
     data: $data
   ) {
     id
-    title
+    workTool {
+      id
+      name
+    }
   }
 }
 `;

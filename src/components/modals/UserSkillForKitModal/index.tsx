@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getErrorMessage } from '@helpers/errors';
 import { capitalizedText } from '@helpers/text';
 import { searchSkillsQuery } from '@services/graphql/queries/skill';
-import { addUserSkillsMutation, createUserKitMutation } from '@services/graphql/queries/userKit';
+import { addUserSkillsMutation } from '@services/graphql/queries/userKit';
 import { createUserSkillMutation, userSkillsQuery } from '@services/graphql/queries/userSkill';
 import { Modal, Spin, Tabs, Form, message, TreeSelect } from 'antd';
 import { useMutation, useQuery } from 'urql';

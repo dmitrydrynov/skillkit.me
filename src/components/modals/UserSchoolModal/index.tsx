@@ -45,7 +45,7 @@ const UserSchoolModal = ({ onSave, onCancel, userSkillId, recordId = null, visib
 	useEffect(() => {
 		if (data) {
 			form.setFieldsValue({
-				title: data.userSchool.title,
+				title: data.userSchool.school.name,
 				description: data.userSchool.description,
 				startedAt: data.userSchool.startedAt ? moment(data.userSchool.startedAt) : null,
 				finishedAt: data.userSchool.finishedAt ? moment(data.userSchool.finishedAt) : null,
@@ -107,7 +107,7 @@ const UserSchoolModal = ({ onSave, onCancel, userSkillId, recordId = null, visib
 
 	return (
 		<Modal
-			title={recordId && data ? `Details for ${data.userSchool.title}` : 'Add school'}
+			title={recordId && data ? `School details` : 'Add school'}
 			visible={visible}
 			onOk={() => (recordId ? handleUpdate() : handleCreate())}
 			onCancel={onCancel}

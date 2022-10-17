@@ -324,7 +324,7 @@ const UserSkillSharePage: NextPageWithLayout = ({
 																	(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
 															</div>
 															<div className={styles.userJobTitle}>
-																{item.userCompany.name} — {item.position}
+																{item.workPlace.name} — {item.position}
 															</div>
 															{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
 														</div>

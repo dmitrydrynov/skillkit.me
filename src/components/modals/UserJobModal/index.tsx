@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getErrorMessage } from '@helpers/errors';
-import { searchUserCompaniesQuery } from '@services/graphql/queries/userCompany';
 import { createUserJobMutation, getUserJobQuery, updateUserJobMutation } from '@services/graphql/queries/userJob';
+import { searchWorkPlacesQuery } from '@services/graphql/queries/workPlace';
 import { AutoComplete, Col, DatePicker, Form, Input, message, Modal, Row, Spin } from 'antd';
 import moment from 'moment';
 import { useMutation, useQuery } from 'urql';
@@ -25,15 +25,15 @@ type _FormData = {
 
 const UserJobModal = ({ onSave, onCancel, userSkillId, recordId = null, visible = false }: _ModalParams) => {
 	const [form] = Form.useForm();
-	const [userCompanySearchQuery, setUserCompanySearchQuery] = useState(null);
+	const [workPlaceSearchQuery, setworkPlaceSearchQuery] = useState(null);
 	/** Mutations */
 	const [, createUserJob] = useMutation(createUserJobMutation);
 	const [, updateUserJob] = useMutation(updateUserJobMutation);
 	/** Queries */
-	let [{ data: searchUserCompanyData }, searchUserCompanies] = useQuery({
-		query: searchUserCompaniesQuery,
-		variables: { search: userCompanySearchQuery },
-		pause: !userCompanySearchQuery || userCompanySearchQuery.length <= 2,
+	let [{ data: searchworkPlaceData }, searchWorkPlaces] = useQuery({
+		query: searchWorkPlacesQuery,
+		variables: { search: workPlaceSearchQuery },
+		pause: !workPlaceSearchQuery || workPlaceSearchQuery.length <= 2,
 		requestPolicy: 'network-only',
 	});
 	const [{ data, fetching }] = useQuery({
@@ -50,10 +50,10 @@ const UserJobModal = ({ onSave, onCancel, userSkillId, recordId = null, visible 
 	}, [visible]);
 
 	useEffect(() => {
-		setUserCompanySearchQuery(null);
+		setworkPlaceSearchQuery(null);
 		if (data) {
 			form.setFieldsValue({
-				companyName: data.userJob.userCompany.name,
+				companyName: data.userJob.workPlace.name,
 				position: data.userJob.position,
 				description: data.userJob.description,
 				startedAt: data.userJob.startedAt ? moment(data.userJob.startedAt) : null,
@@ -118,7 +118,7 @@ const UserJobModal = ({ onSave, onCancel, userSkillId, recordId = null, visible 
 
 	return (
 		<Modal
-			title={recordId && data ? `Details for ${data.userJob.title}` : 'Add job'}
+			title={recordId && data ? `Work place details` : 'Add work place'}
 			visible={visible}
 			onOk={() => (recordId ? handleUpdate() : handleCreate())}
 			onCancel={onCancel}
@@ -150,11 +150,11 @@ const UserJobModal = ({ onSave, onCancel, userSkillId, recordId = null, visible 
 							filterOption={false}
 							placeholder="Company LLC"
 							notFoundContent={null}
-							onSearch={(value) => setUserCompanySearchQuery(value)}
+							onSearch={(value) => setworkPlaceSearchQuery(value)}
 						>
-							{userCompanySearchQuery?.length > 2 &&
-								searchUserCompanyData?.userCompanies?.length > 0 &&
-								searchUserCompanyData.userCompanies.map((d: any) => (
+							{workPlaceSearchQuery?.length > 2 &&
+								searchworkPlaceData?.WorkPlaces?.length > 0 &&
+								searchworkPlaceData.WorkPlaces.map((d: any) => (
 									<AutoComplete.Option key={d.id} value={d.name}>
 										{d.name}
 									</AutoComplete.Option>

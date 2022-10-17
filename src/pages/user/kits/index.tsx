@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import EmptySkills from '@assets/images/skills/empty-skills.svg';
-import { capitalizedText } from '@helpers/text';
+import { capitalizedText, experienceAsText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { userKitsQuery } from '@services/graphql/queries/userKit';
@@ -183,11 +183,19 @@ const UserKitsPage: NextPageWithLayout = () => {
 									);
 								}}
 							/>
-							<Table.Column
+							{/* <Table.Column
 								title="Skills count"
 								key="userSkills"
 								dataIndex="userSkills"
 								render={(data: any[]) => data?.length}
+								responsive={['lg']}
+							/> */}
+							<Table.Column
+								title="Experience"
+								width="150px"
+								key="experience"
+								dataIndex="experience"
+								render={(data: unknown, record: any) => experienceAsText(record.experience)}
 								responsive={['lg']}
 							/>
 							<Table.Column

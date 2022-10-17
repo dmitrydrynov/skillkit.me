@@ -10,16 +10,16 @@ import { capitalizedText, experienceAsText, readyText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
 import { searchProfessionsQuery } from '@services/graphql/queries/profession';
-import { deleteUserFileMutation, userFilesQuery } from '@services/graphql/queries/userFile';
-import { userJobsQuery } from '@services/graphql/queries/userJob';
+import { deleteUserFileMutation } from '@services/graphql/queries/userFile';
 import {
 	deleteUserSkillFromKitMutation,
 	editUserKitMutation,
 	getUserKitQuery,
+	userFilesForKitQuery,
+	userJobsForKitQuery,
+	userSchoolsForKitQuery,
 	userToolsForKitQuery,
 } from '@services/graphql/queries/userKit';
-import { userSchoolsQuery } from '@services/graphql/queries/userSchool';
-import { userToolsQuery } from '@services/graphql/queries/userTool';
 import { getSkillLevel, UserSkillViewModeEnum } from 'src/definitions/skill';
 import { DeleteOutlined, EditOutlined, PlusOutlined, WarningTwoTone } from '@ant-design/icons';
 import {
@@ -88,20 +88,20 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 		pause: !kitId,
 	});
 	const [{ data: userSchoolsData, fetching: userSchoolFetching }, refreshUserSchools] = useQuery({
-		query: userSchoolsQuery,
-		variables: { userSkillId: kitId },
+		query: userSchoolsForKitQuery,
+		variables: { id: kitId },
 		requestPolicy: 'network-only',
 		pause: !kitId,
 	});
 	const [{ data: userJobsData, fetching: userJobFetching }, refreshUserJobs] = useQuery({
-		query: userJobsQuery,
-		variables: { userSkillId: kitId },
+		query: userJobsForKitQuery,
+		variables: { id: kitId },
 		requestPolicy: 'network-only',
 		pause: !kitId,
 	});
 	const [{ data: userFilesData, fetching: userFilesFetching }, refreshUserFiles] = useQuery({
-		query: userFilesQuery,
-		variables: { attachType: 'UserKit', attachId: kitId },
+		query: userFilesForKitQuery,
+		variables: { id: kitId },
 		requestPolicy: 'network-only',
 		pause: !kitId,
 	});
@@ -185,9 +185,12 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 		refreshUserFiles();
 	};
 
-	const handleSaveUserKits = () => {
+	const handleSaveUserSkills = () => {
 		message.success('User skills updated!');
 		setVisibleUserSkillModal(false);
+		refreshUserTools();
+		refreshUserSchools();
+		refreshUserJobs();
 	};
 
 	const handleDeleteUserFile = async (item) => {
@@ -220,7 +223,10 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 						The user skill <strong>{capitalizedText(item.name)}</strong> removed
 					</>,
 				);
-				// refreshUserSkills();
+				refreshUserTools();
+				refreshUserFiles();
+				refreshUserSchools();
+				refreshUserJobs();
 			}
 		} catch (error: any) {
 			message.error(error.message);
@@ -296,7 +302,7 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 											<p className={styles.description}>
 												{userKitData?.userKit.description
 													? readyText(userKitData?.userKit.description)
-													: emptyData('No description')}
+													: emptyData('Additional information about the skill kit')}
 											</p>
 										}
 										editMode={
@@ -439,7 +445,7 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 												<List.Item className={styles.listItem}>
 													<List.Item.Meta
 														className={styles.listItemMeta}
-														title={item.title}
+														title={item.workTool.name}
 														description={
 															<Space direction="horizontal">
 																{item.description && (
@@ -466,22 +472,30 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 											</Tooltip>
 										</Space>
 									</div>
-									{userSchoolsData?.userSchools.length ? (
+									{userSchoolsData?.userSchoolsForKit.length ? (
 										<Spin spinning={userSchoolFetching}>
 											<Timeline mode="left">
-												{userSchoolsData?.userSchools.map((item: any, indx: number) => (
+												{userSchoolsData?.userSchoolsForKit.map((item: any, indx: number) => (
 													<Timeline.Item key={indx}>
-														<Space size="large" className={styles.userSchoolListItem}>
+														<div className={styles.userSchoolListItem}>
 															<div className={styles.userSchoolInfo}>
-																<div className={styles.userSchoolRange}>
-																	{moment(item.startedAt).format('MMM, YYYY') +
-																		' — ' +
-																		(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
-																</div>
-																<div className={styles.userSchoolTitle}>{item.title}</div>
-																{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
+																<div className={styles.userSchoolTitle}>{item.name}</div>
+																{item.userSchools.map((userSchool) => (
+																	<>
+																		{!!userSchool && (
+																			<Space direction="vertical" style={{ display: 'block' }}>
+																				<div className={styles.userSchoolRange}>
+																					{moment(userSchool.startedAt).format('MMM, YYYY') +
+																						' — ' +
+																						(userSchool.finishedAt ? moment(userSchool.finishedAt).format('MMM, YYYY') : 'Now')}
+																				</div>
+																				<p className={styles.userSchoolDesc}>{readyText(userSchool?.description)}</p>
+																			</Space>
+																		)}
+																	</>
+																))}
 															</div>
-														</Space>
+														</div>
 													</Timeline.Item>
 												))}
 											</Timeline>
@@ -499,22 +513,35 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 											</Tooltip>
 										</Space>
 									</div>
-									{userJobsData?.userJobs.length ? (
+									{userJobsData?.userJobsForKit.length ? (
 										<Spin spinning={userJobFetching}>
 											<Timeline mode="left">
-												{userJobsData?.userJobs.map((item: any, indx: number) => (
+												{userJobsData?.userJobsForKit.map((item: any, indx: number) => (
 													<Timeline.Item key={indx}>
 														<Space size="large" className={styles.userJobListItem}>
 															<div className={styles.userJobInfo}>
-																<div className={styles.userJobRange}>
+																{/* <div className={styles.userJobRange}>
 																	{moment(item.startedAt).format('MMM, YYYY') +
 																		' — ' +
 																		(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
-																</div>
-																<div className={styles.userJobTitle}>
-																	{item.userCompany.name} — {item.position}
-																</div>
-																{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
+																</div> */}
+																<div className={styles.userJobTitle}>{item.name}</div>
+																{/* {!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>} */}
+																{item.userJobs.map((userJob) => (
+																	<>
+																		{!!userJob && (
+																			<Space direction="vertical" style={{ display: 'block' }}>
+																				<div className={styles.userJobRange}>
+																					<span className={styles.jobPosition}>{userJob.position}</span>,&nbsp;
+																					{moment(userJob.startedAt).format('MMM, YYYY') +
+																						' — ' +
+																						(userJob.finishedAt ? moment(userJob.finishedAt).format('MMM, YYYY') : 'Now')}
+																				</div>
+																				<p className={styles.userJobDesc}>{readyText(userJob?.description)}</p>
+																			</Space>
+																		)}
+																	</>
+																))}
 															</div>
 														</Space>
 													</Timeline.Item>
@@ -534,7 +561,7 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 								<div className={styles.headerContainer}>
 									<Space>
 										<h2>Work examples</h2>
-										<Button
+										{/* <Button
 											type="ghost"
 											shape="circle"
 											size="small"
@@ -543,12 +570,13 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 												setVisibleAddUserFileModal(true);
 												setEditableAddUserFile(null);
 											}}
-										/>
+										/> */}
 									</Space>
 								</div>
-								{userFilesData?.userFiles.length > 0 ? (
+								{!!userKitData && userFilesData?.getUserFilesForKit.length > 0 ? (
 									<FileGallery
-										fileList={userFilesData.userFiles}
+										onlyView
+										fileList={userFilesData.getUserFilesForKit}
 										onDelete={handleDeleteUserFile}
 										onEdit={(record) => {
 											setVisibleEditUserFileModal(true);
@@ -567,7 +595,7 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 			<UserSkillForKitModal
 				userKit={userKitData?.userKit}
 				visible={visibleUserSkillModal}
-				onSave={handleSaveUserKits}
+				onSave={handleSaveUserSkills}
 				onCancel={() => {
 					setVisibleUserSkillModal(false);
 				}}
@@ -600,6 +628,10 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 					showEditSkillModal({ visible: false, recordId: null });
 					await refetchUserKit();
 					await refreshUserTools();
+					await refreshUserTools();
+					await refreshUserFiles();
+					await refreshUserSchools();
+					await refreshUserJobs();
 				}}
 			/>
 		</>

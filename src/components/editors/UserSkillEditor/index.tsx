@@ -40,7 +40,6 @@ import {
 import moment from 'moment';
 import Head from 'next/head';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
 
@@ -207,7 +206,7 @@ const UserSkillEditor = ({ userSkillId }: any) => {
 			if (deletedItems) {
 				message.success(
 					<>
-						The user tool <strong>{item.title}</strong> deleted
+						The user tool <strong>{item.workTool.name}</strong> deleted
 					</>,
 				);
 				refreshUserTools();
@@ -236,7 +235,7 @@ const UserSkillEditor = ({ userSkillId }: any) => {
 			if (deletedItems) {
 				message.success(
 					<>
-						The user school <strong>{item.title}</strong> deleted
+						The user school <strong>{item.school.name}</strong> deleted
 					</>,
 				);
 				refreshUserSchools();
@@ -265,7 +264,7 @@ const UserSkillEditor = ({ userSkillId }: any) => {
 			if (deletedItems) {
 				message.success(
 					<>
-						The user job <strong>{item.userCompany.name}</strong> deleted
+						The user job <strong>{item.workPlace.name}</strong> deleted
 					</>,
 				);
 				refreshUserJobs();
@@ -424,7 +423,7 @@ const UserSkillEditor = ({ userSkillId }: any) => {
 												<List.Item className={styles.listItem}>
 													<List.Item.Meta
 														className={styles.listItemMeta}
-														title={item.title}
+														title={item.workTool.name}
 														description={
 															<Space direction="horizontal">
 																{item.description && (
@@ -496,7 +495,7 @@ const UserSkillEditor = ({ userSkillId }: any) => {
 																		' — ' +
 																		(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
 																</div>
-																<div className={styles.userSchoolTitle}>{item.title}</div>
+																<div className={styles.userSchoolTitle}>{item.school.name}</div>
 																{!!item.description && <p className={styles.userSchoolDesc}>{readyText(item.description)}</p>}
 															</div>
 															<Dropdown.Button
@@ -561,7 +560,7 @@ const UserSkillEditor = ({ userSkillId }: any) => {
 																		(item.finishedAt ? moment(item.finishedAt).format('MMM, YYYY') : 'Now')}
 																</div>
 																<div className={styles.userJobTitle}>
-																	{item.userCompany.name} — {item.position}
+																	{item.workPlace.name} — {item.position}
 																</div>
 																{!!item.description && <p className={styles.userJobDesc}>{readyText(item.description)}</p>}
 															</div>

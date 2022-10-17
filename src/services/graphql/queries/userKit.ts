@@ -7,6 +7,10 @@ query($where: UserKitWhereInput) {
     }
   ) {
     id
+    experience {
+      years
+      months
+    }
     profession {
       id
       name
@@ -54,6 +58,10 @@ query($id: ID!) {
     id
     description
     isDraft
+    experience {
+      years
+      months
+    }
     userSkills {
       id
       skill { id name }
@@ -136,6 +144,10 @@ query($id: ID!) {
     viewMode
     updatedAt
     shareLink
+    experience {
+      years
+      months
+    }
     profession {
       name
     }
@@ -156,8 +168,65 @@ query($id: ID!) {
     }
   ) {
     id
+    workTool {
+      name
+    }
+    description
+  }
+}
+`;
+
+export const userFilesForKitQuery = `
+query($id: ID!) {
+  getUserFilesForKit(
+    where: {
+      id: $id
+    }
+  ) {
+    id
     title
     description
+    url
+    type
+  }
+}
+`;
+
+export const userSchoolsForKitQuery = `
+query($id: ID!) {
+  userSchoolsForKit(
+    where: {
+      id: $id
+    }
+  ) {
+    schoolId
+    name
+    userSchools {
+      id
+      startedAt
+      finishedAt
+      description
+    }
+  }
+}
+`;
+
+export const userJobsForKitQuery = `
+query($id: ID!) {
+  userJobsForKit(
+    where: {
+      id: $id
+    }
+  ) {
+    workPlaceId
+    name
+    userJobs {
+      id
+      position
+      startedAt
+      finishedAt
+      description
+    }
   }
 }
 `;
