@@ -40,6 +40,7 @@
     "antd-img-crop": "^4.1.0",
     "avvvatars-react": "^0.3.0",
     "braft-editor": "^2.3.9",
+    "classnames": "^2.3.2",
     "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
     "editorjs-blocks-react-renderer": "^1.2.4",

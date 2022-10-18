@@ -32,7 +32,7 @@ export const skillLevelsList = [
 		index: 1,
 		label: SkillLevelEnum.NOVICE,
 		icon: SkillNoviceIcon,
-		color: '#FF5959',
+		color: '#ffeb3b',
 		description: 'Has knowledge of how to get the job done but has no experience yet',
 	},
 	{

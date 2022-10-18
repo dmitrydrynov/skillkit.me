@@ -6,6 +6,7 @@ import AddUserFileModal from '@components/modals/AddUserFileModal';
 import EditUserFileModal from '@components/modals/EditUserFileModal';
 import UserSkillEditModal from '@components/modals/UserSkillEditModal';
 import UserSkillForKitModal from '@components/modals/UserSkillForKitModal';
+import { hexToRgbA } from '@helpers/color';
 import { capitalizedText, experienceAsText, readyText } from '@helpers/text';
 import ProtectedLayout from '@layouts/ProtectedLayout';
 import { NextPageWithLayout } from '@pages/_app';
@@ -32,6 +33,7 @@ import {
 	List,
 	message,
 	Popconfirm,
+	Popover,
 	Progress,
 	Row,
 	Skeleton,
@@ -47,6 +49,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { BiLinkAlt, BiWorld } from 'react-icons/bi';
+import { FaInfoCircle } from 'react-icons/fa';
 import { FiEyeOff, FiHelpCircle } from 'react-icons/fi';
 import { useMutation, useQuery } from 'urql';
 import styles from './style.module.less';
@@ -348,6 +351,13 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 												return (
 													<List.Item
 														className={styles.listItem}
+														style={{
+															backgroundColor: `${hexToRgbA(level.color, 0.02 * level.index)}`,
+															background: `linear-gradient(105deg, ${hexToRgbA(level.color, 0.05 * level.index)} 0%, ${hexToRgbA(
+																level.color,
+																0,
+															)} ${level.index * 20}%, rgba(255,255,255,0) ${level.index * 20}%)`,
+														}}
 														actions={[
 															<Button
 																key="edit-userskill"
@@ -426,6 +436,12 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 										/>
 									)}
 								</div>
+							</Space>
+						</Col>
+					</Row>
+					<Row>
+						<Col flex={1}>
+							<Space direction="vertical" size={40} className={styles.collectedDataContainer}>
 								<div className={styles.toolsSection}>
 									<div className={styles.headerContainer}>
 										<Space>
@@ -436,29 +452,52 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 										</Space>
 									</div>
 									{userToolsData?.getUserToolsForKit.length ? (
-										<List
-											className={styles.list}
-											size="small"
-											dataSource={userToolsData.getUserToolsForKit}
-											loading={userToolFetching}
-											renderItem={(item: any) => (
-												<List.Item className={styles.listItem}>
-													<List.Item.Meta
-														className={styles.listItemMeta}
-														title={item.workTool.name}
-														description={
-															<Space direction="horizontal">
-																{item.description && (
-																	<Typography.Paragraph ellipsis={{ tooltip: item.description }}>
-																		{readyText(item.description)}
-																	</Typography.Paragraph>
-																)}
-															</Space>
+										// <List
+										// 	className={styles.list}
+										// 	size="small"
+										// 	dataSource={userToolsData.getUserToolsForKit}
+										// 	loading={userToolFetching}
+										// 	renderItem={(item: any) => (
+										// 		<List.Item className={styles.listItem}>
+										// 			<List.Item.Meta
+										// 				className={styles.listItemMeta}
+										// 				title={item.workTool.name}
+										// 				description={
+										// 					<Space direction="horizontal">
+										// 						{item.description && (
+										// 							<Typography.Paragraph ellipsis={{ tooltip: item.description }}>
+										// 								{readyText(item.description)}
+										// 							</Typography.Paragraph>
+										// 						)}
+										// 					</Space>
+										// 				}
+										// 			/>
+										// 		</List.Item>
+										// 	)}
+										// />
+										<Space className={styles.toolsList} size="middle" direction="horizontal">
+											{userToolsData.getUserToolsForKit.map((item: any, idx: number) =>
+												item.description ? (
+													<Badge
+														count={
+															<Popover
+																content={item.description}
+																overlayStyle={{
+																	maxWidth: '50vw',
+																}}
+															>
+																<FaInfoCircle color="#313c5d" />
+															</Popover>
 														}
-													/>
-												</List.Item>
+														key={idx}
+													>
+														<div className={styles.toolsListItem}>{item.workTool.name}</div>
+													</Badge>
+												) : (
+													<div className={styles.toolsListItem}>{item.workTool.name}</div>
+												),
 											)}
-										/>
+										</Space>
 									) : (
 										emptyData('No data about tools. You can add ones in skill settings')
 									)}
@@ -552,16 +591,16 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 										emptyData('No data about jobs. You can add ones in skill settings')
 									)}
 								</div>
-							</Space>
-						</Col>
-					</Row>
-					<Row style={{ marginTop: '40px' }}>
-						<Col flex={1}>
-							<div className={styles.worksSection}>
-								<div className={styles.headerContainer}>
-									<Space>
-										<h2>Work examples</h2>
-										{/* <Button
+
+								{/* </Col>
+					</Row> */}
+								{/* <Row style={{ marginTop: '40px' }}>
+						<Col flex={1}> */}
+								<div className={styles.worksSection}>
+									<div className={styles.headerContainer}>
+										<Space>
+											<h2>Work examples</h2>
+											{/* <Button
 											type="ghost"
 											shape="circle"
 											size="small"
@@ -571,22 +610,23 @@ const SkillKitEditorPage: NextPageWithLayout = () => {
 												setEditableAddUserFile(null);
 											}}
 										/> */}
-									</Space>
+										</Space>
+									</div>
+									{!!userKitData && userFilesData?.getUserFilesForKit.length > 0 ? (
+										<FileGallery
+											onlyView
+											fileList={userFilesData.getUserFilesForKit}
+											onDelete={handleDeleteUserFile}
+											onEdit={(record) => {
+												setVisibleEditUserFileModal(true);
+												setEditableEditUserFile(record);
+											}}
+										/>
+									) : (
+										emptyData('No any examples')
+									)}
 								</div>
-								{!!userKitData && userFilesData?.getUserFilesForKit.length > 0 ? (
-									<FileGallery
-										onlyView
-										fileList={userFilesData.getUserFilesForKit}
-										onDelete={handleDeleteUserFile}
-										onEdit={(record) => {
-											setVisibleEditUserFileModal(true);
-											setEditableEditUserFile(record);
-										}}
-									/>
-								) : (
-									emptyData('No any examples')
-								)}
-							</div>
+							</Space>
 						</Col>
 					</Row>
 					<Row style={{ marginTop: '40px' }}>* An empty section will not be displayed in the public version</Row>

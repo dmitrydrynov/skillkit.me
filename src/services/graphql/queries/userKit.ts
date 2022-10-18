@@ -230,3 +230,78 @@ query($id: ID!) {
   }
 }
 `;
+
+export const getUserKitForShareQuery = `
+query($hash: String!) {
+  userKitForShare(hash: $hash) {
+    viewer
+    user {
+      fullName
+      age
+      about
+      country
+      avatar
+      email
+    }
+    userKit { 
+      viewMode
+      description
+      profession {
+        name
+      }
+      experience {
+        years
+        months
+      }
+      publishedAt
+      createdAt
+      shareLink
+      userSkills {
+        level
+        viewMode
+        shareLink
+        skill { name }
+        experience {
+          years
+          months
+        }
+      }
+      userTools {
+        description
+        workTool {
+          name
+        }
+      }
+      userJobs {
+        name
+        userJobs {
+          position
+          description
+          startedAt
+          finishedAt
+          workPlace {
+            name
+          }
+        }
+      }
+      userSchools {
+        name
+        userSchools {
+          description
+          startedAt
+          finishedAt
+          school {
+            name
+          }
+        }
+      }
+      userFiles {
+        title
+        description
+        url
+        type
+      }
+    }    
+  }
+}
+`;
